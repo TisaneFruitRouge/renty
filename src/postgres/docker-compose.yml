@@ -1,0 +1,15 @@
+name: 'renty-db'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: renty
+
+    volumes:
+      - "./postgres-data:/var/lib/postgresql/data"
+
+    ports:
+      - "5433:5432"
