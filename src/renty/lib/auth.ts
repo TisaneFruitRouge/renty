@@ -17,11 +17,11 @@ export const auth = betterAuth({
     plugins: [nextCookies()],
     user: {
         additionalFields: {
-            address: { type: "string" },
-            city: { type: "string" },
-            state: { type: "string" },
-            country: { type: "string" },
-            postalCode: { type: "string" },
+            address: { type: "string", required: false },
+            city: { type: "string", required: false },
+            state: { type: "string", required: false },
+            country: { type: "string", required: false },
+            postalCode: { type: "string", required: false },
         }
     }
 })
