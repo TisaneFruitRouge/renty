@@ -82,6 +82,9 @@ Better-Auth automatically creates and manages its own tables in your database. T
 - `account` - Handles authentication providers and credentials
 - `verification` - Manages email verification tokens
 
+/!\ You can modify the `user` and `session` tables as you see fit, but you have to add the new fields manually 
+when you instanciate better-auth.
+
 To sync Better-Auth tables with your database:
 
 1. Ensure your database connection is configured in `.env`
@@ -119,22 +122,22 @@ model profile {
 
 1. Pull latest database schema (if working with existing database):
 ```bash
-npm run db:pull
+yarn db:pull
 ```
 
 2. Generate Prisma Client after schema changes:
 ```bash
-npm run db:generate
+yarn db:generate
 ```
 
 3. Create new migrations for schema changes:
 ```bash
-npm run db:migrate:dev -- --name describe_your_changes
+yarn db:migrate:dev -- --name describe_your_changes
 ```
 
 4. Use Prisma Studio to browse and edit data:
 ```bash
-npm run db:studio
+yarn db:studio
 ```
 
 ## Troubleshooting

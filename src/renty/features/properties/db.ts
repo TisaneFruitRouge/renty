@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma/db";
+import type { Prisma } from "@prisma/client";
 
 export async function getPropertiesForUser(userId: string) {
     const properties = await prisma.property.findMany({
@@ -22,6 +23,20 @@ export async function getPropertyById(id: string) {
     }
 
     return property;
+}
+
+export async function updateProperty(id: string, data: Omit<Prisma.propertyUpdateInput, "id" | "createdAt" | "updatedAt">) {
+    return await prisma.property.update({
+        where: { id },
+        data: {
+            title: data.title,
+            address: data.address,
+            city: data.city,
+            state: data.state,
+            country: data.country,
+            postalCode: data.postalCode
+        },
+    });
 }
 
 export default async function createProperty(

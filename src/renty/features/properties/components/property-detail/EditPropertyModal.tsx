@@ -21,64 +21,70 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Loader2, Plus } from "lucide-react"
-import { createPropertySchema } from "../schemas"
-import { createPropertyAction } from "../actions"
+import { Loader2, Pencil } from "lucide-react"
+import { updatePropertySchema } from "../../schemas"
+import { updatePropertyAction } from "../../actions"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { z } from "zod"
 import { useState } from "react"
+import type { property } from "@prisma/client"
 
-export default function CreatePropertyModal() {
+interface EditPropertyModalProps {
+    property: property
+}
+
+export default function EditPropertyModal({ property }: EditPropertyModalProps) {
     const { toast } = useToast()
     const router = useRouter()
     const t = useTranslations('property')
+    const [loading, setLoading] = useState(false)
 
-    const [loading, setLoading] = useState(false);
-
-    const form = useForm<z.infer<typeof createPropertySchema>>({
-        resolver: zodResolver(createPropertySchema),
+    const form = useForm<z.infer<typeof updatePropertySchema>>({
+        resolver: zodResolver(updatePropertySchema),
         defaultValues: {
-            title: "",
-            address: "",
-            city: "",
-            state: "",
-            country: "",
-            postalCode: "",
+            title: property.title,
+            address: property.address,
+            city: property.city,
+            state: property.state,
+            country: property.country,
+            postalCode: property.postalCode,
         }
-    });
+    })
 
-    async function onSubmit(values: z.infer<typeof createPropertySchema>) {
+    async function onSubmit(values: z.infer<typeof updatePropertySchema>) {
         try {
-            setLoading(true);
-            const {data: property} = await createPropertyAction(values)
+            setLoading(true)
+            const { data: updatedProperty } = await updatePropertyAction({
+                id: property.id,
+                ...values
+            })
             toast({
-                title: t('create-form.success'),
-                description: property?.title || "",
-            });
-            router.push(`property/${property?.id}`)
+                title: t('edit-form.success'),
+                description: updatedProperty?.title || "",
+            })
+            router.refresh()
         } catch (error) {
             console.error("Form submission error", error)
             toast({
-                title: t('create-form.error'),
-                description: error instanceof Error ? error.message : t('create-form.error'),
+                title: t('edit-form.error'),
+                description: error instanceof Error ? error.message : t('edit-form.error'),
             })
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('create-form.title')}
+                <Button variant="ghost" size="icon">
+                    <Pencil className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{t('create-form.title')}</DialogTitle>
+                    <DialogTitle>{t('edit-form.title')}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -189,8 +195,8 @@ export default function CreatePropertyModal() {
                             type="submit" 
                             className="w-full"
                         >
-                            {loading && <Loader2 className="animate-spin" />}
-                            {t('create-form.submit')}
+                            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {t('edit-form.submit')}
                         </Button>
                     </form>
                 </Form>

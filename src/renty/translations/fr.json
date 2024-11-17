@@ -15,40 +15,101 @@
             "title": "Propriété introuvable",
             "description": "La propriété que vous recherchez n'existe pas ou a été supprimée",
             "return-to-properties": "Retourner aux propriétés"
+        },
+        "edit": "Modifier",
+        "edit-form": {
+            "title": "Modifier la propriété",
+            "submit": "Sauvegarder les modifications",
+            "success": "La propriété a été modifiée:",
+            "error": "Une erreur est survenue lors de la modification de la propriété"
+        },
+        "create-form": {
+            "title": "Créer une nouvelle propriété",
+            "submit": "Créer la propriété",
+            "success": "La propriété suivante a été créée:",
+            "error": "Une erreur est survenue lors de la création de la propriété"
+        },
+        "form": {
+            "add-property": "Ajouter une propriété",
+            "create-title": "Créer une nouvelle propriété",
+            "title": {
+                "label": "Titre",
+                "placeholder": "Bel appartement en centre-ville",
+                "description": "Un titre descriptif pour votre propriété"
+            },
+            "address": {
+                "label": "Adresse",
+                "placeholder": "123 Rue Principale",
+                "description": "Adresse de la propriété"
+            },
+            "city": {
+                "label": "Ville",
+                "placeholder": "Paris"
+            },
+            "state": {
+                "label": "État/Région",
+                "placeholder": "Île-de-France"
+            },
+            "country": {
+                "label": "Pays",
+                "placeholder": "France"
+            },
+            "postal-code": {
+                "label": "Code postal",
+                "placeholder": "75001"
+            }
         }
     },
-    "property-form": {
-        "add-property": "Ajouter une propriété",
-        "create-title": "Créer une nouvelle propriété",
-        "title": {
-            "label": "Titre",
-            "placeholder": "Bel appartement en centre-ville",
-            "description": "Un titre descriptif pour votre propriété"
+    "settings": {
+        "title": "Paramètres",
+        "description": "Gérez vos paramètres de compte et vos préférences",
+        "tabs": {
+            "personal": {
+                "title": "Informations personnelles",
+                "description": "Gérez vos informations personnelles et vos coordonnées"
+            },
+            "app": {
+                "title": "Paramètres de l'application",
+                "description": "Configurez vos préférences d'application"
+            }
         },
-        "address": {
-            "label": "Adresse",
-            "placeholder": "123 Rue Principale",
-            "description": "Adresse de la propriété"
-        },
-        "city": {
-            "label": "Ville",
-            "placeholder": "Paris"
-        },
-        "state": {
-            "label": "État/Région",
-            "placeholder": "Île-de-France"
-        },
-        "country": {
-            "label": "Pays",
-            "placeholder": "France"
-        },
-        "postal-code": {
-            "label": "Code postal",
-            "placeholder": "75001"
-        },
-        "submit": "Créer la propriété",
-        "success": "La propriété a été créée",
-        "error": "Une erreur est survenue lors de la création de la propriété"
+        "personal-info-form": {
+            "name": {
+                "label": "Nom",
+                "placeholder": "Votre nom complet"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "votre.email@exemple.com"
+            },
+            "image": {
+                "label": "Photo de profil",
+                "placeholder": "URL de votre photo de profil"
+            },
+            "address": {
+                "label": "Adresse",
+                "placeholder": "123 rue de la Paix"
+            },
+            "city": {
+                "label": "Ville",
+                "placeholder": "Paris"
+            },
+            "state": {
+                "label": "État/Région",
+                "placeholder": "Île-de-France"
+            },
+            "country": {
+                "label": "Pays",
+                "placeholder": "France"
+            },
+            "postal-code": {
+                "label": "Code postal",
+                "placeholder": "75001"
+            },
+            "submit": "Enregistrer les modifications",
+            "success": "Vos informations ont été mises à jour",
+            "error": "Une erreur est survenue lors de la mise à jour de vos informations"
+        }
     },
     "sidebar": {
         "application": "Application",

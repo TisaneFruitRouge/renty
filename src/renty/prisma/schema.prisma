@@ -35,6 +35,11 @@ model user {
   email         String    @unique
   emailVerified Boolean
   image         String?
+  address       String?
+  city          String?
+  country       String?
+  postalCode    String?
+  state         String?
   createdAt     DateTime  @db.Date
   updatedAt     DateTime  @db.Date
   property     property[]

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { MapPin } from "lucide-react"
 import type { property } from "@prisma/client"
 import { getTranslations } from "next-intl/server"
+import EditPropertyModal from "./EditPropertyModal"
 
 interface HeaderCardProps {
     property: property
@@ -13,12 +14,15 @@ export default async function HeaderCard({ property }: HeaderCardProps) {
     return (
         <Card className="overflow-hidden">
             <CardHeader>
-                <div className="space-y-2">
-                    <h1 className="text-2xl font-bold">{property.title}</h1>
-                    <div className="flex items-center text-muted-foreground">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <p>{property.address}</p>
+                <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                        <h1 className="text-2xl font-bold">{property.title}</h1>
+                        <div className="flex items-center text-muted-foreground">
+                            <MapPin className="h-4 w-4 mr-2" />
+                            <p>{property.address}</p>
+                        </div>
                     </div>
+                    <EditPropertyModal property={property} />
                 </div>
             </CardHeader>
 

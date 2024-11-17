@@ -3,8 +3,8 @@
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import createProperty from "./db"
-import { createPropertySchema } from "./schemas"
+import createProperty, { updateProperty } from "./db"
+import { createPropertySchema, updatePropertySchema } from "./schemas"
 import { headers } from "next/headers"
 
 export type CreatePropertyInput = z.infer<typeof createPropertySchema>
@@ -45,4 +45,20 @@ export async function createPropertyAction(values: CreatePropertyInput) {
             error: error instanceof Error ? error.message : "Failed to create property" 
         }
     }
+}
+
+export async function updatePropertyAction(input: z.infer<typeof updatePropertySchema> & { id: string }) {
+
+    const result = updatePropertySchema.safeParse(input);
+    if (!result.success) {
+        throw new Error(result.error.message);
+    }
+
+    const property = await updateProperty(input.id, {
+        ...input
+    });
+
+    return {
+        data: property,
+    };
 }
