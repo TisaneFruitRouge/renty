@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { signUp } from "../actions"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
 	email: z.string().email("Please enter a valid email address"),
@@ -29,11 +30,12 @@ const formSchema = z.object({
 })
 
 export default function SignUpForm() {
-	const { toast } = useToast()
+	const { toast } = useToast();
+	const router = useRouter();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-	})
+	});
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
@@ -43,6 +45,7 @@ export default function SignUpForm() {
 				title: "Success",
 				description: "Your account has been created",
 			});
+			router.push('/');
 		} catch (error) {
 			console.error("Form submission error", error)
 			toast({

@@ -1,0 +1,61 @@
+{
+    "home": {
+        "welcome": "Bonjour, {name}",
+        "properties": "Propriétés",
+        "no-properties-found": "Aucune propriété trouvée"
+    },
+    "property": {
+        "back-to-properties": "Retour aux propriétés",
+        "location-details": "Détails de l'emplacement",
+        "city": "Ville",
+        "state": "État/Région",
+        "country": "Pays",
+        "postal-code": "Code postal",
+        "not-found": {
+            "title": "Propriété introuvable",
+            "description": "La propriété que vous recherchez n'existe pas ou a été supprimée",
+            "return-to-properties": "Retourner aux propriétés"
+        }
+    },
+    "property-form": {
+        "add-property": "Ajouter une propriété",
+        "create-title": "Créer une nouvelle propriété",
+        "title": {
+            "label": "Titre",
+            "placeholder": "Bel appartement en centre-ville",
+            "description": "Un titre descriptif pour votre propriété"
+        },
+        "address": {
+            "label": "Adresse",
+            "placeholder": "123 Rue Principale",
+            "description": "Adresse de la propriété"
+        },
+        "city": {
+            "label": "Ville",
+            "placeholder": "Paris"
+        },
+        "state": {
+            "label": "État/Région",
+            "placeholder": "Île-de-France"
+        },
+        "country": {
+            "label": "Pays",
+            "placeholder": "France"
+        },
+        "postal-code": {
+            "label": "Code postal",
+            "placeholder": "75001"
+        },
+        "submit": "Créer la propriété",
+        "success": "La propriété a été créée",
+        "error": "Une erreur est survenue lors de la création de la propriété"
+    },
+    "sidebar": {
+        "application": "Application",
+        "menu": {
+            "home": "Accueil",
+            "settings": "Paramètres"
+        },
+        "logout": "Se déconnecter"
+    }
+}

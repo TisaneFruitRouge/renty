@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function LogoutButton() {
-    
     const router = useRouter();
+    const t = useTranslations('sidebar');
 
     async function signOut() {
         await authClient.signOut({
@@ -23,7 +24,7 @@ export default function LogoutButton() {
             onClick={signOut}
             className="w-full"
         >
-            Logout
+            {t('logout')}
         </Button>
     )
 }

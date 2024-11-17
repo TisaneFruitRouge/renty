@@ -37,6 +37,7 @@ model user {
   image         String?
   createdAt     DateTime  @db.Date
   updatedAt     DateTime  @db.Date
+  property     property[]
   account       account[]
   session       session[]
 }
@@ -47,4 +48,18 @@ model verification {
   value      String
   expiresAt  DateTime  @db.Date
   createdAt  DateTime? @db.Date
+}
+
+
+model property {
+  id String @id
+  address String
+  city String
+  country String
+  postalCode String
+  state String
+  title String
+  images String[]
+  userId String
+  user         user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
