@@ -7,9 +7,7 @@ import HeaderCard from "@/features/properties/components/property-detail/HeaderC
 import { getTranslations } from "next-intl/server"
 
 interface PropertyPageProps {
-    params: {
-        id: string
-    }
+    params: Promise<{ id: string }>
 }
 
 export default async function PropertyPage({ params }: PropertyPageProps) {
@@ -17,7 +15,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     const t = await getTranslations('property');
     
     let property;
-    const { id } = await params; // weird Next.js 15 thing
+    const { id } = await params;
     try {
         property = await getPropertyById(id);
     } catch {
