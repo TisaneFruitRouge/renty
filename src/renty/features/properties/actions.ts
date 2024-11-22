@@ -3,8 +3,8 @@
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import createProperty, { updateProperty } from "./db"
-import { createPropertySchema, updatePropertySchema } from "./schemas"
+import createProperty, { updateProperty, updatePropertyRental } from "./db"
+import { createPropertySchema, updatePropertySchema, rentalFormSchema } from "./schemas"
 import { headers } from "next/headers"
 
 export type CreatePropertyInput = z.infer<typeof createPropertySchema>
@@ -61,4 +61,23 @@ export async function updatePropertyAction(input: z.infer<typeof updatePropertyS
     return {
         data: property,
     };
+}
+
+export async function updatePropertyRentalAction(propertyId: string, input: z.infer<typeof rentalFormSchema>) {
+    const result = rentalFormSchema.safeParse(input);
+    if (!result.success) {
+        throw new Error(result.error.message);
+    }
+
+    try {
+        const property = await updatePropertyRental(propertyId, result.data);
+        revalidatePath(`/properties/${propertyId}`);
+        return { success: true, data: property };
+    } catch (error) {
+        console.error("Error updating rental info:", error);
+        return { 
+            success: false, 
+            error: error instanceof Error ? error.message : "Failed to update rental information" 
+        };
+    }
 }

@@ -19,8 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import type { user } from "@prisma/client"
 import { updateUserSchema, type UpdateUserInput } from "../schemas"
 
-const userInfoSchema = updateUserSchema
-
 type UserInfoFormProps = {
     user: user;
     isPending: boolean;
@@ -47,8 +45,7 @@ export function UserInfoForm({ user, isPending, error }: UserInfoFormProps) {
 
     async function onSubmit(values: UpdateUserInput) {
         try {
-            const { data: updatedUser } = await updateUserAction(values);
-            console.log(updatedUser)
+            await updateUserAction(values);
             toast({
                 title: t('success')
             });

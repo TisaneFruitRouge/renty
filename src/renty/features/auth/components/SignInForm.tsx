@@ -45,6 +45,7 @@ export default function SignInForm() {
 		} catch (error) {
 			console.error("Form submission error", error)
 			toast({
+				variant: "destructive",
 				title: "Error",
 				description: "There was an error submitting the form",
 			});

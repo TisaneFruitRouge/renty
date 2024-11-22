@@ -49,6 +49,7 @@ export default function SignUpForm() {
 		} catch (error) {
 			console.error("Form submission error", error)
 			toast({
+				variant: "destructive",
 				title: "Error",
 				description: "There was an error creating your account",
 			});

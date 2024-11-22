@@ -11,6 +11,8 @@
         "state": "État/Région",
         "country": "Pays",
         "postal-code": "Code postal",
+        "duration": "Durée de location",
+        "rented-since": "Loué depuis",
         "not-found": {
             "title": "Propriété introuvable",
             "description": "La propriété que vous recherchez n'existe pas ou a été supprimée",
@@ -58,7 +60,38 @@
                 "label": "Code postal",
                 "placeholder": "75001"
             }
-        }
+        },
+        "rental-details": "Informations de location",
+        "rental-description": "Détails du contrat de location",
+        "pricing": "Tarification",
+        "rent": "Loyer",
+        "base-rent": "Loyer hors charges",
+        "charges": "Charges",
+        "total-rent": "Loyer total",
+        "deposit": "Dépôt de garantie",
+        "rental": {
+            "currency": {
+                "select": "Sélectionner une devise"
+            },
+            "payment-frequency": {
+                "select": "Sélectionner une fréquence",
+                "biweekly": "toutes les deux semaines",
+                "monthly": "par mois",
+                "quarterly": "par trimestre",
+                "yearly": "par an"
+            },
+            "furnished": {
+                "select": "Loué meublé ?",
+                "yes": "Oui",
+                "no": "Non"
+            }
+        },
+        "lease-duration": "Durée du bail",
+        "one-year-lease": "1 an (meublé)",
+        "three-year-lease": "3 ans (non meublé)",
+        "months": "mois",
+        "edit-rental-details": "Modifier les informations de location",
+        "save": "Enregistrer"
     },
     "settings": {
         "title": "Paramètres",

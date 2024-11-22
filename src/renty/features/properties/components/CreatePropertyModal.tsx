@@ -60,6 +60,7 @@ export default function CreatePropertyModal() {
         } catch (error) {
             console.error("Form submission error", error)
             toast({
+                variant: "destructive",
                 title: t('create-form.error'),
                 description: error instanceof Error ? error.message : t('create-form.error'),
             })

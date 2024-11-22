@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import HeaderCard from "@/features/properties/components/property-detail/HeaderCard"
+import RentalCard from "@/features/properties/components/property-detail/RentalCard"
 import { getTranslations } from "next-intl/server"
 
 interface PropertyPageProps {
@@ -34,6 +35,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             </div>
             <div className="flex flex-col gap-4">
                 <HeaderCard property={property} />
+                <RentalCard property={property} />
             </div> 
         </div>
     )

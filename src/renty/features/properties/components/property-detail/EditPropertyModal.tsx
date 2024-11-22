@@ -67,6 +67,7 @@ export default function EditPropertyModal({ property }: EditPropertyModalProps) 
         } catch (error) {
             console.error("Form submission error", error)
             toast({
+                variant: "destructive",
                 title: t('edit-form.error'),
                 description: error instanceof Error ? error.message : t('edit-form.error'),
             })
