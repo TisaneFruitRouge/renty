@@ -70,7 +70,7 @@ model property {
 
   // Rental information
   rentDetails Json? // { baseRent: number, charges: number }
-  currency    String @default("EUR")
+  currency    String? @default("EUR")
   paymentFrequency String @default("monthly") // "biweekly" | "monthly" | "quarterly" | "yearly"
   depositAmount Float?
   rentedSince DateTime?
