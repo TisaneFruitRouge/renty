@@ -41,6 +41,15 @@ export default function SignUpForm() {
 		try {
 			const { email, password, name } = values;
 			await signUp(email, password, name);
+			
+			await fetch('/api/email/after-sign-up', {
+				method: 'POST',
+				headers: {
+				  'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ name, email }),
+			});
+			
 			toast({
 				title: "Success",
 				description: "Your account has been created",
