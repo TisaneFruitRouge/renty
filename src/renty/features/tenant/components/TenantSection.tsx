@@ -17,7 +17,7 @@ export default function TenantSection({ propertyId, initialTenant }: TenantSecti
   const router = useRouter()
   const t = useTranslations('tenant')
 
-  if (initialTenant) {
+  if (initialTenant !== undefined) {
     return <TenantCard tenant={initialTenant} />
   }
 

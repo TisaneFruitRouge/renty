@@ -46,7 +46,7 @@ export async function getTenantByPropertyId(propertyId: string) {
     where: {
       propertyId
     }
-  }))[0] ?? null;
+  }))[0];
 }
 
 export async function getAllTenants() {
