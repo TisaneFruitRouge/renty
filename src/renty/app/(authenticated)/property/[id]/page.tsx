@@ -6,6 +6,8 @@ import { notFound } from "next/navigation"
 import HeaderCard from "@/features/properties/components/property-detail/HeaderCard"
 import RentalCard from "@/features/properties/components/property-detail/RentalCard"
 import { getTranslations } from "next-intl/server"
+import TenantSection from "@/features/tenant/components/TenantSection"
+import { getTenantByPropertyId } from "@/features/tenant/actions"
 
 interface PropertyPageProps {
     params: Promise<{ id: string }>
@@ -23,6 +25,8 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
         notFound();
     }
 
+    const tenant = await getTenantByPropertyId(id);
+
     return (
         <div className="p-6">
             <div className="mb-6">
@@ -36,6 +40,10 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             <div className="flex flex-col gap-4">
                 <HeaderCard property={property} />
                 <RentalCard property={property} />
+                <div className="bg-white rounded-lg border p-6">
+                    <h2 className="text-xl font-semibold mb-4">{t('tenant.title')}</h2>
+                    <TenantSection propertyId={id} initialTenant={tenant} />
+                </div>
             </div> 
         </div>
     )
