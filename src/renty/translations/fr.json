@@ -91,7 +91,10 @@
         "three-year-lease": "3 ans (non meublé)",
         "months": "mois",
         "edit-rental-details": "Modifier les informations de location",
-        "save": "Enregistrer"
+        "save": "Enregistrer",
+        "tenant": {
+            "title": "Gestion du locataire"
+        }
     },
     "settings": {
         "title": "Paramètres",
@@ -148,8 +151,125 @@
         "application": "Application",
         "menu": {
             "home": "Accueil",
+            "properties": "Propriétés",
+            "tenants": "Locataires",
             "settings": "Paramètres"
         },
         "logout": "Se déconnecter"
+    },
+    "tenant": {
+        "section": {
+            "add-button": "Ajouter un locataire",
+            "dialog": {
+                "title": "Ajouter un nouveau locataire",
+                "description": "Remplissez les informations du locataire ci-dessous"
+            },
+            "success": {
+                "created": "Le locataire a été créé avec succès"
+            },
+            "error": {
+                "create": "Une erreur est survenue lors de la création du locataire"
+            }
+        },
+        "card": {
+            "title": "Informations du locataire",
+            "email": "Email",
+            "phone": "Téléphone",
+            "notes": "Notes",
+            "remove-button": "Supprimer le locataire",
+            "success": {
+                "removed": "Le locataire a été supprimé"
+            },
+            "error": {
+                "remove": "Une erreur est survenue lors de la suppression du locataire"
+            }
+        },
+        "selector": {
+            "select": "Sélectionner un locataire",
+            "select-tenant": "Sélectionner un locataire",
+            "search-tenant": "Rechercher un locataire",
+            "no-tenant-found": "Aucun locataire trouvé",
+            "assign": "Assigner le locataire"
+        },
+        "success": {
+            "assigned": "Le locataire a été assigné à la propriété"
+        },
+        "error": {
+            "assign": "Une erreur est survenue lors de l'assignation du locataire"
+        },
+        "form": {
+            "first-name": {
+                "label": "Prénom",
+                "placeholder": "Jean",
+                "error": "Le prénom doit contenir au moins 2 caractères"
+            },
+            "last-name": {
+                "label": "Nom",
+                "placeholder": "Dupont",
+                "error": "Le nom doit contenir au moins 2 caractères"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "jean.dupont@example.com",
+                "error": "Veuillez entrer une adresse email valide"
+            },
+            "phone": {
+                "label": "Téléphone",
+                "placeholder": "+33612345678",
+                "error": "Veuillez entrer un numéro de téléphone valide"
+            },
+            "notes": {
+                "label": "Notes",
+                "placeholder": "Informations complémentaires sur le locataire..."
+            },
+            "submit": "Ajouter le locataire",
+            "success": {
+                "created": "Le locataire a été créé avec succès"
+            },
+            "error": {
+                "create": "Une erreur est survenue lors de la création du locataire"
+            }
+        },
+        "create-form": {
+            "title": "Ajouter un nouveau locataire",
+            "description": "Remplissez les informations du locataire",
+            "first-name": "Prénom",
+            "first-name-placeholder": "Entrez le prénom",
+            "last-name": "Nom",
+            "last-name-placeholder": "Entrez le nom",
+            "email": "Email",
+            "email-placeholder": "Entrez l'email",
+            "phone": "Téléphone",
+            "phone-placeholder": "Entrez le numéro de téléphone",
+            "notes": "Notes",
+            "notes-placeholder": "Entrez des notes (optionnel)",
+            "property": "Propriété",
+            "select-property": "Sélectionnez une propriété",
+            "search-property": "Rechercher une propriété...",
+            "no-property-found": "Aucune propriété trouvée",
+            "submit": "Ajouter le locataire",
+            "success": {
+                "created": "Le locataire a été créé avec succès"
+            },
+            "error": {
+                "create": "Une erreur est survenue lors de la création du locataire"
+            }
+        }
+    },
+    "tenants": {
+        "title": "Gérez vos locataires",
+        "no-tenants-found": "Aucun locataire trouvé",
+        "add-tenant": "Ajouter un locataire",
+        "create-form": {
+            "title": "Ajouter un nouveau locataire",
+            "description": "Remplissez les informations du locataire ci-dessous"
+        },
+        "tenant-card": {
+            "email": "Email",
+            "phone": "Téléphone",
+            "property": "Propriété",
+            "view-details": "Voir les détails",
+            "remove": "Supprimer"
+        }
     }
 }
