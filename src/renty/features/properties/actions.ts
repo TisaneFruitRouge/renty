@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import createProperty, { updateProperty, updatePropertyRental } from "./db"
+import createProperty, { getPropertiesForUser, updateProperty, updatePropertyRental } from "./db"
 import { createPropertySchema, updatePropertySchema, rentalFormSchema } from "./schemas"
 import { headers } from "next/headers"
 
@@ -80,4 +80,15 @@ export async function updatePropertyRentalAction(propertyId: string, input: z.in
             error: error instanceof Error ? error.message : "Failed to update rental information" 
         };
     }
+}
+export async function getAllProperties() {
+    const session = await auth.api.getSession({
+        headers: await headers() // you need to pass the headers object.
+    });
+    
+    if (!session?.user?.id) {
+        throw new Error("Not authenticated");
+    }
+
+    return getPropertiesForUser(session.user.id);
 }

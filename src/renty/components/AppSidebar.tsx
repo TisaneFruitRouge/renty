@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, Settings } from "lucide-react"
+import { Home, Settings, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 import {
   Sidebar,
@@ -24,6 +24,11 @@ export function AppSidebar() {
       title: t('menu.home'),
       url: "/",
       icon: Home,
+    },
+    {
+      title: t('menu.tenants'),
+      url: "/tenants",
+      icon: Users,
     },
     {
       title: t('menu.settings'),
