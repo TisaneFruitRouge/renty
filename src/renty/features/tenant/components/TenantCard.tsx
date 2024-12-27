@@ -41,7 +41,7 @@ export default function TenantCard({ tenant }: TenantCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{tenant.fistName} {tenant.lastName}</CardTitle>
+        <CardTitle>{tenant.firstName} {tenant.lastName}</CardTitle>
         <CardDescription>{t('title')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2">

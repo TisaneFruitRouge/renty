@@ -21,7 +21,7 @@ export default function TenantListCard({ tenant }: TenantListCardProps) {
                 </div>
                 <CardHeader>
                     <h3 className="text-lg font-semibold line-clamp-1">
-                        {tenant.fistName} {tenant.lastName}
+                        {tenant.firstName} {tenant.lastName}
                     </h3>
                     <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center">

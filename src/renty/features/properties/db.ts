@@ -11,6 +11,20 @@ export async function getPropertiesForUser(userId: string) {
     return properties;
 }
 
+export async function getAllPropertiesWithActiveTenants() {
+    return await prisma.property.findMany({
+        where: {
+            tenants: {
+                some: {}
+            }
+        },
+        include: {
+            tenants: true,
+            user: true
+        }
+    });
+}
+
 export async function getPropertyById(id: string) {
     const property = await prisma.property.findUnique({
         where: {
