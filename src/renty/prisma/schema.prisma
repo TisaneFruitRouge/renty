@@ -114,7 +114,7 @@ model rentReceipt {
 
 model tenant {
   id          String    @id @default(cuid())
-  fistName    String    @default("John")
+  firstName   String    @default("John")
   lastName    String
   email       String
   phoneNumber String
@@ -125,7 +125,7 @@ model tenant {
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   rentReceipt rentReceipt[]
-  
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

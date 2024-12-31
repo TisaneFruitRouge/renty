@@ -91,14 +91,9 @@ export async function getAllProperties() {
     }
 
     return getPropertiesForUser(session.user.id);
+}
 
-export async function updateRentReceiptSettingsAction({
-  propertyId,
-  rentReceiptStartDate,
-}: {
-  propertyId: string
-  rentReceiptStartDate: Date
-}) {
+export async function updateRentReceiptSettingsAction(propertyId: string, rentReceiptStartDate: Date) {
     const session = await auth.api.getSession({
         headers: await headers()
     });
@@ -113,11 +108,7 @@ export async function updateRentReceiptSettingsAction({
     return { data: updatedProperty };
 }
 
-export async function deleteRentReceiptSettingsAction({
-  propertyId,
-}: {
-  propertyId: string
-}) {
+export async function deleteRentReceiptSettingsAction(propertyId: string) {
     const session = await auth.api.getSession({
         headers: await headers()
     });

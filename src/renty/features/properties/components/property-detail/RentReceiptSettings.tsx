@@ -45,10 +45,7 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
     
     try {
       setLoading(true);
-      await updateRentReceiptSettingsAction({
-        propertyId: property.id,
-        rentReceiptStartDate: date,
-      });
+      await updateRentReceiptSettingsAction(property.id, date);
 
       toast({
         title: t("configuration.success"),
@@ -71,9 +68,7 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
   const handleDelete = async () => {
     try {
       setLoading(true);
-      await deleteRentReceiptSettingsAction({
-        propertyId: property.id,
-      });
+      await deleteRentReceiptSettingsAction(property.id);
 
       toast({
         title: t("configuration.deleted"),
