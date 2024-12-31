@@ -1,5 +1,6 @@
 import { getAllPropertiesWithActiveTenants } from '@/features/properties/db';
-import createReceipt, { deleteReceipt } from '@/features/rent-receipt/db';
+import { deleteReceiptFromBlob, saveReceiptToBlob } from '@/features/rent-receipt/blob';
+import createReceipt, { addBlobUrlToRceipt, deleteReceipt } from '@/features/rent-receipt/db';
 import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
 import { generatePDF } from '@/features/rent-receipt/pdf/generatePDF';
 import { parseRentDetails, shouldGenerateReceipt, calculateReceiptDates } from '@/features/rent-receipt/utils';
@@ -51,6 +52,14 @@ export async function GET(request: NextRequest) {
         property.tenants[0] 
       );
 
+      const url = await saveReceiptToBlob(pdfBuffer);
+
+      if (!url) {
+        throw new Error(`Error saving receipt for property ${property.id}`);
+      }
+
+      await addBlobUrlToRceipt(createdReceipt.id, url);
+
       // send mail
       await sendReceiptEmail(
         createdReceipt,
@@ -64,6 +73,8 @@ export async function GET(request: NextRequest) {
       if (createdReceipt) {
         try {
           await deleteReceipt(createdReceipt.id);
+          if (createdReceipt.blobUrl) await deleteReceiptFromBlob(createdReceipt.blobUrl);
+          
           console.log(`Cleaned up receipt ${createdReceipt.id} after error`);
         } catch (deleteError) {
           console.error(`Failed to clean up receipt ${createdReceipt.id}: ${deleteError}`);

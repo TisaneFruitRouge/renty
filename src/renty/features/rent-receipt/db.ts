@@ -29,3 +29,10 @@ export default async function createReceipt(
         });
     });
 }
+
+export async function addBlobUrlToRceipt(receiptId: string, blobUrl: string) {
+    return await prisma.rentReceipt.update({
+        where: { id: receiptId },
+        data: { blobUrl }
+    });
+}

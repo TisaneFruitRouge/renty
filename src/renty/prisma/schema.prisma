@@ -105,6 +105,8 @@ model rentReceipt {
   propertyId String
   tenantId String
 
+  blobUrl String?
+
   property property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tenant   tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
