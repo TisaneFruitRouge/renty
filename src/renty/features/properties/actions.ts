@@ -91,7 +91,6 @@ export async function getAllProperties() {
     }
 
     return getPropertiesForUser(session.user.id);
-}
 
 export async function updateRentReceiptSettingsAction({
   propertyId,
