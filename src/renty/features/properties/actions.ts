@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import createProperty, { getPropertiesForUser, updateProperty, updatePropertyRental } from "./db"
+import createProperty, { getPropertiesForUser, updateProperty, updatePropertyRental, getPropertyForUser, updatePropertyRentReceiptSettings } from "./db"
 import { createPropertySchema, updatePropertySchema, rentalFormSchema } from "./schemas"
 import { headers } from "next/headers"
 
@@ -91,4 +91,34 @@ export async function getAllProperties() {
     }
 
     return getPropertiesForUser(session.user.id);
+}
+
+export async function updateRentReceiptSettingsAction(propertyId: string, rentReceiptStartDate: Date) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+
+    if (!session?.user?.id) {
+        throw new Error("Unauthorized")
+    }
+
+    await getPropertyForUser(propertyId, session.user.id);
+    const updatedProperty = await updatePropertyRentReceiptSettings(propertyId, rentReceiptStartDate);
+
+    return { data: updatedProperty };
+}
+
+export async function deleteRentReceiptSettingsAction(propertyId: string) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+
+    if (!session?.user?.id) {
+        throw new Error("Unauthorized")
+    }
+
+    await getPropertyForUser(propertyId, session.user.id);
+    const updatedProperty = await updatePropertyRentReceiptSettings(propertyId, null);
+
+    return { data: updatedProperty };
 }
