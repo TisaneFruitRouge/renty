@@ -66,7 +66,6 @@ model verification {
   updatedAt  DateTime? @db.Date
 }
 
-
 model property {
   id String @id
   address String
@@ -79,6 +78,9 @@ model property {
   userId String
   user         user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tenants      tenant[]
+  rentReceipt  rentReceipt[]
+
+  rentReceiptStartDate DateTime?
 
   // Rental information
   rentDetails Json? // { baseRent: number, charges: number }
@@ -92,9 +94,27 @@ model property {
   updatedAt   DateTime? @updatedAt @default(now())
 }
 
+model rentReceipt {
+  // we duplicate some of the property data, since the property data might be modified by the user later on
+  id String @id @default(cuid())
+  startDate DateTime
+  endDate DateTime
+  baseRent Float
+  charges Float
+  paymentFrequency String // "biweekly" | "monthly" | "quarterly" | "yearly"
+  propertyId String
+  tenantId String
+
+  property property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tenant   tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt @default(now())
+}
+
 model tenant {
   id          String    @id @default(cuid())
-  fistName    String
+  firstName   String    @default("John")
   lastName    String
   email       String
   phoneNumber String
@@ -102,9 +122,10 @@ model tenant {
   propertyId  String?
   notes       String?
   
-  user        user      @relation(fields: [userId], references: [id])
-  property    property? @relation(fields: [propertyId], references: [id])
-  
+  user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rentReceipt rentReceipt[]
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

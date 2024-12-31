@@ -8,6 +8,7 @@ import RentalCard from "@/features/properties/components/property-detail/RentalC
 import { getTranslations } from "next-intl/server"
 import TenantSection from "@/features/tenant/components/TenantSection"
 import { getTenantByPropertyId } from "@/features/tenant/actions"
+import RentReceiptSettings from "@/features/properties/components/property-detail/RentReceiptSettings"
 
 interface PropertyPageProps {
     params: Promise<{ id: string }>
@@ -29,13 +30,14 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
 
     return (
         <div className="p-6">
-            <div className="mb-6">
+            <div className="mb-6 flex justify-between">
                 <Link href="/">
-                    <Button variant="ghost" className="pl-0">
+                    <Button variant="ghost">
                         <ChevronLeft className="mr-2 h-4 w-4" />
                         {t("back-to-properties")}
                     </Button>
                 </Link>
+                <RentReceiptSettings property={property} />
             </div>
             <div className="flex flex-col gap-4">
                 <HeaderCard property={property} />

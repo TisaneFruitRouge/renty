@@ -118,6 +118,11 @@ model profile {
 }
 ```
 
+### Rent Receipt Cron Job
+
+The `rentReceipt` cron job is responsible for sending rent receipt emails to tenants. 
+It is configured (as for every cron job) in the `vercel.json` file.
+
 ## Development Workflow
 
 1. Pull latest database schema (if working with existing database):

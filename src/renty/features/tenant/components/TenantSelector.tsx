@@ -82,7 +82,7 @@ export function TenantSelector({ onSelect }: TenantSelectorProps) {
                     >
                       {field.value
                         ? tenants.find((tenant) => tenant.id === field.value)
-                          ? `${tenants.find((tenant) => tenant.id === field.value)?.fistName} ${tenants.find((tenant) => tenant.id === field.value)?.lastName}`
+                          ? `${tenants.find((tenant) => tenant.id === field.value)?.firstName} ${tenants.find((tenant) => tenant.id === field.value)?.lastName}`
                           : t('select-tenant')
                         : t('select-tenant')}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -110,7 +110,7 @@ export function TenantSelector({ onSelect }: TenantSelectorProps) {
                                 tenant.id === field.value ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            {tenant.fistName} {tenant.lastName}
+                            {tenant.firstName} {tenant.lastName}
                             <span className="ml-2 text-muted-foreground">
                               {tenant.email}
                             </span>
