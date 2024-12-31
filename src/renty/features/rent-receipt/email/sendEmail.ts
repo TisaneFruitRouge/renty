@@ -23,7 +23,7 @@ export async function sendReceiptEmail(
     to: tenant.email,
     cc: landlordEmail,
     subject: `Quittance de loyer - ${month}`,
-    html: `<p>Bonjour ${tenant.fistName},</p>
+    html: `<p>Bonjour ${tenant.firstName},</p>
            <p>Veuillez trouver ci-joint votre quittance de loyer pour ${month}.</p>
            <p>Cordialement,<br>Renty</p>`,
     attachments: [{

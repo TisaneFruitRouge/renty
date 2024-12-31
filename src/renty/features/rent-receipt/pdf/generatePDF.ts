@@ -1,10 +1,10 @@
 import { renderToBuffer } from '@react-pdf/renderer';
 import { RentReceiptTemplate } from './RentReceiptTemplate';
-import { rentReceipt, property, tenant } from '@prisma/client';
+import type { rentReceipt, property, tenant, user } from '@prisma/client';
 
 export async function generatePDF(
   receipt: rentReceipt,
-  property: property,
+  property: property & {user: user},
   tenant: tenant
 ): Promise<Buffer> {
   try {

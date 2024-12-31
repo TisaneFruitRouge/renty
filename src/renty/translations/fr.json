@@ -94,6 +94,28 @@
         "save": "Enregistrer",
         "tenant": {
             "title": "Gestion du locataire"
+        },
+        "rent-receipt": {
+            "title": "Configuration de l'envoie des quittances de loyer",
+            "no-date": "Aucune date de début de génération des quittances n'a été définie.",
+            "configure": "Configuration de l'envoie des quittances de loyer",
+            "configuration": {
+                "title": "Configuration des quittances de loyer",
+                "description": "Configurez l'envoi automatique des quittances de loyer",
+                "automatic-send": "Envoi automatique configuré pour le",
+                "next-receipt-info": "La prochaine quittance sera envoyée pour la période du {startDate} au {endDate}"
+            },
+            "edit": {
+                "title": "Modification de la configuration",
+                "description": "Modifiez la date à partir de laquelle vous souhaitez générer les quittances de loyer.",
+                "button": "Modifier la configuration"
+            },
+            "generated-from": "Les quittances sont générées à partir du",
+            "actions": {
+                "save": "Enregistrer",
+                "cancel": "Annuler",
+                "delete": "Supprimer"
+            }
         }
     },
     "settings": {

@@ -50,7 +50,7 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    getAllProperties().then((properties) => {console.log(properties);setProperties(properties)})
+    getAllProperties().then((properties) => setProperties(properties))
   }, [])
 
   const form = useForm<CreateTenantFormData>({
@@ -70,13 +70,13 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
       await createTenant(values)
       form.reset()
       toast({
-        title: t("tenant.form.success.created")
+        title: t("success.created")
       })
       onSuccess?.()
     } catch (error) {
       console.error(error)
       toast({
-        title: t("tenant.form.error.create"),
+        title: t("error.create"),
         variant: "destructive",
       })
     }

@@ -2,13 +2,13 @@ import { getAllPropertiesWithActiveTenants } from '@/features/properties/db';
 import createReceipt, { deleteReceipt } from '@/features/rent-receipt/db';
 import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
 import { generatePDF } from '@/features/rent-receipt/pdf/generatePDF';
-import { parseRentDetails, shouldGenerateReceipt } from '@/features/rent-receipt/utils';
+import { parseRentDetails, shouldGenerateReceipt, calculateReceiptDates } from '@/features/rent-receipt/utils';
 import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Unauthorized', {
+    return Response.json({ error: 'Unauthorized' }, {
       status: 401,
     });
   }
@@ -28,9 +28,11 @@ export async function GET(request: NextRequest) {
         throw new Error(`Error parsing rent details for property ${property.id}`);
       }
 
+      const { startDate, endDate } = calculateReceiptDates(property.paymentFrequency, today);
+
       createdReceipt = await createReceipt(
-        new Date(),
-        new Date(),
+        startDate,
+        endDate,
         rentDetails.baseRent,
         rentDetails.charges,
         property.paymentFrequency,

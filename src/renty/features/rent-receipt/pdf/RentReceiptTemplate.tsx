@@ -1,4 +1,4 @@
-import type { property, rentReceipt, tenant } from '@prisma/client';
+import type { property, rentReceipt, tenant, user } from '@prisma/client';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 const styles = StyleSheet.create({
@@ -14,6 +14,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
+  landlordAndTenant: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   section: {
     marginBottom: 10,
   },
@@ -25,17 +30,50 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 12,
   },
+  paymentPeriod: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: 'bold',
+    margin: "20 0"
+  },
   footer: {
     marginTop: 30,
     fontSize: 10,
     textAlign: 'center',
     color: '#666',
   },
+  table: {
+    width: '100%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderColor: '#666',
+  },
+  tableRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#666',
+    borderBottomStyle: 'solid',
+  },
+  tableCell: {
+    flex: 1,
+    padding: 8,
+    fontSize: 12,
+  },
+  tableCellBorder: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#666',
+    borderLeftStyle: 'solid',
+  },
+  tableHeader: {
+    backgroundColor: '#f5f5f5',
+    fontSize: 10,
+    color: '#666',
+  },
 });
 
 interface RentReceiptTemplateProps {
   receipt: rentReceipt;
-  property: property;
+  property: property & {user: user};
   tenant: tenant;
 }
 
@@ -60,33 +98,68 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <Text style={styles.title}>Quittance de Loyer</Text>
-          <Text style={styles.value}>Période du {formatDate(receipt.startDate)} au {formatDate(receipt.endDate)}</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>PROPRIÉTAIRE</Text>
-          <Text style={styles.value}>{property.userId}</Text>
-          <Text style={styles.value}>{property.address}</Text>
+        <View style={styles.landlordAndTenant}>
+          <View style={styles.section}>
+            <Text style={styles.label}>PROPRIÉTAIRE</Text>
+            <Text style={styles.value}>{property.user.name}</Text>
+            {property.user.address && <Text style={styles.value}>{property.user.address}</Text>}
+            {property.user.email && <Text style={styles.value}>Email: {property.user.email}</Text>}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.label}>LOCATAIRE</Text>
+            <Text style={styles.value}>{tenant.firstName} {tenant.lastName}</Text>
+            <Text style={styles.value}>{property.address}</Text>
+          </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.label}>LOCATAIRE</Text>
-          <Text style={styles.value}>{tenant.firstName} {tenant.lastName}</Text>
-          <Text style={styles.value}>{property.address}</Text>
-        </View>
+        <Text style={styles.paymentPeriod}>Période du {formatDate(receipt.startDate)} au {formatDate(receipt.endDate)}</Text>
 
         <View style={styles.section}>
           <Text style={styles.label}>DÉTAILS DU PAIEMENT</Text>
-          <Text style={styles.value}>Loyer: {formatCurrency(receipt.baseRent)}</Text>
-          <Text style={styles.value}>Charges: {formatCurrency(receipt.charges)}</Text>
-          <Text style={styles.value}>Total: {formatCurrency(receipt.baseRent + receipt.charges)}</Text>
+          <View style={styles.table}>
+            <View style={[styles.tableRow, styles.tableHeader]}>
+              <View style={styles.tableCell}>
+                <Text>Description</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellBorder]}>
+                <Text>Montant</Text>
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text>Loyer</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellBorder]}>
+                <Text>{formatCurrency(receipt.baseRent)}</Text>
+              </View>
+            </View>
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text>Charges</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellBorder]}>
+                <Text>{formatCurrency(receipt.charges)}</Text>
+              </View>
+            </View>
+            <View style={[styles.tableRow, styles.tableHeader]}>
+              <View style={styles.tableCell}>
+                <Text>Total</Text>
+              </View>
+              <View style={[styles.tableCell, styles.tableCellBorder]}>
+                <Text>{formatCurrency(receipt.baseRent + receipt.charges)}</Text>
+              </View>
+            </View>
+          </View>
         </View>
 
         <View style={styles.footer}>
           <Text>
-            Je soussigné(e) {property.userId}, propriétaire du logement désigné ci-dessus,
-            déclare avoir reçu de {tenant.firstName} {tenant.lastName} la somme de {formatCurrency(receipt.baseRent + receipt.charges)} 
-            au titre du paiement du loyer et des charges pour la période indiquée ci-dessus.
+            Je soussigné(e) {property.user.name}, propriétaire du logement désigné ci-dessus,
+            déclare avoir reçu de {tenant.firstName} {tenant.lastName} la somme de {formatCurrency(receipt.baseRent + receipt.charges)}
+            {" "}au titre du paiement du loyer et des charges pour la période indiquée ci-dessus.
           </Text>
           <Text style={{ marginTop: 20 }}>
             Fait le {formatDate(new Date())}

@@ -39,6 +39,21 @@ export async function getPropertyById(id: string) {
     return property;
 }
 
+export async function getPropertyForUser(id: string, userId: string) {
+    const property = await prisma.property.findUnique({
+        where: {
+            id,
+            userId,
+        },
+    });
+
+    if (!property) {
+        throw new Error("Property not found");
+    }
+
+    return property;
+}
+
 export async function updateProperty(id: string, data: Omit<Prisma.propertyUpdateInput, "id" | "createdAt" | "updatedAt">) {
     return await prisma.property.update({
         where: { id },
@@ -61,7 +76,6 @@ export async function updatePropertyRental(id: string, data: {
     rentedSince: string;
     isFurnished: boolean;
 }) {
-    console.log('Input rent:', data);
     const rentDetails = data.rentDetails ?? { baseRent: 0, charges: 0 };
     
     const property = await prisma.property.update({
@@ -75,8 +89,16 @@ export async function updatePropertyRental(id: string, data: {
             isFurnished: data.isFurnished,
         },
     });
-    console.log('Updated property:', property)
     return property;
+}
+
+export async function updatePropertyRentReceiptSettings(id: string, rentReceiptStartDate: Date | null) {
+    return await prisma.property.update({
+        where: { id },
+        data: {
+            rentReceiptStartDate,
+        },
+    });
 }
 
 export default async function createProperty(

@@ -1,11 +1,17 @@
 import { type property } from "@prisma/client";
 import type { JsonValue } from "@prisma/client/runtime/library";
+import { subMonths, subYears, subQuarters, subWeeks, startOfMonth, endOfMonth, startOfYear, endOfYear, startOfQuarter, endOfQuarter, startOfWeek, endOfWeek } from 'date-fns';
 
 type PaymentFrequency = "monthly" | "biweekly" | "quarterly" | "yearly";
 
+interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
 function daysInMonth(month: number, year: number) {
     return new Date(year, month, 0).getDate();
-  }
+}
 
 function getDaysDifference(date1: Date, date2: Date): number {
     const diffTime = Math.abs(date1.getTime() - date2.getTime());
@@ -57,6 +63,46 @@ export function parseRentDetails(rentDetails: JsonValue): RentDetails | null {
     }
 
     return { baseRent, charges };
+}
+
+export function calculateReceiptDates(frequency: string, currentDate?: Date): DateRange {
+  
+  if (!currentDate) {
+    return { startDate: new Date(), endDate: new Date() };
+  }
+  
+  switch (frequency) {
+    case 'monthly': {
+      const lastMonth = subMonths(currentDate, 1);
+      return {
+        startDate: startOfMonth(lastMonth),
+        endDate: endOfMonth(lastMonth),
+      };
+    }
+    case 'annually': {
+      const lastYear = subYears(currentDate, 1);
+      return {
+        startDate: startOfYear(lastYear),
+        endDate: endOfYear(lastYear),
+      };
+    }
+    case 'quarterly': {
+      const lastQuarter = subQuarters(currentDate, 1);
+      return {
+        startDate: startOfQuarter(lastQuarter),
+        endDate: endOfQuarter(lastQuarter),
+      };
+    }
+    case 'biweekly': {
+      const twoWeeksAgo = subWeeks(currentDate, 2);
+      return {
+        startDate: startOfWeek(twoWeeksAgo),
+        endDate: endOfWeek(subWeeks(currentDate, 1)),
+      };
+    }
+    default:
+      throw new Error(`Unsupported payment frequency: ${frequency}`);
+  }
 }
 
 export function shouldGenerateReceipt(property: property, today: Date = new Date()): boolean {
