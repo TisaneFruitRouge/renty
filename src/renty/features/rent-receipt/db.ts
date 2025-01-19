@@ -1,4 +1,5 @@
 import { prisma } from "@/prisma/db";
+import { RentReceiptStatus } from "@prisma/client";
 
 export async function deleteReceipt(id: string) {
     return await prisma.rentReceipt.delete({
@@ -34,5 +35,39 @@ export async function addBlobUrlToRceipt(receiptId: string, blobUrl: string) {
     return await prisma.rentReceipt.update({
         where: { id: receiptId },
         data: { blobUrl }
+    });
+}
+
+export async function getReceiptById(receiptId: string) {
+    return await prisma.rentReceipt.findUnique({
+        where: { id: receiptId },
+        include: {
+            property: true,
+            tenant: true
+        }
+    });
+}
+
+export async function getReceiptsOfUser(userId: string) {
+    return await prisma.rentReceipt.findMany({
+        where: { 
+            property: {
+                userId
+            }
+        },
+        include: {
+            property: true,
+            tenant: true
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+}
+
+export async function updateReceiptStatus(receiptId: string, status: RentReceiptStatus) {
+    return await prisma.rentReceipt.update({
+        where: { id: receiptId },
+        data: { status }
     });
 }

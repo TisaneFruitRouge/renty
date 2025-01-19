@@ -18,6 +18,8 @@ import { useToast } from "@/hooks/use-toast"
 import { signIn } from "../actions"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
 	email: z.string(),
@@ -26,6 +28,7 @@ const formSchema = z.object({
 
 export default function SignInForm() {
 	const { toast } = useToast()
+	const t = useTranslations('auth.signIn')
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -38,16 +41,16 @@ export default function SignInForm() {
 			const { email, password } = values;
 			await signIn(email, password);
 			toast({
-				title: "Logged in!",
-				description: "The login has been successful",
+				title: t('toast.success.title'),
+				description: t('toast.success.description'),
 			});
             router.push("/");
 		} catch (error) {
 			console.error("Form submission error", error)
 			toast({
 				variant: "destructive",
-				title: "Error",
-				description: "There was an error submitting the form",
+				title: t('toast.error.title'),
+				description: t('toast.error.description'),
 			});
 		}
 	}
@@ -55,8 +58,8 @@ export default function SignInForm() {
 	return (
 		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md p-6 bg-background border rounded-xl shadow-lg">
 			<div className="space-y-2 text-center">
-				<h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-				<p className="text-sm text-muted-foreground">Enter your credentials below to sign in to your account</p>
+				<h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+				<p className="text-sm text-muted-foreground">{t('subtitle')}</p>
 			</div>
 			
 			<Form {...form}>
@@ -66,15 +69,15 @@ export default function SignInForm() {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>E-mail</FormLabel>
+								<FormLabel>{t('email.label')}</FormLabel>
 								<FormControl>
 									<Input 
-										placeholder="john.doe@gmail.com"
+										placeholder={t('email.placeholder')}
 										type="email"
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>The email you used to create your account</FormDescription>
+								<FormDescription>{t('email.description')}</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -85,24 +88,29 @@ export default function SignInForm() {
 						name="password"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Password</FormLabel>
+								<FormLabel>{t('password.label')}</FormLabel>
 								<FormControl>
 									<Input 
 										type="password"
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>Your password</FormDescription>
+								<FormDescription>{t('password.description')}</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
 					<div className="space-y-4">
-						<Button type="submit" className="w-full">Sign in</Button>
+						<Button disabled={form.formState.isSubmitting} type="submit" className="w-full">
+							{form.formState.isSubmitting && (
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							)}
+							{t('submit')}
+						</Button>
 						<p className="text-sm text-center text-muted-foreground">
-							Don&apos;t have an account?{" "}
+							{t('noAccount')}{" "}
 							<Link href="/sign-up" className="text-primary hover:underline">
-								Sign up
+								{t('signUpLink')}
 							</Link>
 						</p>
 					</div>

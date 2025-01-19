@@ -104,6 +104,7 @@ model rentReceipt {
   paymentFrequency String // "biweekly" | "monthly" | "quarterly" | "yearly"
   propertyId String
   tenantId String
+  status RentReceiptStatus @default(PENDING)
 
   blobUrl String?
 
@@ -112,6 +113,15 @@ model rentReceipt {
 
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt @default(now())
+}
+
+enum RentReceiptStatus {
+  DRAFT
+  PENDING
+  PAID
+  LATE
+  UNPAID
+  CANCELLED
 }
 
 model tenant {
