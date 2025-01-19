@@ -118,6 +118,55 @@
             }
         }
     },
+    "rent-receipts": {
+        "no-receipts": "Aucune quittance trouvée",
+        "title": "Quittances de loyer",
+        "create-modal": {
+            "create": "Créer",
+            "create-and-send": "Créer & Envoyer",
+            "create-receipt": "Créer une quittance",
+            "modal-title": "Créer une quittance de loyer",
+            "start-date": "Date de début",
+            "end-date": "Date de fin",
+            "base-rent": "Loyer de base",
+            "charges": "Charges",
+            "property": "Propriété",
+            "select-property": "Sélectionnez une propriété",
+            "edit-form": {
+                "error": "Erreur",
+                "error-description": "Une erreur est survenue lors de la création de la quittance"
+            }
+        },
+        "actions": {
+            "view": "Voir la quittance",
+            "download": "Télécharger",
+            "mark-as": "Marquer comme",
+            "mark-as-draft": "Brouillon",
+            "mark-as-pending": "En attente",
+            "mark-as-paid": "Payé",
+            "mark-as-late": "En retard",
+            "mark-as-unpaid": "Non payé",
+            "mark-as-cancelled": "Annulé"
+        },
+        "validation": {
+            "property-required": "La propriété est requise",
+            "start-date-required": "La date de début est requise",
+            "end-date-required": "La date de fin est requise",
+            "end-date-after-start": "La date de fin doit être postérieure à la date de début",
+            "base-rent-required": "Le loyer de base est requis",
+            "base-rent-positive": "Le loyer de base doit être positif",
+            "charges-required": "Les charges sont requises",
+            "charges-positive": "Les charges doivent être positives"
+        },
+        "status": {
+            "DRAFT": "Brouillon",
+            "PENDING": "En attente",
+            "PAID": "Payé",
+            "LATE": "En retard",
+            "UNPAID": "Non payé",
+            "CANCELLED": "Annulé"
+        }
+    },
     "settings": {
         "title": "Paramètres",
         "description": "Gérez vos paramètres de compte et vos préférences",
@@ -174,6 +223,7 @@
         "menu": {
             "home": "Accueil",
             "properties": "Propriétés",
+            "rent-receipts": "Quittances de loyer",
             "tenants": "Locataires",
             "settings": "Paramètres"
         },
@@ -292,6 +342,75 @@
             "property": "Propriété",
             "view-details": "Voir les détails",
             "remove": "Supprimer"
+        }
+    },
+    "auth": {
+        "signIn": {
+            "title": "Connexion",
+            "subtitle": "Entrez vos identifiants ci-dessous pour vous connecter à votre compte",
+            "email": {
+                "label": "E-mail",
+                "placeholder": "john.doe@gmail.com",
+                "description": "L'email utilisé lors de la création de votre compte"
+            },
+            "password": {
+                "label": "Mot de passe",
+                "description": "Votre mot de passe"
+            },
+            "submit": "Se connecter",
+            "noAccount": "Vous n'avez pas de compte ?",
+            "signUpLink": "S'inscrire",
+            "toast": {
+                "success": {
+                    "title": "Connecté !",
+                    "description": "La connexion a réussi"
+                },
+                "error": {
+                    "title": "Erreur",
+                    "description": "Une erreur est survenue lors de la soumission du formulaire"
+                }
+            }
+        },
+        "signUp": {
+            "title": "Créer un compte",
+            "subtitle": "Entrez vos informations ci-dessous pour créer votre compte",
+            "email": {
+                "label": "E-mail",
+                "placeholder": "john.doe@gmail.com",
+                "description": "Ce sera votre email de connexion",
+                "error": "Veuillez entrer une adresse email valide"
+            },
+            "name": {
+                "label": "Nom complet",
+                "placeholder": "John Doe",
+                "description": "Votre nom complet",
+                "error": "Le nom doit contenir au moins 2 caractères"
+            },
+            "password": {
+                "label": "Mot de passe",
+                "placeholder": "••••••••",
+                "description": "Au moins 8 caractères",
+                "error": "Le mot de passe doit contenir au moins 8 caractères"
+            },
+            "confirmPassword": {
+                "label": "Confirmer le mot de passe",
+                "placeholder": "••••••••",
+                "description": "Saisissez à nouveau votre mot de passe",
+                "error": "Les mots de passe ne correspondent pas"
+            },
+            "submit": "Créer un compte",
+            "haveAccount": "Vous avez déjà un compte ?",
+            "signInLink": "Se connecter",
+            "toast": {
+                "success": {
+                    "title": "Succès",
+                    "description": "Votre compte a été créé"
+                },
+                "error": {
+                    "title": "Erreur",
+                    "description": "Une erreur est survenue lors de la création de votre compte"
+                }
+            }
         }
     }
 }
