@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { rentReceiptStatusVariants } from "@/features/rent-receipt/constants";
 
-export default async function Page({ params }: { params: { id: string } }) {
-    const { id } = params;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const t = await getTranslations('rent-receipts');
     const receipt = await getReceiptById(id);
 
