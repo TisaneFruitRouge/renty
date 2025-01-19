@@ -137,6 +137,10 @@
                 "error-description": "Une erreur est survenue lors de la création de la quittance"
             }
         },
+        "detail": {
+            "not-found": "La quittance demandée n'existe pas ou a été supprimée",
+            "loading": "Chargement de l'aperçu..."
+        },
         "actions": {
             "view": "Voir la quittance",
             "download": "Télécharger",

@@ -42,7 +42,11 @@ export async function getReceiptById(receiptId: string) {
     return await prisma.rentReceipt.findUnique({
         where: { id: receiptId },
         include: {
-            property: true,
+            property: {
+                include: {
+                    user: true
+                }
+            },
             tenant: true
         }
     });

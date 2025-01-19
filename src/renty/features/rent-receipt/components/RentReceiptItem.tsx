@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { MouseEventHandler } from "react"
 import { updateRentReceiptStatusAction } from "../actions"
+import { rentReceiptStatusVariants } from "../constants"
 
 interface RentReceiptItemProps {
     receipt: rentReceipt & { property: property; tenant: tenant }
@@ -60,15 +61,6 @@ export function RentReceiptItem({ receipt }: RentReceiptItemProps) {
         CANCELLED: []
     }
     
-    const statusVariants = {
-        DRAFT: "bg-gray-100 text-gray-800 hover:bg-gray-200",
-        PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-        PAID: "bg-green-100 text-green-800 hover:bg-green-200",
-        LATE: "bg-red-100 text-red-800 hover:bg-red-200",
-        UNPAID: "bg-orange-100 text-orange-800 hover:bg-orange-200",
-        CANCELLED: "bg-gray-100 text-gray-800 hover:bg-gray-200"
-    }
-    
     return (
         <Card 
             className="p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100 hover:cursor-pointer duration-300"
@@ -86,7 +78,7 @@ export function RentReceiptItem({ receipt }: RentReceiptItemProps) {
                 </div>
                 <div>
                     <Badge className={cn(
-                        statusVariants[receipt.status],
+                        rentReceiptStatusVariants[receipt.status],
                         "font-medium shadow-none"
                     )}>
                         {t('status.' + receipt.status)}
@@ -130,7 +122,7 @@ export function RentReceiptItem({ receipt }: RentReceiptItemProps) {
                                                         }}
                                                     >
                                                         <Badge className={cn(
-                                                            statusVariants[status],
+                                                            rentReceiptStatusVariants[status],
                                                             "shadow-none mr-2"
                                                         )}>
                                                             {t('actions.mark-as-' + status.toLowerCase())}
