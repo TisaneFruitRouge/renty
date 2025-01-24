@@ -1,10 +1,10 @@
 {
     "home": {
         "welcome": "Bonjour, {name}",
-        "properties": "Propriétés",
+        "properties": "Vos propriétés",
         "no-properties-found": "Aucune propriété trouvée",
         "total-properties": "Total des propriétés",
-        "total-tenants": "Total des locataires",
+        "total-tenants": "Locataires actifs",
         "total-rent": "Total des loyers",
         "total-charges": "Total des charges"
     },
@@ -382,23 +382,37 @@
             "title": "Locataire introuvable",
             "description": "Le locataire que vous recherchez n'existe pas ou a été supprimé",
             "return-to-tenants": "Retourner aux locataires"
-        }
-    },
-    "tenants": {
-        "title": "Gérez vos locataires",
-        "no-tenants-found": "Aucun locataire trouvé",
-        "add-tenant": "Ajouter un locataire",
-        "create-form": {
-            "title": "Ajouter un nouveau locataire",
-            "description": "Remplissez les informations du locataire ci-dessous"
         },
         "tenant-card": {
             "email": "Email",
             "phone": "Téléphone",
             "property": "Propriété",
             "view-details": "Voir les détails",
-            "remove": "Supprimer"
+            "remove": "Supprimer",
+            "no-property": "Sans propriété"
         }
+    },
+    "tenants": {
+        "title": "Gérez vos locataires",
+        "no-tenants-found": "Aucun locataire trouvé",
+        "add-tenant": "Ajouter un locataire",
+        "total-tenants": "Total des locataires",
+        "active-tenants": "Locataires actifs",
+        "average-rent": "Loyer moyen",
+        "properties-with-tenants": "Propriétés louées",
+        "tenant-card": {
+            "email": "Email",
+            "phone": "Téléphone",
+            "property": "Propriété",
+            "view-details": "Voir les détails",
+            "remove": "Supprimer",
+            "no-property": "Sans propriété"
+        },
+        "create-form": {
+            "title": "Ajouter un nouveau locataire",
+            "description": "Remplissez les informations du locataire ci-dessous"
+        },
+        "your-renters": "Vos locataires"
     },
     "auth": {
         "signIn": {

@@ -73,9 +73,8 @@ export async function GET(request: NextRequest) {
       if (createdReceipt) {
         try {
           await deleteReceipt(createdReceipt.id);
-          if (createdReceipt.blobUrl) await deleteReceiptFromBlob(createdReceipt.blobUrl);
-          
-          console.log(`Cleaned up receipt ${createdReceipt.id} after error`);
+          if (createdReceipt.blobUrl) 
+            await deleteReceiptFromBlob(createdReceipt.blobUrl);
         } catch (deleteError) {
           console.error(`Failed to clean up receipt ${createdReceipt.id}: ${deleteError}`);
         }

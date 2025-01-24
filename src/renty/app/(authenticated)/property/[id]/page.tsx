@@ -2,13 +2,15 @@ import { getPropertyById } from "@/features/properties/db"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import HeaderCard from "@/features/properties/components/property-detail/HeaderCard"
 import RentalCard from "@/features/properties/components/property-detail/RentalCard"
 import { getTranslations } from "next-intl/server"
 import TenantSection from "@/features/tenant/components/TenantSection"
 import { getTenantByPropertyId } from "@/features/tenant/actions"
 import RentReceiptSettings from "@/features/properties/components/property-detail/RentReceiptSettings"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 
 interface PropertyPageProps {
     params: Promise<{ id: string }>
@@ -23,6 +25,20 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     try {
         property = await getPropertyById(id);
     } catch {
+        notFound();
+    }
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    const userId = session?.user?.id;
+
+    if (userId !== property.userId) {
+        redirect("/");
+    }
+
+    if (!property) {
         notFound();
     }
 
