@@ -5,9 +5,19 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import CreateRentReceiptModal from "@/features/rent-receipt/components/CreateRentReceiptModal";
 import { getPropertiesForUser } from "@/features/properties/db";
+import { RentReceiptFilters } from "./components/RentReceiptFilters";
 
-export default async function RentReceiptsPage() {
+interface RentReceiptsPageSearchParams {
+    searchParams: Promise<{ 
+        propertyId: string;
+        receiptStatus: string;
+    }>
+}
+
+export default async function RentReceiptsPage({ searchParams }: RentReceiptsPageSearchParams) {
     const t = await getTranslations('rent-receipts');
+
+    const { propertyId, receiptStatus } = await searchParams;
 
     const data = await auth.api.getSession({
         headers: await headers()
@@ -17,8 +27,17 @@ export default async function RentReceiptsPage() {
         throw new Error("Not authenticated");
     }
     
-    const receipts = await getReceiptsOfUser(data.user.id)
+    let receipts = await getReceiptsOfUser(data.user.id)
     const properties = await getPropertiesForUser(data.user.id);
+
+    console.log(propertyId)
+    if (propertyId && propertyId !== "all") {
+        receipts = receipts.filter(receipt => receipt.propertyId === propertyId)
+    }
+
+    if (receiptStatus && receiptStatus !== "all") {
+        receipts = receipts.filter(receipt => receipt.status === receiptStatus)
+    }
 
     return (
         <div className="p-6">
@@ -26,6 +45,8 @@ export default async function RentReceiptsPage() {
                 <h1 className="text-3xl font-semibold mb-4">{t('title')}</h1>
                 <CreateRentReceiptModal properties={properties} />
             </div>
+            
+            <RentReceiptFilters properties={properties} />
             
             <div>
                 {receipts.length === 0 ? (

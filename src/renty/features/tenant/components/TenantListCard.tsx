@@ -14,7 +14,7 @@ export default function TenantListCard({ tenant }: TenantListCardProps) {
     const t = useTranslations('tenants.tenant-card')
 
     return (
-        <Link href={`/property/${tenant.propertyId}`}>
+        <Link href={`/tenants/${tenant.id}`}>
             <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
                 <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                     <User className="h-24 w-24 text-muted-foreground" />
