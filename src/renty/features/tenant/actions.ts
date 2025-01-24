@@ -115,3 +115,17 @@ export async function updateTenantProperty(tenantId: string, propertyId: string)
   revalidatePath(`/properties/${propertyId}`)
   return tenant
 }
+
+export async function deleteTenantFromProperty(tenantId: string) {
+  await prisma.tenant.update({
+    where: {
+      id: tenantId,
+    },
+    data: {
+      propertyId: null,
+    },
+  })
+
+  revalidatePath('/tenants')
+  revalidatePath(`/tenants/${tenantId}`)
+}

@@ -2,7 +2,11 @@
     "home": {
         "welcome": "Bonjour, {name}",
         "properties": "Propriétés",
-        "no-properties-found": "Aucune propriété trouvée"
+        "no-properties-found": "Aucune propriété trouvée",
+        "total-properties": "Total des propriétés",
+        "total-tenants": "Total des locataires",
+        "total-rent": "Total des loyers",
+        "total-charges": "Total des charges"
     },
     "property": {
         "back-to-properties": "Retour aux propriétés",
@@ -121,6 +125,21 @@
     "rent-receipts": {
         "no-receipts": "Aucune quittance trouvée",
         "title": "Quittances de loyer",
+        "filters": {
+            "property": {
+                "placeholder": "Filtrer par propriété",
+                "all": "Toutes les propriétés"
+            }
+        },
+        "status": {
+            "all": "Tous les statuts",
+            "DRAFT": "Brouillon",
+            "PENDING": "En attente",
+            "PAID": "Payée",
+            "LATE": "En retard",
+            "CANCELLED": "Annulée",
+            "UNPAID": "Non payée"
+        },
         "create-modal": {
             "create": "Créer",
             "create-and-send": "Créer & Envoyer",
@@ -161,14 +180,6 @@
             "base-rent-positive": "Le loyer de base doit être positif",
             "charges-required": "Les charges sont requises",
             "charges-positive": "Les charges doivent être positives"
-        },
-        "status": {
-            "DRAFT": "Brouillon",
-            "PENDING": "En attente",
-            "PAID": "Payé",
-            "LATE": "En retard",
-            "UNPAID": "Non payé",
-            "CANCELLED": "Annulé"
         }
     },
     "settings": {
@@ -238,7 +249,7 @@
             "add-button": "Ajouter un locataire",
             "dialog": {
                 "title": "Ajouter un nouveau locataire",
-                "description": "Remplissez les informations du locataire ci-dessous"
+                "description": "Remplissez les informations du locataire"
             },
             "success": {
                 "created": "Le locataire a été créé avec succès"
@@ -246,6 +257,14 @@
             "error": {
                 "create": "Une erreur est survenue lors de la création du locataire"
             }
+        },
+        "edit": "Modifier",
+        "edit-form": {
+            "title": "Modifier le locataire",
+            "description": "Modifiez les informations du locataire",
+            "success": "Le locataire a été modifié avec succès",
+            "error": "Une erreur est survenue lors de la modification du locataire",
+            "submit": "Sauvegarder les modifications"
         },
         "card": {
             "title": "Informations du locataire",
@@ -330,6 +349,39 @@
             "error": {
                 "create": "Une erreur est survenue lors de la création du locataire"
             }
+        },
+        "back-to-tenants": "Retour aux locataires",
+        "personal-info": {
+            "title": "Informations personnelles",
+            "name": "Nom complet",
+            "email": "Email",
+            "phone": "Téléphone",
+            "notes": "Notes"
+        },
+        "property-info": {
+            "title": "Informations sur le logement",
+            "property": "Propriété",
+            "address": "Adresse",
+            "location": "Localisation"
+        },
+        "rent-info": {
+            "title": "Informations sur le loyer",
+            "base-rent": "Loyer hors charges",
+            "charges": "Charges",
+            "payment-frequency": {
+                "title": "Fréquence de paiement",
+                "biweekly": "Toutes les deux semaines",
+                "monthly": "Mensuelle",
+                "quarterly": "Trimestrielle",
+                "yearly": "Annuelle"
+            },
+            "deposit": "Dépôt de garantie",
+            "rented-since": "Loué depuis"
+        },
+        "not-found": {
+            "title": "Locataire introuvable",
+            "description": "Le locataire que vous recherchez n'existe pas ou a été supprimé",
+            "return-to-tenants": "Retourner aux locataires"
         }
     },
     "tenants": {

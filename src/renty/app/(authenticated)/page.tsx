@@ -22,7 +22,7 @@ export default async function Home() {
   return (
     <div className="p-4 lg:p-8 flex flex-col gap-16">
       {session?.user?.name &&  (
-        <h1 className="text-lg lg:text-xl font-semibold">{t("welcome", { name: session.user.name })}</h1>
+        <h1 className="text-lg lg:text-xl font-semibold">{t("welcome", { name: session.user.name })}{" "}👋</h1>
       )}
       <PropertiesList
         properties={properties}

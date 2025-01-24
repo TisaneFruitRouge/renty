@@ -143,7 +143,7 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>{t('property')}</FormLabel>
-              <Popover open={open} onOpenChange={setOpen}>
+              <Popover open={open} onOpenChange={setOpen} modal>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button

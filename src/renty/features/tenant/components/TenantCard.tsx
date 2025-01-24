@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { deleteTenant, getTenantByPropertyId } from "../actions"
+import { deleteTenantFromProperty, getTenantByPropertyId } from "../actions"
 import { useToast } from "@/hooks/use-toast"
 import { useTranslations } from "next-intl"
 
@@ -23,7 +23,7 @@ export default function TenantCard({ tenant }: TenantCardProps) {
 
   async function handleDelete() {
     try {
-      await deleteTenant(tenant.propertyId as string)
+      await deleteTenantFromProperty(tenant.id as string)
       toast({
         title: "Success",
         description: t('success.removed'),
