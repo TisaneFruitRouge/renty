@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardFooter, CardHeader } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import type { tenant } from "@prisma/client"
 import { User, Mail, Phone } from "lucide-react"
 import Link from "next/link"
@@ -18,11 +19,18 @@ export default function TenantListCard({ tenant }: TenantListCardProps) {
             <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
                 <div className="relative w-full h-48 bg-muted flex items-center justify-center">
                     <User className="h-24 w-24 text-muted-foreground" />
+                    {!tenant.propertyId && (
+                        <Badge variant="destructive" className="absolute right-2 top-2">
+                            {t('no-property')}
+                        </Badge>
+                    )}
                 </div>
                 <CardHeader>
-                    <h3 className="text-lg font-semibold line-clamp-1">
-                        {tenant.firstName} {tenant.lastName}
-                    </h3>
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold line-clamp-1">
+                            {tenant.firstName} {tenant.lastName}
+                        </h3>
+                    </div>
                     <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center">
                             <Mail className="h-4 w-4 mr-2" />

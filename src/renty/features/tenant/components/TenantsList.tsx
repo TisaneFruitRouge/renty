@@ -21,7 +21,7 @@ export default function TenantsList({tenants}: TenantsListProps) {
                 </div>
             ) : (
                 <>
-                    <h2 className="text-xl underline font-semibold mb-6">{t("title")}</h2>
+                    <h2 className="text-xl underline font-semibold mb-6">{t("your-renters")}</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {tenants.map((tenant) => (
                             <TenantListCard key={tenant.id} tenant={tenant} />
