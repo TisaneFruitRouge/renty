@@ -63,6 +63,9 @@ export async function getAllTenants() {
     where: {
       userId: session.user.id
     },
+    include: {
+      property: true
+    },
     orderBy: {
       createdAt: 'desc',
     },

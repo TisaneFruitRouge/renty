@@ -5,6 +5,9 @@ export async function getPropertiesForUser(userId: string) {
     const properties = await prisma.property.findMany({
         where: {
             userId
+        }, 
+        include: {
+            tenants: true
         }
     });
 

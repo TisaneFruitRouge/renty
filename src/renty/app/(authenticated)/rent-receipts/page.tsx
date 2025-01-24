@@ -30,7 +30,6 @@ export default async function RentReceiptsPage({ searchParams }: RentReceiptsPag
     let receipts = await getReceiptsOfUser(data.user.id)
     const properties = await getPropertiesForUser(data.user.id);
 
-    console.log(propertyId)
     if (propertyId && propertyId !== "all") {
         receipts = receipts.filter(receipt => receipt.propertyId === propertyId)
     }
