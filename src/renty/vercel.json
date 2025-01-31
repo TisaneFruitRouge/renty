@@ -3,7 +3,7 @@
     "crons": [
         {
             "path": "/api/rent-receipt/generate-and-send",
-            "schedule": "0 14 * * *"
+            "schedule": "0 18 * * *"
         }
     ]
     
