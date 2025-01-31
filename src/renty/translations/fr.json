@@ -107,7 +107,8 @@
                 "title": "Configuration des quittances de loyer",
                 "description": "Configurez l'envoi automatique des quittances de loyer",
                 "automatic-send": "Envoi automatique configuré pour le",
-                "next-receipt-info": "La prochaine quittance sera envoyée pour la période du {startDate} au {endDate}"
+                "next-receipt-info": "La prochaine quittance sera envoyée pour la période du {startDate} au {endDate}",
+                "success": "Configuration des quittances de loyer mise à jour"
             },
             "edit": {
                 "title": "Modification de la configuration",
