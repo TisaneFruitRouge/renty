@@ -115,7 +115,15 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
           <Calendar
             mode="single"
             selected={date}
-            onSelect={setDate}
+            onSelect={(selectedDate) => {
+              if (selectedDate) {
+                // Force the time to noon in local timezone to avoid date shifting
+                const localDate = new Date(selectedDate.setHours(12, 0, 0, 0));
+                setDate(localDate);
+              } else {
+                setDate(selectedDate);
+              }
+            }}
             locale={fr}
             fromDate={tomorrow}
             className="rounded-md border w-fit"
