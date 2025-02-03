@@ -52,7 +52,7 @@ export async function getReceiptById(receiptId: string) {
     });
 }
 
-export async function getReceiptsOfUser(userId: string) {
+export async function getReceiptsOfUser(userId: string, limit?: number) {
     return await prisma.rentReceipt.findMany({
         where: { 
             property: {
@@ -65,7 +65,8 @@ export async function getReceiptsOfUser(userId: string) {
         },
         orderBy: {
             createdAt: 'desc'
-        }
+        },
+        take: limit
     });
 }
 
@@ -75,3 +76,17 @@ export async function updateReceiptStatus(receiptId: string, status: RentReceipt
         data: { status }
     });
 }
+
+export async function countWaitingReceiptsForUser(userId: string): Promise<number> {
+    return await prisma.rentReceipt.count({
+        where: { 
+            property: {
+                userId
+            },
+            status: {
+                in: [RentReceiptStatus.PENDING, RentReceiptStatus.LATE]
+            }
+        }
+    });
+}
+

@@ -4,17 +4,10 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/prisma/db"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
+import { CreateTenantFormData } from "./components/CreateTenantForm"
+import { EditTenantFormData } from "./components/EditTenantForm"
 
-interface CreateTenantData {
-  firstName: string
-  lastName: string
-  email: string
-  phoneNumber: string
-  notes?: string
-  propertyId: string
-}
-
-export async function createTenant(data: CreateTenantData) {
+export async function createTenant(data: CreateTenantFormData) {
 
   const session = await auth.api.getSession({
     headers: await headers()
@@ -93,17 +86,6 @@ export async function getAvailableTenants() {
   })
 }
 
-export async function deleteTenant(propertyId: string) {
-  await prisma.tenant.deleteMany({
-    where: {
-      propertyId,
-    },
-  })
-
-  revalidatePath('/tenants')
-  revalidatePath(`/properties/${propertyId}`)
-}
-
 export async function updateTenantProperty(tenantId: string, propertyId: string) {
   const tenant = await prisma.tenant.update({
     where: {
@@ -116,6 +98,61 @@ export async function updateTenantProperty(tenantId: string, propertyId: string)
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${propertyId}`)
+  return tenant
+}
+
+export async function editTenant(tenantId: string, data: EditTenantFormData) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  const tenant = await prisma.tenant.update({
+    where: {
+      id: tenantId,
+      userId: session.user.id
+    },
+    data: {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      notes: data.notes,
+      propertyId: data.propertyId,
+      startDate: data.startDate
+    },
+  })
+
+  revalidatePath('/tenants')
+  if (data.propertyId) {
+    revalidatePath(`/properties/${data.propertyId}`)
+  }
+  return tenant
+}
+
+export async function deleteTenant(tenantId: string) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  const tenant = await prisma.tenant.delete({
+    where: {
+      id: tenantId,
+      userId: session.user.id
+    },
+  })
+
+  revalidatePath('/tenants')
+  if (tenant.propertyId) {
+    revalidatePath(`/properties/${tenant.propertyId}`)
+  }
   return tenant
 }
 
