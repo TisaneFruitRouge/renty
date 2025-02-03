@@ -13,9 +13,8 @@ import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import type { property } from "@prisma/client"
-import { getAllProperties } from "@/features/properties/actions"
 import { toast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
@@ -42,16 +41,12 @@ export type CreateTenantFormData = z.infer<typeof formSchema>
 interface CreateTenantFormProps {
   onSuccess?: () => void
   propertyId?: string
+  properties?: property[]
 }
 
-export default function CreateTenantForm({ onSuccess, propertyId: initialPropertyId }: CreateTenantFormProps) {
+export default function CreateTenantForm({ onSuccess, propertyId: initialPropertyId, properties }: CreateTenantFormProps) {
   const t = useTranslations('tenant.create-form')
-  const [properties, setProperties] = useState<property[]>([])
   const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    getAllProperties().then((properties) => setProperties(properties))
-  }, [])
 
   const form = useForm<CreateTenantFormData>({
     resolver: zodResolver(formSchema),
@@ -156,7 +151,7 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
                       )}
                     >
                       {field.value
-                        ? properties.find((property) => property.id === field.value)?.title
+                        ? properties?.find((property) => property.id === field.value)?.title
                         : t('select-property')}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -168,7 +163,7 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
                     <CommandList>
                       <CommandEmpty>{t('no-property-found')}</CommandEmpty>
                       <CommandGroup>
-                        {properties.map((property) => (
+                        {properties?.map((property) => (
                           <CommandItem
                             value={property.id}
                             key={property.id}

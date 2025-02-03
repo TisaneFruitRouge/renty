@@ -13,8 +13,13 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import CreateTenantForm from "./CreateTenantForm"
 import { Plus } from "lucide-react"
+import type { property } from "@prisma/client"
 
-export default function CreateTenantModal() {
+interface CreateTenantModalProps {
+  properties: property[]
+}
+
+export default function CreateTenantModal({properties}: CreateTenantModalProps) {
   const [open, setOpen] = useState(false)
   const t = useTranslations('tenants')
 
@@ -33,7 +38,10 @@ export default function CreateTenantModal() {
             {t('create-form.description')}
           </DialogDescription>
         </DialogHeader>
-        <CreateTenantForm onSuccess={() => setOpen(false)} />
+        <CreateTenantForm
+          properties={properties} 
+          onSuccess={() => setOpen(false)} 
+        />
       </DialogContent>
     </Dialog>
   )

@@ -133,6 +133,8 @@ model tenant {
   userId      String
   propertyId  String?
   notes       String?
+  startDate   DateTime?
+  endDate     DateTime?
   
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)

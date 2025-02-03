@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 
 export default function AuthenticatedLayout({
@@ -10,7 +10,6 @@ export default function AuthenticatedLayout({
     <SidebarProvider defaultOpen>
       <AppSidebar />
       <main className="w-full">
-        <SidebarTrigger />
         {children}
       </main>
     </SidebarProvider>

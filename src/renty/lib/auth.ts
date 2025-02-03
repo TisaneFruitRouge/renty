@@ -22,6 +22,13 @@ export const auth = betterAuth({
             state: { type: "string", required: false },
             country: { type: "string", required: false },
             postalCode: { type: "string", required: false },
-        }
+        },
+        includeInSession: [
+            'address',
+            'city',
+            'state',
+            'country',
+            'postalCode'
+        ]
     }
 })
