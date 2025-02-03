@@ -129,3 +129,31 @@ export default async function createProperty(
 
     return property;
 }
+
+export async function calculateMonthlyRevenue(userId: string): Promise<number> {
+    const properties = await prisma.property.findMany({
+        where: {
+            userId,
+        },
+        select: {
+            rentDetails: true,
+            paymentFrequency: true
+        }
+    });
+
+    return properties.reduce((total, property) => {
+        const rentDetails = property.rentDetails as { baseRent: number; charges: number } | null;
+        if (!rentDetails || !property.paymentFrequency) return total;
+
+        const { baseRent, charges } = rentDetails;
+        const monthlyMultiplier = {
+            'biweekly': 2.17, // (52 weeks / 2) / 12 months
+            'monthly': 1,
+            'quarterly': 1/3,
+            'yearly': 1/12
+        }[property.paymentFrequency] || 0;
+
+        return total + ((baseRent + charges) * monthlyMultiplier);
+    }, 0);
+}
+

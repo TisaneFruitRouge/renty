@@ -25,9 +25,10 @@ import { rentReceiptStatusVariants } from "../constants"
 
 interface RentReceiptItemProps {
     receipt: rentReceipt & { property: property; tenant: tenant }
+    className?: string
 }
 
-export function RentReceiptItem({ receipt }: RentReceiptItemProps) {
+export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
     
     const router = useRouter();
     const t = useTranslations('rent-receipts');
@@ -63,7 +64,10 @@ export function RentReceiptItem({ receipt }: RentReceiptItemProps) {
     
     return (
         <Card 
-            className="p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100 hover:cursor-pointer duration-300"
+            className={cn(
+                "p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100 hover:cursor-pointer duration-300",
+                className
+            )}
             onClick={handleView}
         >
             <div className="flex items-center justify-between">

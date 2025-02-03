@@ -1,12 +1,27 @@
 {
+    "calendar": {
+        "today": "Aujourd'hui",
+        "select-date": "Sélectionner une date",
+        "previous-month": "Mois précédent",
+        "next-month": "Mois suivant"
+    },
     "home": {
+        "add-property": "Ajouter une propriété",
         "welcome": "Bonjour, {name}",
+        "welcome-subtext": "Voici ce qui se passe avec vos propriétés",
         "properties": "Vos propriétés",
         "no-properties-found": "Aucune propriété trouvée",
         "total-properties": "Total des propriétés",
         "total-tenants": "Locataires actifs",
-        "total-rent": "Total des loyers",
-        "total-charges": "Total des charges"
+        "monthly-revenues": "Revenus mensuels moyens",
+        "payments-waiting": "Paiement en attente",
+        "recent-activity": "Activité Récente",
+        "see-more": "Voir plus"
+    },
+    "properties": {
+        "title": "Mes Propriétés",
+        "description": "Gérez vos biens immobiliers",
+        "add": "Ajouter une propriété"
     },
     "property": {
         "back-to-properties": "Retour aux propriétés",
@@ -246,6 +261,14 @@
         "logout": "Se déconnecter"
     },
     "tenant": {
+        "delete": {
+            "title": "Supprimer le locataire",
+            "description": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action ne peut pas être annulée.",
+            "confirm": "Supprimer",
+            "cancel": "Annuler",
+            "success": "Le locataire a été supprimé avec succès",
+            "error": "Une erreur est survenue lors de la suppression du locataire"
+        },
         "section": {
             "add-button": "Ajouter un locataire",
             "dialog": {
@@ -265,7 +288,8 @@
             "description": "Modifiez les informations du locataire",
             "success": "Le locataire a été modifié avec succès",
             "error": "Une erreur est survenue lors de la modification du locataire",
-            "submit": "Sauvegarder les modifications"
+            "submit": "Sauvegarder les modifications",
+            "start-date": "Date d'entrée"
         },
         "card": {
             "title": "Informations du locataire",
@@ -395,8 +419,23 @@
     },
     "tenants": {
         "title": "Gérez vos locataires",
+        "subtitle": "Gérez vos locataires et leurs informations",
         "no-tenants-found": "Aucun locataire trouvé",
         "add-tenant": "Ajouter un locataire",
+        "search-placeholder": "Rechercher un locataire...",
+        "filter-all": "Tous les locataires",
+        "filter-active": "Locataires actuels",
+        "filter-former": "Anciens locataires",
+        "table-tenant": "Locataire",
+        "table-contact": "Contact",
+        "table-property": "Propriété",
+        "table-status": "Statut",
+        "table-notes": "Notes",
+        "table-actions": "Actions",
+        "no-property": "Aucune propriété assignée",
+        "status-up_to_date": "À jour",
+        "status-late": "En retard",
+        "status-former": "Ancien",
         "total-tenants": "Total des locataires",
         "active-tenants": "Locataires actifs",
         "average-rent": "Loyer moyen",
