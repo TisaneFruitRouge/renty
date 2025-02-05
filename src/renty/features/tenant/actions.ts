@@ -156,16 +156,75 @@ export async function deleteTenant(tenantId: string) {
   return tenant
 }
 
-export async function deleteTenantFromProperty(tenantId: string) {
-  await prisma.tenant.update({
+export async function assignTenantToProperty(propertyId: string, tenantId: string) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  // Check if property belongs to user
+  const property = await prisma.property.findFirst({
+    where: {
+      id: propertyId,
+      userId: session.user.id
+    }
+  })
+
+  if (!property) {
+    throw new Error("Property not found or unauthorized");
+  }
+
+  const tenant = await prisma.tenant.update({
     where: {
       id: tenantId,
+      userId: session.user.id
     },
     data: {
-      propertyId: null,
-    },
+      propertyId
+    }
   })
 
   revalidatePath('/tenants')
-  revalidatePath(`/tenants/${tenantId}`)
+  revalidatePath(`/properties/${propertyId}`)
+  return tenant
+}
+
+export async function removeTenantFromProperty(propertyId: string, tenantId: string) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user?.id) {
+    throw new Error("Not authenticated");
+  }
+
+  // Check if property belongs to user
+  const property = await prisma.property.findFirst({
+    where: {
+      id: propertyId,
+      userId: session.user.id
+    }
+  })
+
+  if (!property) {
+    throw new Error("Property not found or unauthorized");
+  }
+
+  const tenant = await prisma.tenant.update({
+    where: {
+      id: tenantId,
+      userId: session.user.id,
+      propertyId
+    },
+    data: {
+      propertyId: null
+    }
+  })
+
+  revalidatePath('/tenants')
+  revalidatePath(`/properties/${propertyId}`)
+  return tenant
 }

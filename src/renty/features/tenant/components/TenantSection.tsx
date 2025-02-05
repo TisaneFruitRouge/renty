@@ -1,43 +1,34 @@
 "use client"
 
-import { TenantSelector } from "@/features/tenant/components/TenantSelector"
 import TenantCard from "./TenantCard"
-import { getTenantByPropertyId, updateTenantProperty } from "../actions"
-import { useTranslations } from "next-intl"
-import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
+import SelectTenantModal from "./SelectTenantModal"
+import RemoveTenantModal from "./RemoveTenantModal"
+import type { tenant } from "@prisma/client"
 
 interface TenantSectionProps {
   propertyId: string
-  initialTenant?: Awaited<ReturnType<typeof getTenantByPropertyId>>
+  initialTenant?: tenant
+  availableTenants: tenant[]
 }
 
-export default function TenantSection({ propertyId, initialTenant }: TenantSectionProps) {
-  const { toast } = useToast()
-  const router = useRouter()
-  const t = useTranslations('tenant')
-
-  if (initialTenant !== undefined) {
-    return <TenantCard tenant={initialTenant} />
+export default function TenantSection({ propertyId, initialTenant, availableTenants }: TenantSectionProps) {
+  if (initialTenant) {
+    return (
+      <div className="space-y-4">
+        <TenantCard tenant={initialTenant} />
+        <div className="flex justify-end">
+          <RemoveTenantModal
+            propertyId={propertyId}
+            tenantId={initialTenant.id}
+          />
+        </div>
+      </div>
+    )
   }
-
-  async function handleSelect(tenantId: string) {
-    try {
-      await updateTenantProperty(tenantId, propertyId)
-      toast({
-        title: "Success",
-        description: t('success.assigned'),
-      })
-      router.refresh()
-    } catch (error) {
-      console.error("Error updating tenant property:", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: t('error.assign'),
-      })
-    }
-  }
-
-  return <TenantSelector onSelect={handleSelect} />
+  
+  return (
+    <div className="flex justify-end">
+      <SelectTenantModal availableTenants={availableTenants} propertyId={propertyId} />
+    </div>
+  )
 }

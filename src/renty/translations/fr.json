@@ -32,53 +32,88 @@
         "postal-code": "Code postal",
         "duration": "Durée de location",
         "rented-since": "Loué depuis",
+        "edit-property": "Modifier la propriété",
+        "success": "Succès",
+        "error": "Erreur",
+        "photos-uploaded-successfully": "Les photos ont été téléchargées avec succès",
+        "error-uploading-photos": "Une erreur est survenue lors du téléchargement des photos",
+        "photo-removed-successfully": "La photo a été supprimée avec succès",
+        "error-removing-photo": "Une erreur est survenue lors de la suppression de la photo",
+        "primary-photo-set-successfully": "La photo principale a été définie avec succès",
+        "error-setting-primary-photo": "Une erreur est survenue lors de la définition de la photo principale",
+        "edit-form": {
+            "title": "Modifier la propriété",
+            "description": "Modifiez les informations de votre propriété",
+            "success-title": "Modifications enregistrées",
+            "success-description": "Les modifications ont été enregistrées avec succès",
+            "error-title": "Erreur",
+            "error-description": "Une erreur est survenue lors de l'enregistrement des modifications",
+            "submit": "Enregistrer les modifications"
+        },
+        "form": {
+            "property-details": "Informations de la propriété",
+            "rental-details": "Informations de location",
+            "title": "Titre",
+            "address": "Adresse",
+            "city": "Ville",
+            "state": "État/Région",
+            "country": "Pays",
+            "postal-code": "Code postal",
+            "base-rent": "Loyer de base",
+            "charges": "Charges",
+            "currency": "Devise",
+            "select-currency": "Sélectionner une devise",
+            "payment-frequency": "Fréquence de paiement",
+            "select-frequency": "Sélectionner une fréquence",
+            "biweekly": "Bimensuel",
+            "monthly": "Mensuel",
+            "quarterly": "Trimestriel",
+            "yearly": "Annuel",
+            "deposit-amount": "Montant du dépôt de garantie",
+            "rented-since": "Date de début de location",
+            "pick-date": "Sélectionner une date",
+            "furnished": "Meublé"
+        },
         "not-found": {
             "title": "Propriété introuvable",
             "description": "La propriété que vous recherchez n'existe pas ou a été supprimée",
             "return-to-properties": "Retourner aux propriétés"
         },
+        "photos": "Photos",
+        "view": "Vue",
+        "of": "de",
+        "add-photos": "Ajouter des photos",
+        "modify-photos": "Modifier les photos",
+        "no-photos-found": "Aucune photo",
+        "edit-photos": "Modifier les photos",
+        "upload-photos": "Télécharger des photos",
+        "photo": "Photo",
+        "set-as-primary": "Définir comme photo principale",
+        "remove-primary": "Retirer comme photo principale",
+        "remove-photo": "Supprimer la photo",
+        "current-tenants": "Locataires actuels",
+        "add-tenant": "Ajouter un locataire",
+        "remove-tenant": "Supprimer le locataire",
+        "documents": "Documents",
+        "add-document": "Ajouter un document",
+        "added-on": "Ajouté le",
+        "download": "Télécharger",
+        "key-information": "Informations clés",
+        "monthly-rent": "Loyer mensuel (HC)",
+        "entry-date": "Date d'entrée",
+        "furnished": "Meublé",
+        "yes": "Oui",
+        "no": "Non",
+        "quick-actions": "Actions rapides",
+        "rent-receipts-history": "Historique des quittances",
+        "contact-tenant": "Contacter le locataire",
+        "recent-payments": "Paiements récents",
         "edit": "Modifier",
-        "edit-form": {
-            "title": "Modifier la propriété",
-            "submit": "Sauvegarder les modifications",
-            "success": "La propriété a été modifiée:",
-            "error": "Une erreur est survenue lors de la modification de la propriété"
-        },
         "create-form": {
             "title": "Créer une nouvelle propriété",
             "submit": "Créer la propriété",
             "success": "La propriété suivante a été créée:",
             "error": "Une erreur est survenue lors de la création de la propriété"
-        },
-        "form": {
-            "add-property": "Ajouter une propriété",
-            "create-title": "Créer une nouvelle propriété",
-            "title": {
-                "label": "Titre",
-                "placeholder": "Bel appartement en centre-ville",
-                "description": "Un titre descriptif pour votre propriété"
-            },
-            "address": {
-                "label": "Adresse",
-                "placeholder": "123 Rue Principale",
-                "description": "Adresse de la propriété"
-            },
-            "city": {
-                "label": "Ville",
-                "placeholder": "Paris"
-            },
-            "state": {
-                "label": "État/Région",
-                "placeholder": "Île-de-France"
-            },
-            "country": {
-                "label": "Pays",
-                "placeholder": "France"
-            },
-            "postal-code": {
-                "label": "Code postal",
-                "placeholder": "75001"
-            }
         },
         "rental-details": "Informations de location",
         "rental-description": "Détails du contrat de location",
@@ -114,6 +149,7 @@
         "tenant": {
             "title": "Gestion du locataire"
         },
+        "see-more": "Voir plus",
         "rent-receipt": {
             "title": "Configuration de l'envoie des quittances de loyer",
             "no-date": "Aucune date de début de génération des quittances n'a été définie.",
@@ -121,7 +157,7 @@
             "configuration": {
                 "title": "Configuration des quittances de loyer",
                 "description": "Configurez l'envoi automatique des quittances de loyer",
-                "automatic-send": "Envoi automatique configuré pour le",
+                "automatic-send": "Envoi automatique le",
                 "next-receipt-info": "La prochaine quittance sera envoyée pour la période du {startDate} au {endDate}",
                 "success": "Configuration des quittances de loyer mise à jour"
             },
@@ -261,6 +297,10 @@
         "logout": "Se déconnecter"
     },
     "tenant": {
+        "status": {
+            "up_to_date": "À JOUR",
+            "late": "EN RETARD"
+        },
         "delete": {
             "title": "Supprimer le locataire",
             "description": "Êtes-vous sûr de vouloir supprimer {name} ? Cette action ne peut pas être annulée.",
@@ -422,6 +462,24 @@
         "subtitle": "Gérez vos locataires et leurs informations",
         "no-tenants-found": "Aucun locataire trouvé",
         "add-tenant": "Ajouter un locataire",
+        "remove-tenant": "Supprimer le locataire",
+        "select-form": {
+            "title": "Sélectionner un locataire",
+            "description": "Sélectionnez un locataire à assigner à cette propriété",
+            "tenant-label": "Locataire",
+            "tenant-placeholder": "Sélectionner un locataire",
+            "submit": "Assigner le locataire",
+            "success": "Le locataire a été assigné à la propriété",
+            "error": "Une erreur est survenue lors de l'assignation du locataire"
+        },
+        "remove": {
+            "title": "Supprimer le locataire",
+            "description": "Êtes-vous sûr de vouloir supprimer ce locataire de la propriété ?",
+            "confirm": "Supprimer",
+            "cancel": "Annuler",
+            "success": "Le locataire a été supprimé de la propriété",
+            "error": "Une erreur est survenue lors de la suppression du locataire"
+        },
         "search-placeholder": "Rechercher un locataire...",
         "filter-all": "Tous les locataires",
         "filter-active": "Locataires actuels",
