@@ -62,11 +62,18 @@ export async function updateProperty(id: string, data: Omit<Prisma.propertyUpdat
         where: { id },
         data: {
             title: data.title,
+            images: data.images,
             address: data.address,
             city: data.city,
             state: data.state,
             country: data.country,
-            postalCode: data.postalCode
+            postalCode: data.postalCode,
+            rentDetails: data.rentDetails,
+            currency: data.currency,
+            paymentFrequency: data.paymentFrequency,
+            depositAmount: data.depositAmount,
+            rentedSince: data.rentedSince,
+            isFurnished: data.isFurnished,
         },
     });
 }

@@ -1,72 +1,32 @@
-"use client"
-
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { deleteTenantFromProperty, getTenantByPropertyId } from "../actions"
-import { useToast } from "@/hooks/use-toast"
 import { useTranslations } from "next-intl"
+import { Users } from "lucide-react"
+import type { tenant } from "@prisma/client"
 
 interface TenantCardProps {
-  tenant: Awaited<ReturnType<typeof getTenantByPropertyId>>
+  tenant: tenant;
 }
 
 export default function TenantCard({ tenant }: TenantCardProps) {
-  const { toast } = useToast()
-  const t = useTranslations('tenant.card')
-
-  async function handleDelete() {
-    try {
-      await deleteTenantFromProperty(tenant.id as string)
-      toast({
-        title: "Success",
-        description: t('success.removed'),
-      })
-    } catch (error) {
-      console.error("Delete error", error)
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: t('error.remove'),
-      })
-    }
-  }
+  const t = useTranslations('tenant')
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{tenant.firstName} {tenant.lastName}</CardTitle>
-        <CardDescription>{t('title')}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div>
-          <span className="font-medium">{t('email')}:</span> {tenant.email}
+    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+      <div className="flex items-center">
+        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+          <Users className="h-5 w-5 text-gray-500" />
         </div>
-        <div>
-          <span className="font-medium">{t('phone')}:</span> {tenant.phoneNumber}
-        </div>
-        {tenant.notes && (
-          <div>
-            <span className="font-medium">{t('notes')}:</span>
-            <p className="text-sm text-gray-500 mt-1">{tenant.notes}</p>
+        <div className="ml-4">
+          <div className="text-sm font-medium text-gray-900">
+            {tenant.firstName} {tenant.lastName}
           </div>
-        )}
-      </CardContent>
-      <CardFooter>
-        <Button 
-          variant="destructive" 
-          onClick={handleDelete}
-          className="w-full"
-        >
-          {t('remove-button')}
-        </Button>
-      </CardFooter>
-    </Card>
+          <div className="text-sm text-gray-500">
+            {tenant.email} • {tenant.phoneNumber}
+          </div>
+        </div>
+      </div>
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        {t('status.up_to_date')}
+      </span>
+    </div>
   )
 }

@@ -90,3 +90,18 @@ export async function countWaitingReceiptsForUser(userId: string): Promise<numbe
     });
 }
 
+export async function getRentReceiptsOfProperty(propertyId: string, limit?: number) {
+    return await prisma.rentReceipt.findMany({
+        where: { 
+            propertyId
+        },
+        include: {
+            property: true,
+            tenant: true
+        },
+        orderBy: {
+            createdAt: 'desc'
+        },
+        take: limit
+    })
+}
