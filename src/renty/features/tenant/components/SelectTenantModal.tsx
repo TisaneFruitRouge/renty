@@ -11,18 +11,19 @@ import {
 } from "@/components/ui/dialog"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { Pencil } from "lucide-react"
-import type { property } from "@prisma/client"
-import { EditPropertyForm } from "./EditPropertyForm"
+import { Plus } from "lucide-react"
+import { SelectTenantForm } from "./SelectTenantForm"
+import type { tenant } from "@prisma/client"
 
-interface EditPropertyModalProps {
-  property: property
+interface SelectTenantModalProps {
+  propertyId: string
+  availableTenants: tenant[];
   onSuccess?: () => void
 }
 
-export default function EditPropertyModal({ property, onSuccess }: EditPropertyModalProps) {
+export default function SelectTenantModal({ propertyId, availableTenants, onSuccess }: SelectTenantModalProps) {
   const [open, setOpen] = useState(false)
-  const t = useTranslations('property')
+  const t = useTranslations('tenants')
 
   const handleSuccess = () => {
     setOpen(false)
@@ -32,20 +33,21 @@ export default function EditPropertyModal({ property, onSuccess }: EditPropertyM
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center" variant="outline">
-          <Pencil className="w-4 h-4 mr-2" />
-          {t("edit-property")}
+        <Button variant="ghost">
+          <Plus className="w-4 h-4 mr-1" />
+          {t('add-tenant')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('edit-form.title')}</DialogTitle>
+          <DialogTitle>{t('select-form.title')}</DialogTitle>
           <DialogDescription>
-            {t('edit-form.description')}
+            {t('select-form.description')}
           </DialogDescription>
         </DialogHeader>
-        <EditPropertyForm
-          property={property}
+        <SelectTenantForm
+          propertyId={propertyId}
+          availableTenants={availableTenants}
           onSuccess={handleSuccess}
         />
       </DialogContent>
