@@ -6,7 +6,6 @@
         "next-month": "Mois suivant"
     },
     "home": {
-        "add-property": "Ajouter une propriété",
         "welcome": "Bonjour, {name}",
         "welcome-subtext": "Voici ce qui se passe avec vos propriétés",
         "properties": "Vos propriétés",
@@ -41,6 +40,38 @@
         "error-removing-photo": "Une erreur est survenue lors de la suppression de la photo",
         "primary-photo-set-successfully": "La photo principale a été définie avec succès",
         "error-setting-primary-photo": "Une erreur est survenue lors de la définition de la photo principale",
+        "create-form": {
+            "open-title": "Ajouter une propriété",
+            "submit": "Créer la propriété",
+            "success": "La propriété suivante a été créée:",
+            "error": "Une erreur est survenue lors de la création de la propriété",
+            "title": {
+                "label": "Titre",
+                "placeholder": "Ex: Appartement T3 Centre-ville",
+                "description": "Le titre qui sera affiché pour cette propriété"
+            },
+            "address": {
+                "label": "Adresse",
+                "placeholder": "Ex: 123 rue de la Paix",
+                "description": "L'adresse complète de la propriété"
+            },
+            "city": {
+                "label": "Ville",
+                "placeholder": "Ex: Paris"
+            },
+            "state": {
+                "label": "État/Région",
+                "placeholder": "Ex: Île-de-France"
+            },
+            "country": {
+                "label": "Pays",
+                "placeholder": "Ex: France"
+            },
+            "postal-code": {
+                "label": "Code postal",
+                "placeholder": "Ex: 75001"
+            }
+        },
         "edit-form": {
             "title": "Modifier la propriété",
             "description": "Modifiez les informations de votre propriété",
@@ -109,12 +140,6 @@
         "contact-tenant": "Contacter le locataire",
         "recent-payments": "Paiements récents",
         "edit": "Modifier",
-        "create-form": {
-            "title": "Créer une nouvelle propriété",
-            "submit": "Créer la propriété",
-            "success": "La propriété suivante a été créée:",
-            "error": "Une erreur est survenue lors de la création de la propriété"
-        },
         "rental-details": "Informations de location",
         "rental-description": "Détails du contrat de location",
         "pricing": "Tarification",
@@ -157,13 +182,14 @@
             "configuration": {
                 "title": "Configuration des quittances de loyer",
                 "description": "Configurez l'envoi automatique des quittances de loyer",
-                "automatic-send": "Envoi automatique le",
-                "next-receipt-info": "La prochaine quittance sera envoyée pour la période du {startDate} au {endDate}",
-                "success": "Configuration des quittances de loyer mise à jour"
+                "automatic-send": "Envoi automatique à partir du",
+                "next-receipt-info": "Les quittances seront envoyées le {date} de chaque mois. Vous les receverez quelques jours avant et pourrez les modifier/annuler.",
+                "success": "Configuration des quittances de loyer mise à jour",
+                "deleted": "Configuration des quittances de loyer supprimée"
             },
             "edit": {
                 "title": "Modification de la configuration",
-                "description": "Modifiez la date à partir de laquelle vous souhaitez générer les quittances de loyer.",
+                "description": "Modifiez la date à laquelle vous souhaitez envoyer les quittances de loyer.",
                 "button": "Modifier la configuration"
             },
             "generated-from": "Les quittances sont générées à partir du",
@@ -177,6 +203,18 @@
     "rent-receipts": {
         "no-receipts": "Aucune quittance trouvée",
         "title": "Quittances de loyer",
+        "status-update": {
+            "success": "Statut mis à jour",
+            "success-description": "Le statut de la quittance a été mis à jour avec succès",
+            "error": "Erreur",
+            "error-description": "Une erreur est survenue lors de la mise à jour du statut"
+        },
+        "send": {
+            "success": "Quittance envoyée",
+            "success-description": "La quittance a été envoyée avec succès",
+            "error": "Erreur",
+            "error-description": "Une erreur est survenue lors de l'envoi de la quittance"
+        },
         "filters": {
             "property": {
                 "placeholder": "Filtrer par propriété",
@@ -213,6 +251,9 @@
             "loading": "Chargement de l'aperçu..."
         },
         "actions": {
+            "approve": "Approuver",
+            "reject": "Rejeter",
+            "send": "Envoyer",
             "view": "Voir la quittance",
             "download": "Télécharger",
             "mark-as": "Marquer comme",

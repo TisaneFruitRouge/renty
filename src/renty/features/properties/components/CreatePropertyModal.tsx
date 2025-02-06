@@ -30,9 +30,9 @@ import { z } from "zod"
 import { useState } from "react"
 
 export default function CreatePropertyModal() {
-    const { toast } = useToast()
-    const router = useRouter()
-    const t = useTranslations('property')
+    const { toast } = useToast();
+    const router = useRouter();
+    const t = useTranslations('property');
 
     const [loading, setLoading] = useState(false);
 
@@ -74,7 +74,7 @@ export default function CreatePropertyModal() {
             <DialogTrigger asChild>
                 <Button>
                     <Plus className="mr-2 h-4 w-4" />
-                    {t('create-form.title')}
+                    {t('create-form.open-title')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
@@ -88,14 +88,14 @@ export default function CreatePropertyModal() {
                             name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('form.title.label')}</FormLabel>
+                                    <FormLabel>{t('create-form.title.label')}</FormLabel>
                                     <FormControl>
                                         <Input 
-                                            placeholder={t('form.title.placeholder')}
+                                            placeholder={t('create-form.title.placeholder')}
                                             {...field} 
                                         />
                                     </FormControl>
-                                    <FormDescription>{t('form.title.description')}</FormDescription>
+                                    <FormDescription>{t('create-form.title.description')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -105,14 +105,14 @@ export default function CreatePropertyModal() {
                             name="address"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>{t('form.address.label')}</FormLabel>
+                                    <FormLabel>{t('create-form.address.label')}</FormLabel>
                                     <FormControl>
                                         <Input 
-                                            placeholder={t('form.address.placeholder')}
+                                            placeholder={t('create-form.address.placeholder')}
                                             {...field} 
                                         />
                                     </FormControl>
-                                    <FormDescription>{t('form.address.description')}</FormDescription>
+                                    <FormDescription>{t('create-form.address.description')}</FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -123,10 +123,10 @@ export default function CreatePropertyModal() {
                                 name="city"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.city.label')}</FormLabel>
+                                        <FormLabel>{t('create-form.city.label')}</FormLabel>
                                         <FormControl>
                                             <Input 
-                                                placeholder={t('form.city.placeholder')}
+                                                placeholder={t('create-form.city.placeholder')}
                                                 {...field} 
                                             />
                                         </FormControl>
@@ -139,10 +139,10 @@ export default function CreatePropertyModal() {
                                 name="state"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.state.label')}</FormLabel>
+                                        <FormLabel>{t('create-form.state.label')}</FormLabel>
                                         <FormControl>
                                             <Input 
-                                                placeholder={t('form.state.placeholder')}
+                                                placeholder={t('create-form.state.placeholder')}
                                                 {...field} 
                                             />
                                         </FormControl>
@@ -173,10 +173,10 @@ export default function CreatePropertyModal() {
                                 name="postalCode"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.postal-code.label')}</FormLabel>
+                                        <FormLabel>{t('create-form.postal-code.label')}</FormLabel>
                                         <FormControl>
                                             <Input 
-                                                placeholder={t('form.postal-code.placeholder')}
+                                                placeholder={t('create-form.postal-code.placeholder')}
                                                 {...field} 
                                             />
                                         </FormControl>

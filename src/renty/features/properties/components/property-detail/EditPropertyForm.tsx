@@ -246,6 +246,7 @@ export function EditPropertyForm({ property, onSuccess }: EditPropertyFormProps)
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
+                                            disabled
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
@@ -272,6 +273,7 @@ export function EditPropertyForm({ property, onSuccess }: EditPropertyFormProps)
                                         <Select
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
+                                            disabled
                                         >
                                             <FormControl>
                                                 <SelectTrigger>

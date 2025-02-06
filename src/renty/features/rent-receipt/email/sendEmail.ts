@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import type { rentReceipt, tenant } from '@prisma/client';
+import RentReceiptEmail from './RentReceiptEmail';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -23,9 +24,10 @@ export async function sendReceiptEmail(
     to: tenant.email,
     cc: landlordEmail,
     subject: `Quittance de loyer - ${month}`,
-    html: `<p>Bonjour ${tenant.firstName},</p>
-           <p>Veuillez trouver ci-joint votre quittance de loyer pour ${month}.</p>
-           <p>Cordialement,<br>Renty</p>`,
+    react: RentReceiptEmail({
+      tenantName: tenant.firstName,
+      month: month
+    }),
     attachments: [{
       filename: `quittance-${month}.pdf`,
       content: pdfBuffer
