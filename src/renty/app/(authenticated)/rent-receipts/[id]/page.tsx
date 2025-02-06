@@ -1,6 +1,7 @@
 import { getReceiptById } from "@/features/rent-receipt/db";
 import { getTranslations } from "next-intl/server";
 import { RentReceiptPreview } from "@/features/rent-receipt/components/RentReceiptPreview";
+import { RentReceiptStatusActions } from "@/features/rent-receipt/components/RentReceiptStatusActions";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -21,12 +22,18 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 <h1 className="text-2xl font-semibold">
                     {receipt.property.title} - {receipt.tenant.firstName} {receipt.tenant.lastName}
                 </h1>
-                <Badge className={cn(
-                    rentReceiptStatusVariants[receipt.status],
-                    "font-medium shadow-none"
-                )}>
-                    {t('status.' + receipt.status)}
-                </Badge>
+                <div className="flex items-center gap-4">
+                    <RentReceiptStatusActions
+                        receiptId={receipt.id}
+                        currentStatus={receipt.status}
+                    />
+                    <Badge className={cn(
+                        rentReceiptStatusVariants[receipt.status],
+                        "font-medium shadow-none"
+                    )}>
+                        {t('status.' + receipt.status)}
+                    </Badge>
+                </div>
             </div>
             <Card className="p-6">
                 <RentReceiptPreview receipt={receipt} />

@@ -103,5 +103,32 @@ export async function getRentReceiptsOfProperty(propertyId: string, limit?: numb
             createdAt: 'desc'
         },
         take: limit
-    })
+    });
+}
+
+export async function getPendingReceiptsForDate(date: Date) {
+    // Create a date range for the entire day
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return await prisma.rentReceipt.findMany({
+        where: {
+            status: RentReceiptStatus.PENDING,
+            startDate: {
+                gte: startOfDay,
+                lte: endOfDay
+            }
+        },
+        include: {
+            property: {
+                include: {
+                    user: true
+                }
+            },
+            tenant: true
+        }
+    });
 }

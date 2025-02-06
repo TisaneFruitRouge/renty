@@ -5,8 +5,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Home as HomeIcon, Users, TriangleAlert, TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { countWaitingReceiptsForUser, getReceiptsOfUser } from "@/features/rent-receipt/db";
 import MostRecentRentReceipts from "@/features/rent-receipt/components/MostRecentRentReceipts";
 
@@ -40,11 +38,6 @@ export default async function Home() {
               {t("welcome-subtext")}
             </p>
           </div>
-          <Link href="/properties">
-            <Button>
-              {t("add-property")}
-            </Button>
-          </Link>
         </div>
         
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

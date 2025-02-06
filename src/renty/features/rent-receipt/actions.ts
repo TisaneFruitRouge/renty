@@ -7,7 +7,7 @@ import { generatePDF } from "./pdf/generatePDF"
 import { deleteReceiptFromBlob, saveReceiptToBlob } from "./blob"
 import { sendReceiptEmail } from "./email/sendEmail"
 import { createReceiptSchema } from "./schemas"
-import type { RentReceiptStatus } from "@prisma/client";
+import { RentReceiptStatus } from "@prisma/client";
 import { updateReceiptStatus } from "./db";
 
 type createRentReceiptInput = z.infer<typeof createReceiptSchema>
@@ -97,4 +97,40 @@ export async function createRentReceiptAction(sendMail = true, {
 export async function updateRentReceiptStatusAction(id: string, newStatus: RentReceiptStatus) {
   'use server'
   await updateReceiptStatus(id, newStatus);
+}
+
+export async function sendRentReceiptAction(id: string) {
+  const receipt = await prisma.rentReceipt.findUnique({
+    where: { id },
+    include: {
+      property: {
+        include: {
+          user: true
+        }
+      },
+      tenant: true
+    }
+  });
+
+  if (!receipt || !receipt.blobUrl) {
+    throw new Error('Receipt not found or no PDF generated');
+  }
+
+  // Fetch the PDF content from the blob URL
+  const pdfResponse = await fetch(receipt.blobUrl);
+  if (!pdfResponse.ok) {
+    throw new Error(`Failed to fetch PDF from blob storage: ${pdfResponse.statusText}`);
+  }
+  const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
+
+  // Send the email
+  await sendReceiptEmail(
+    receipt,
+    receipt.tenant,
+    receipt.property.user.email,
+    pdfBuffer
+  );
+
+  // Update status to SENT
+  await updateReceiptStatus(id, RentReceiptStatus.PAID);
 }

@@ -23,7 +23,6 @@ import {
   deleteRentReceiptSettingsAction, 
   updateRentReceiptSettingsAction 
 } from "@/features/properties/actions";
-import { calculateReceiptDates } from "@/features/rent-receipt/utils";
 
 interface RentReceiptSettingsProps {
   property: property;
@@ -37,8 +36,6 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
   const t = useTranslations("property.rent-receipt");
   const { toast } = useToast();
   const tomorrow = addDays(new Date(), 0);
-
-  const { startDate, endDate } = calculateReceiptDates(property.paymentFrequency, date);
 
   const handleSave = async () => {
     if (!date) return;
@@ -108,8 +105,7 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
         <div className="text-sm italic flex flex-col gap-8 justify-center items-center py-6">
           {date && (
             <p className="w-full">{t("configuration.next-receipt-info", {
-              startDate: format(startDate, "d MMMM yyyy", { locale: fr }),
-              endDate: format(endDate, "d MMMM yyyy", { locale: fr }),
+              date: date ? format(date, "d", { locale: fr }) : "--"
             })}</p>
           )}
           <Calendar
