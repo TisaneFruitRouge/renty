@@ -56,7 +56,7 @@ export default function CreatePropertyModal() {
                 title: t('create-form.success'),
                 description: property?.title || "",
             });
-            router.push(`property/${property?.id}`)
+            router.push(`properties/${property?.id}`)
         } catch (error) {
             console.error("Form submission error", error)
             toast({
@@ -79,7 +79,7 @@ export default function CreatePropertyModal() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>{t('create-form.title')}</DialogTitle>
+                    <DialogTitle>{t('create-form.open-title')}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -157,10 +157,10 @@ export default function CreatePropertyModal() {
                                 name="country"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{t('form.country.label')}</FormLabel>
+                                        <FormLabel>{t('create-form.country.label')}</FormLabel>
                                         <FormControl>
                                             <Input 
-                                                placeholder={t('form.country.placeholder')}
+                                                placeholder={t('create-form.country.placeholder')}
                                                 {...field} 
                                             />
                                         </FormControl>

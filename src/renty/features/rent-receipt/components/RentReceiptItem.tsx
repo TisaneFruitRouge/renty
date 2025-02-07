@@ -99,8 +99,7 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
                                             />
                                         </div>
                                     </DropdownMenuItem>
-                                )}
-                                
+                                )}                                
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
