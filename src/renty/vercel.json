@@ -2,9 +2,12 @@
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "crons": [
         {
-            "path": "/api/rent-receipt/generate-and-send",
-            "schedule": "0 18 * * *"
+            "path": "/api/rent-receipt/generate",
+            "schedule": "0 9 * * *"
+        },
+        {
+            "path": "/api/rent-receipt/send",
+            "schedule": "0 9 * * *"
         }
     ]
-    
 }

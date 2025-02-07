@@ -1,9 +1,10 @@
 import { getAllPropertiesWithActiveTenants } from '@/features/properties/db';
 import { deleteReceiptFromBlob, saveReceiptToBlob } from '@/features/rent-receipt/blob';
 import createReceipt, { addBlobUrlToRceipt, deleteReceipt } from '@/features/rent-receipt/db';
-import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
+import { sendReceiptReviewEmail } from '@/features/rent-receipt/email/sendReviewEmail';
 import { generatePDF } from '@/features/rent-receipt/pdf/generatePDF';
-import { parseRentDetails, shouldGenerateReceipt, calculateReceiptDates } from '@/features/rent-receipt/utils';
+import { parseRentDetails, shouldGenerateReceipt, getMonthRange } from '@/features/rent-receipt/utils';
+import { addDays } from 'date-fns';
 import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -17,8 +18,11 @@ export async function GET(request: NextRequest) {
   const properties = await getAllPropertiesWithActiveTenants();
   const today = new Date();
 
+  // Check for receipts that will be due in 3 days
+  const futureDate = addDays(today, 3);
+
   const propertiesThatNeedReceipts = properties.filter(property => 
-    shouldGenerateReceipt(property, today)
+    shouldGenerateReceipt(property, futureDate)
   );
 
   for (const property of propertiesThatNeedReceipts) {
@@ -29,7 +33,7 @@ export async function GET(request: NextRequest) {
         throw new Error(`Error parsing rent details for property ${property.id}`);
       }
 
-      const { startDate, endDate } = calculateReceiptDates(property.paymentFrequency, today);
+      const { startDate, endDate } = getMonthRange(futureDate);
 
       createdReceipt = await createReceipt(
         startDate,
@@ -60,13 +64,8 @@ export async function GET(request: NextRequest) {
 
       await addBlobUrlToRceipt(createdReceipt.id, url);
 
-      // send mail
-      await sendReceiptEmail(
-        createdReceipt,
-        property.tenants[0],
-        property.user.email,
-        pdfBuffer
-      );
+      // Send review email to landlord
+      await sendReceiptReviewEmail(createdReceipt, property);
 
     } catch (error) {
       console.error(`Error processing receipt for property ${property.id}: ${error}`);

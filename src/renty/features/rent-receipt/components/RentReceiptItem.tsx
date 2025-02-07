@@ -4,7 +4,6 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Download, Eye } from "lucide-react"
 import type { property, rentReceipt, tenant } from "@prisma/client"
-import { RentReceiptStatus } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { useTranslations } from 'next-intl'
 import {
@@ -12,16 +11,12 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-    DropdownMenuSeparator,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { MouseEventHandler } from "react"
-import { updateRentReceiptStatusAction } from "../actions"
 import { rentReceiptStatusVariants } from "../constants"
+import { RentReceiptStatusActions, availableStatusTransitions } from "./RentReceiptStatusActions"
 
 interface RentReceiptItemProps {
     receipt: rentReceipt & { property: property; tenant: tenant }
@@ -48,20 +43,6 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
         return;
     }
 
-    const handleStatusChange = async (status: RentReceiptStatus) => {
-        await updateRentReceiptStatusAction(receipt.id, status);
-        router.refresh();
-    }
-
-    const availableStatusTransitions: Record<RentReceiptStatus, RentReceiptStatus[]> = {
-        DRAFT: [RentReceiptStatus.PENDING, RentReceiptStatus.CANCELLED],
-        PENDING: [RentReceiptStatus.PAID, RentReceiptStatus.LATE, RentReceiptStatus.UNPAID, RentReceiptStatus.CANCELLED],
-        PAID: [],
-        LATE: [RentReceiptStatus.PAID, RentReceiptStatus.UNPAID, RentReceiptStatus.CANCELLED],
-        UNPAID: [RentReceiptStatus.PAID, RentReceiptStatus.LATE, RentReceiptStatus.CANCELLED],
-        CANCELLED: []
-    }
-    
     return (
         <Card 
             className={cn(
@@ -110,32 +91,14 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
                                 )}
                                 
                                 {availableStatusTransitions[receipt.status].length > 0 && (
-                                    <>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuSub>
-                                            <DropdownMenuSubTrigger>
-                                                {t('actions.mark-as')}
-                                            </DropdownMenuSubTrigger>
-                                            <DropdownMenuSubContent>
-                                                {availableStatusTransitions[receipt.status].map((status) => (
-                                                    <DropdownMenuItem 
-                                                        key={status}
-                                                        onClick={(e) => {
-                                                            handleStatusChange(status)
-                                                            e.stopPropagation();
-                                                        }}
-                                                    >
-                                                        <Badge className={cn(
-                                                            rentReceiptStatusVariants[status],
-                                                            "shadow-none mr-2"
-                                                        )}>
-                                                            {t('actions.mark-as-' + status.toLowerCase())}
-                                                        </Badge>
-                                                    </DropdownMenuItem>
-                                                ))}
-                                            </DropdownMenuSubContent>
-                                        </DropdownMenuSub>
-                                    </>
+                                    <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                                        <div className="w-full">
+                                            <RentReceiptStatusActions
+                                                receiptId={receipt.id}
+                                                currentStatus={receipt.status}
+                                            />
+                                        </div>
+                                    </DropdownMenuItem>
                                 )}
                                 
                             </DropdownMenuContent>
