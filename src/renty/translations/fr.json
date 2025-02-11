@@ -34,6 +34,7 @@
         "edit-property": "Modifier la propriété",
         "success": "Succès",
         "error": "Erreur",
+        "no-properties-found": "Aucune propriété trouvée",
         "photos-uploaded-successfully": "Les photos ont été téléchargées avec succès",
         "error-uploading-photos": "Une erreur est survenue lors du téléchargement des photos",
         "photo-removed-successfully": "La photo a été supprimée avec succès",
@@ -333,6 +334,7 @@
             "properties": "Propriétés",
             "rent-receipts": "Quittances de loyer",
             "tenants": "Locataires",
+            "channels": "Messages",
             "settings": "Paramètres"
         },
         "logout": "Se déconnecter"

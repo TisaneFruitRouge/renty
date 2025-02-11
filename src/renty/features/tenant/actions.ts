@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/prisma/db"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
+import { generateRandomCode, hash } from "@/features/auth/lib"
 import { CreateTenantFormData } from "./components/CreateTenantForm"
 import { EditTenantFormData } from "./components/EditTenantForm"
 
@@ -27,7 +28,22 @@ export async function createTenant(data: CreateTenantFormData) {
       propertyId: data.propertyId,
       userId: session.user.id
     },
-  })
+  });
+
+  const tempCode = generateRandomCode(6);
+  
+  // 3. Create TenantAuth record
+  await prisma.tenantAuth.create({
+    data: {
+      tenantId: tenant.id,
+      phoneNumber: tenant.phoneNumber,
+      tempCode: await hash(tempCode),
+      tempCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      passcode: ''
+    }
+  });
+
+  // TODO: send code to tenant's phone number
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${data.propertyId}`)

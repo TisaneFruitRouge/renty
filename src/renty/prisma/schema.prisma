@@ -139,7 +139,26 @@ model tenant {
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   rentReceipt rentReceipt[]
+  auth        tenantAuth?
 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model tenantAuth {
+  id          String    @id @default(cuid())
+  tenantId    String    @unique
+  phoneNumber String    @unique
+  passcode    String    // Hashed 6-digit passcode
+  tempCode    String?   // Temporary access code for first login
+  tempCodeExpiresAt DateTime?
+  isActivated Boolean   @default(false)
+  tenant     tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // For handling authentication sessions
+  refreshToken String?
+  refreshTokenExpiresAt DateTime?
+  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
