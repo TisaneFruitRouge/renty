@@ -1,15 +1,27 @@
 "use server"
 
 import { auth } from "@/lib/auth"
-import { prisma } from "@/prisma/db"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
+import { addTenantToPropertyChannel } from "@/features/messages/db"
 import { generateRandomCode, hash } from "@/features/auth/lib"
 import { CreateTenantFormData } from "./components/CreateTenantForm"
 import { EditTenantFormData } from "./components/EditTenantForm"
+import {
+  createTenantInDb,
+  createTenantAuthInDb,
+  getTenantsByPropertyId,
+  getAllTenantsForUser,
+  getAvailableTenantsForUser,
+  updateTenantPropertyInDb,
+  editTenantInDb,
+  deleteTenantFromDb,
+  findPropertyForUser,
+  assignTenantToPropertyInDb,
+  removeTenantFromPropertyInDb
+} from './db'
 
 export async function createTenant(data: CreateTenantFormData) {
-
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -18,48 +30,30 @@ export async function createTenant(data: CreateTenantFormData) {
     throw new Error("Not authenticated");
   }
 
-  const tenant = await prisma.tenant.create({
-    data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      notes: data.notes,
-      propertyId: data.propertyId,
-      userId: session.user.id
-    },
-  });
+  const tenant = await createTenantInDb({ ...data, userId: session.user.id });
 
   const tempCode = generateRandomCode(6);
-  
-  // 3. Create TenantAuth record
-  await prisma.tenantAuth.create({
-    data: {
-      tenantId: tenant.id,
-      phoneNumber: tenant.phoneNumber,
-      tempCode: await hash(tempCode),
-      tempCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-      passcode: ''
-    }
-  });
+  await createTenantAuthInDb(tenant.id, tenant.phoneNumber, await hash(tempCode));
+
+  // If propertyId is provided, add tenant to property channel
+  if (data.propertyId) {
+    await addTenantToPropertyChannel(data.propertyId, tenant.id);
+  }
 
   // TODO: send code to tenant's phone number
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${data.propertyId}`)
+  revalidatePath('/channels')
   return tenant
 }
 
 export async function getTenantByPropertyId(propertyId: string) {
-  return (await prisma.tenant.findMany({
-    where: {
-      propertyId
-    }
-  }))[0];
+  const tenants = await getTenantsByPropertyId(propertyId);
+  return tenants[0];
 }
 
 export async function getAllTenants() {
-  
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -68,21 +62,10 @@ export async function getAllTenants() {
     throw new Error("Not authenticated");
   }
 
-  return prisma.tenant.findMany({
-    where: {
-      userId: session.user.id
-    },
-    include: {
-      property: true
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  })
+  return getAllTenantsForUser(session.user.id);
 }
 
 export async function getAvailableTenants() {
-  
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -91,26 +74,11 @@ export async function getAvailableTenants() {
     throw new Error("Not authenticated");
   }
 
-  return prisma.tenant.findMany({
-    where: {
-      propertyId: undefined,
-      userId: session.user.id
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
+  return getAvailableTenantsForUser(session.user.id);
 }
 
 export async function updateTenantProperty(tenantId: string, propertyId: string) {
-  const tenant = await prisma.tenant.update({
-    where: {
-      id: tenantId,
-    },
-    data: {
-      propertyId,
-    },
-  })
+  const tenant = await updateTenantPropertyInDb(tenantId, propertyId);
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${propertyId}`)
@@ -126,21 +94,7 @@ export async function editTenant(tenantId: string, data: EditTenantFormData) {
     throw new Error("Not authenticated");
   }
 
-  const tenant = await prisma.tenant.update({
-    where: {
-      id: tenantId,
-      userId: session.user.id
-    },
-    data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      notes: data.notes,
-      propertyId: data.propertyId,
-      startDate: data.startDate
-    },
-  })
+  const tenant = await editTenantInDb(tenantId, session.user.id, data);
 
   revalidatePath('/tenants')
   if (data.propertyId) {
@@ -158,12 +112,7 @@ export async function deleteTenant(tenantId: string) {
     throw new Error("Not authenticated");
   }
 
-  const tenant = await prisma.tenant.delete({
-    where: {
-      id: tenantId,
-      userId: session.user.id
-    },
-  })
+  const tenant = await deleteTenantFromDb(tenantId, session.user.id);
 
   revalidatePath('/tenants')
   if (tenant.propertyId) {
@@ -182,29 +131,20 @@ export async function assignTenantToProperty(propertyId: string, tenantId: strin
   }
 
   // Check if property belongs to user
-  const property = await prisma.property.findFirst({
-    where: {
-      id: propertyId,
-      userId: session.user.id
-    }
-  })
+  const property = await findPropertyForUser(propertyId, session.user.id);
 
   if (!property) {
     throw new Error("Property not found or unauthorized");
   }
 
-  const tenant = await prisma.tenant.update({
-    where: {
-      id: tenantId,
-      userId: session.user.id
-    },
-    data: {
-      propertyId
-    }
-  })
+  const tenant = await assignTenantToPropertyInDb(tenantId, session.user.id, propertyId);
+
+  // Add tenant to the property's channel
+  await addTenantToPropertyChannel(propertyId, tenantId);
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${propertyId}`)
+  revalidatePath('/channels')
   return tenant
 }
 
@@ -218,27 +158,13 @@ export async function removeTenantFromProperty(propertyId: string, tenantId: str
   }
 
   // Check if property belongs to user
-  const property = await prisma.property.findFirst({
-    where: {
-      id: propertyId,
-      userId: session.user.id
-    }
-  })
+  const property = await findPropertyForUser(propertyId, session.user.id);
 
   if (!property) {
     throw new Error("Property not found or unauthorized");
   }
 
-  const tenant = await prisma.tenant.update({
-    where: {
-      id: tenantId,
-      userId: session.user.id,
-      propertyId
-    },
-    data: {
-      propertyId: null
-    }
-  })
+  const tenant = await removeTenantFromPropertyInDb(tenantId, session.user.id, propertyId);
 
   revalidatePath('/tenants')
   revalidatePath(`/properties/${propertyId}`)

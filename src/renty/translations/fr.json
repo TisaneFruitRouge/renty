@@ -1,4 +1,13 @@
 {
+    "messages": {
+        "title": "Messages",
+        "no-conversations": "Aucune conversation",
+        "default-page": {
+            "title": "Vos messages",
+            "description": "Sélectionnez une conversation pour commencer à discuter",
+            "empty-state": "Vous n'avez pas encore de conversations actives"
+        }
+    },
     "calendar": {
         "today": "Aujourd'hui",
         "select-date": "Sélectionner une date",
