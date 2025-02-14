@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma/db";
-import { ParticipantType } from "@prisma/client";
+import { Message, ParticipantType, tenant, user } from "@prisma/client";
 
 // Create a new channel for a property
 export async function createPropertyChannel(propertyId: string, landlordId: string) {
@@ -44,20 +44,78 @@ export async function addTenantToPropertyChannel(propertyId: string, tenantId: s
       }
     });
 }
-  
+
+export type MessageWithSender = Message & {
+  sender: tenant | user | null; // Adjust the type of sender based on your actual sender type, e.g., User or Tenant
+}
+export type UserWithType = (tenant & { participantType: "TENANT"}) | (user & { participantType: "LANDLORD"})
+
 // Get all messages in a channel with participants
 export async function getChannelMessages(channelId: string) {
-    const messages = await prisma.channel.findUnique({
-      where: { id: channelId },
-      include: {
-        messages: {
-          orderBy: { createdAt: 'desc' },
-          take: 50
-        },
-        participants: true
+  const channel = await prisma.channel.findUnique({
+    where: { id: channelId },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'asc' },
+        take: 50
+      },
+      participants: true,
+      property: true,
+    }
+  });
+
+  if (!channel) {
+    return null; // or handle the case where the channel is not found
+  }
+
+  const messagesWithSender: MessageWithSender[] = await Promise.all(
+    channel.messages.map(async (message) => {
+      let sender: tenant | user | null;
+      if (message.senderType === ParticipantType.LANDLORD) {
+        sender = await prisma.user.findUnique({
+          where: { id: message.senderId }
+        });
+      } else {
+        sender = await prisma.tenant.findUnique({
+          where: { id: message.senderId }
+        });
       }
-    });
-    return messages;
+      return { ...message, sender };
+    })
+  );
+
+  return { ...channel, messages: messagesWithSender };
+}
+
+export async function getChannelParticipants(channelId: string) {
+  const channel = await prisma.channel.findUnique({
+    where: { id: channelId },
+    include: {
+      participants: true,
+    }
+  });
+
+  const participants = channel?.participants ?? [];
+
+  const participantsWithDetails: UserWithType[] = [];
+
+  for (const participant of participants) {
+    if (participant.participantType === ParticipantType.LANDLORD) {
+      const participantWithDetail = await prisma.user.findUnique({
+        where: { id: participant.participantId }
+      });
+      if (participantWithDetail !== null) 
+        participantsWithDetails.push({...participantWithDetail, participantType: participant.participantType});
+    } else {
+      const participantWithDetail = await prisma.tenant.findUnique({
+        where: { id: participant.participantId }
+      });
+      if (participantWithDetail !== null) 
+        participantsWithDetails.push({...participantWithDetail, participantType: participant.participantType});
+    }
+  }
+
+  return participantsWithDetails;
 }
 
 export async function getChannelsOfUser(userId: string) {

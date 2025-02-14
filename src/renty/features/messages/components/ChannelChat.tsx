@@ -7,26 +7,29 @@ import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { ChatSkeleton } from "./ChatSkeleton";
 import * as Ably from "ably";
-import { ParticipantType, type Message } from "@prisma/client";
+import { ParticipantType, user } from "@prisma/client";
+import { MessageWithSender } from "../db";
+ 
 
 type ChannelChatProps = {
     apiKey: string;
-    initialMessages: Message[];
+    initialMessages: MessageWithSender[];
     channelId: string;
-    userId: string;
+    user: user;
 };
 
-function ChatContent({ initialMessages, channelId, userId }: Omit<ChannelChatProps, 'apiKey'>) {
-    const [messages, setMessages] = useState<Message[]>(initialMessages);
+function ChatContent({ initialMessages, channelId, user }: Omit<ChannelChatProps, 'apiKey'>) {
+    const [messages, setMessages] = useState<MessageWithSender[]>(initialMessages);
 
     const { channel } = useChannel(`channel:${channelId}`, 'message', (message) => {
-        const newMessage: Message = {
+        const newMessage: MessageWithSender = {
             id: message.id!,
             channelId: channelId,
             senderId: message.data.senderId,
             senderType: message.data.senderType,
             content: message.data.content,
-            createdAt: new Date(message.data.timestamp)
+            createdAt: new Date(message.data.timestamp),
+            sender: user
         };
         setMessages(prev => [...prev, newMessage]);
     });
@@ -36,7 +39,7 @@ function ChatContent({ initialMessages, channelId, userId }: Omit<ChannelChatPro
             // First save to database
             const savedMessage = await createMessageAction({
                 channelId,
-                senderId: userId,
+                senderId: user.id,
                 senderType: ParticipantType.LANDLORD, // You might want to pass this as a prop
                 content,
             });
@@ -57,19 +60,19 @@ function ChatContent({ initialMessages, channelId, userId }: Omit<ChannelChatPro
 
     return (
         <>
-            <MessageList messages={messages} />
+            <MessageList messages={messages} currentUserId={user.id} />
             <MessageInput onSendMessage={sendMessage} />
         </>
     );
 }
 
-export function ChannelChat({ apiKey, initialMessages, channelId, userId }: ChannelChatProps) {
+export function ChannelChat({ apiKey, initialMessages, channelId, user }: ChannelChatProps) {
     const [client, setClient] = useState<Ably.Realtime | null>(null);
 
     useEffect(() => {
         const ablyClient = new Ably.Realtime({
             key: apiKey,
-            clientId: `${userId}-${Date.now()}`,
+            clientId: `${user.id}-${Date.now()}`,
         });
 
         setClient(ablyClient);
@@ -77,7 +80,7 @@ export function ChannelChat({ apiKey, initialMessages, channelId, userId }: Chan
         return () => {
             ablyClient.close();
         };
-    }, [apiKey, userId]);
+    }, [apiKey, user.id]);
 
     if (!client) {
         return <ChatSkeleton />;
@@ -89,7 +92,7 @@ export function ChannelChat({ apiKey, initialMessages, channelId, userId }: Chan
                 <ChatContent 
                     initialMessages={initialMessages}
                     channelId={channelId}
-                    userId={userId}
+                    user={user}
                 />
             </ChannelProvider>
         </AblyProvider>
