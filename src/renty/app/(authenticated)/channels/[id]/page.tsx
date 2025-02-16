@@ -6,13 +6,13 @@ import { ChannelChat } from "@/features/messages/components/ChannelChat";
 import type { user } from "@prisma/client";
 
 type ChannelProps = {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 };
 
 export default async function Channel({ params }: ChannelProps) {
-    const { id } = params;
+    const { id } = await params;
     
     const session = await auth.api.getSession({
         headers: await headers()
