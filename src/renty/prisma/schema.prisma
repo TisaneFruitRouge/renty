@@ -79,6 +79,7 @@ model property {
   user         user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tenants      tenant[]
   rentReceipt  rentReceipt[]
+  channels     channel[]
 
   rentReceiptStartDate DateTime?
 
@@ -139,7 +140,81 @@ model tenant {
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   rentReceipt rentReceipt[]
+  auth        tenantAuth?
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model tenantAuth {
+  id          String    @id @default(cuid())
+  tenantId    String    @unique
+  phoneNumber String    @unique
+  passcode    String    // Hashed 6-digit passcode
+  tempCode    String?   // Temporary access code for first login
+  tempCodeExpiresAt DateTime?
+  isActivated Boolean   @default(false)
+  tenant     tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // For handling authentication sessions
+  refreshToken String?
+  refreshTokenExpiresAt DateTime?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model channel {
+  id          String    @id @default(cuid())
+  propertyId  String
+  name        String?   // Optional custom name for the channel
+  type        ChannelType @default(PROPERTY)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  property    property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  messages    Message[]
+  participants channelParticipant[]
+
+  @@index([propertyId])
+}
+
+model channelParticipant {
+  id          String    @id @default(cuid())
+  channelId   String
+  participantId String  // Can be either userId (landlord) or tenantId
+  participantType ParticipantType
+  joinedAt    DateTime  @default(now())
+  leftAt      DateTime?
+  
+  channel     channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, participantId])
+  @@index([participantId])
+}
+
+model Message {
+  id          String    @id @default(cuid())
+  content     String
+  channelId   String
+  senderId    String    // Can be either userId (landlord) or tenantId
+  senderType  ParticipantType
+  createdAt   DateTime  @default(now())
+  
+  channel     channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@index([channelId])
+  @@index([senderId])
+}
+
+enum ChannelType {
+  PROPERTY    // Default channel for property-wide communication
+  MAINTENANCE // Specific channel for maintenance issues
+  PAYMENT     // Specific channel for payment discussions
+  CUSTOM      // For any custom channels you might want to create
+}
+
+enum ParticipantType {
+  LANDLORD
+  TENANT
 }
