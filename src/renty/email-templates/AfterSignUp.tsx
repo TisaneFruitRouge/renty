@@ -1,33 +1,110 @@
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Text,
+  Link,
+} from '@react-email/components';
+
 interface AfterSignUpProps {
   name: string;
 }
 
 export default function AfterSignUp({ name }: AfterSignUpProps) {
   return (
-    <div className="bg-white font-sans">
-      <div className="max-w-2xl mx-auto p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Renty, {name}! 🎉</h1>
-          <p className="text-gray-600">We&apos;re excited to have you on board.</p>
-        </div>
-
-        {/* CTA Button */}
-        <div className="text-center mb-8">
-          <a
-            href="https://renty.cc/"
-            className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+    <Html>
+      <Head />
+      <Preview>Bienvenue sur Renty !</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Heading style={h1}>Bienvenue sur Renty, {name} ! 🎉</Heading>
+          <Text style={text}>
+            Nous sommes ravis de vous compter parmi nous.
+          </Text>
+          
+          <Button
+            style={button}
+            href="https://app.renty.cc/"
           >
-            Get Started
-          </a>
-        </div>
-
-        {/* Footer */}
-        <div className="text-center text-gray-500 text-sm">
-          <p className="mb-2">Need help? Contact our support team at support@renty.cc</p>
-          <p> 2024 Renty. All rights reserved.</p>
-        </div>
-      </div>
-    </div>
+            Commencer
+          </Button>
+          
+          <Text style={helpText}>
+            Besoin d&apos;aide ? Contactez notre équipe support à{' '}
+            <Link href="mailto:support@renty.cc" style={link}>
+              support@renty.cc
+            </Link>
+          </Text>
+          
+          <Text style={footer}>
+            © 2024 Renty. Tous droits réservés.
+          </Text>
+        </Container>
+      </Body>
+    </Html>
   );
 }
+
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+};
+
+const container = {
+  margin: '0 auto',
+  padding: '20px 0 48px',
+  maxWidth: '580px',
+};
+
+const h1 = {
+  color: '#1a1a1a',
+  fontSize: '24px',
+  fontWeight: '600',
+  lineHeight: '40px',
+  margin: '0 0 20px',
+  textAlign: 'center' as const,
+};
+
+const text = {
+  color: '#444444',
+  fontSize: '16px',
+  lineHeight: '24px',
+  margin: '0 0 24px',
+  textAlign: 'center' as const,
+};
+
+const button = {
+  backgroundColor: '#000',
+  borderRadius: '6px',
+  color: '#fff',
+  fontSize: '16px',
+  fontWeight: '600',
+  textDecoration: 'none',
+  textAlign: 'center' as const,
+  display: 'inline-block',
+  width: 'auto',
+  margin: '0 auto 32px',
+  padding: '16px 24px',
+};
+
+const helpText = {
+  ...text,
+  margin: '0 0 12px',
+};
+
+const link = {
+  color: '#0066FF',
+  textDecoration: 'none',
+};
+
+const footer = {
+  color: '#898989',
+  fontSize: '14px',
+  lineHeight: '22px',
+  margin: '0',
+  textAlign: 'center' as const,
+};

@@ -1,9 +1,22 @@
 {
+    "messages": {
+        "default-page": {
+            "description": "Sélectionnez une conversation pour commencer à discuter",
+            "empty-state": "Vous n'avez pas encore de conversations actives",
+            "title": "Vos messages"
+        },
+        "direct-messages": "Messages directs",
+        "no-conversations": "Aucune conversation",
+        "participants": "Participants",
+        "title": "Messages",
+        "unknown-sender": "Inconnu",
+        "you": "Vous"
+    },
     "calendar": {
-        "today": "Aujourd'hui",
-        "select-date": "Sélectionner une date",
+        "next-month": "Mois suivant",
         "previous-month": "Mois précédent",
-        "next-month": "Mois suivant"
+        "select-date": "Sélectionner une date",
+        "today": "Aujourd'hui"
     },
     "home": {
         "welcome": "Bonjour, {name}",
@@ -34,6 +47,7 @@
         "edit-property": "Modifier la propriété",
         "success": "Succès",
         "error": "Erreur",
+        "no-properties-found": "Aucune propriété trouvée",
         "photos-uploaded-successfully": "Les photos ont été téléchargées avec succès",
         "error-uploading-photos": "Une erreur est survenue lors du téléchargement des photos",
         "photo-removed-successfully": "La photo a été supprimée avec succès",
@@ -333,6 +347,7 @@
             "properties": "Propriétés",
             "rent-receipts": "Quittances de loyer",
             "tenants": "Locataires",
+            "channels": "Messages",
             "settings": "Paramètres"
         },
         "logout": "Se déconnecter"

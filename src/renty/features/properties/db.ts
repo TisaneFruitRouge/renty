@@ -1,5 +1,6 @@
 import { prisma } from "@/prisma/db";
 import type { Prisma } from "@prisma/client";
+import { createPropertyChannel } from "../messages/db";
 
 export async function getPropertiesForUser(userId: string) {
     const properties = await prisma.property.findMany({
@@ -133,6 +134,8 @@ export default async function createProperty(
             images: [],
         },
     });
+
+    await createPropertyChannel(property.id, userId);
 
     return property;
 }
