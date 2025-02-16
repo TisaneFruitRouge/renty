@@ -1,11 +1,12 @@
 "use server"
 
+import type { ParticipantType } from "@prisma/client";
 import { saveMessage } from "./db";
 
 export async function createMessageAction(data: {
     channelId: string;
     senderId: string;
-    senderType: string;
+    senderType: ParticipantType;
     content: string;
 }) {
     try {
