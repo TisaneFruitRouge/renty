@@ -1,0 +1,17 @@
+{
+  "tabs": {
+    "home": "Accueil",
+    "messages": "Messages",
+    "profile": "Profil"
+  },
+  "auth": {
+    "welcome": "Bienvenue sur Renty",
+    "subtitle": "L'application tout-en-un pour gérer votre location",
+    "login": {
+      "phoneNumber": "Numéro de téléphone",
+      "passcode": "Code à 6 chiffres",
+      "loginButton": "Se connecter",
+      "biometricButton": "Connexion biométrique"
+    }
+  }
+}
