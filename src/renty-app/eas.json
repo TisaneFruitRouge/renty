@@ -37,8 +37,5 @@
         "serviceAccountKeyPath": "path/to/service-account-key.json"
       }
     }
-  },
-  "updates": {
-    "url": "https://u.expo.dev/${PROJECT_ID}"
   }
 }
