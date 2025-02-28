@@ -7,27 +7,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { fetchChannelsOfTenant } from '@/queries/channels';
 import { Channel } from '@/lib/types';
-
-type Chat = {
-  id: string;
-  user: {
-    id: string;
-    name: string;
-    avatar?: string;
-  };
-  lastMessage: {
-    text: string;
-    timestamp: string;
-    isRead: boolean;
-  };
-};
+import { useTranslation } from 'react-i18next';
 
 export default function MessagesScreen() {
   const { tenant } = useAuth();
+  const { t } = useTranslation('messages');
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['channels'],
-    queryFn: () => fetchChannelsOfTenant(tenant.id),
+    queryFn: () => fetchChannelsOfTenant(tenant?.id as string),
   });
 
   const lastMessage = (channel: Channel) => {
@@ -43,19 +31,21 @@ export default function MessagesScreen() {
     const _date = new Date(date);
     return _date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+  
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: 'Messages',
+          headerTitle: t('messages.title'),
           headerLargeTitle: true,
           headerTransparent: true,
           headerBlurEffect: 'regular',
+          headerBackTitle: t('messages.title'),
           headerStyle: {
             backgroundColor: 'transparent',
           },
           headerSearchBarOptions: {
-            placeholder: 'Search messages',
+            placeholder: t('messages.search'),
           },
         }}
       />
@@ -63,7 +53,7 @@ export default function MessagesScreen() {
         className="flex-1 bg-background" 
         contentInsetAdjustmentBehavior="automatic"
       >
-        <View className="px-4 pt-2 pb-4 space-y-3">
+        <View className="px-4 pt-2 pb-4 flex flex-col gap-4">
           {isLoading ? (
             [...Array(3)].map((_, index) => (
               <View 
@@ -89,10 +79,6 @@ export default function MessagesScreen() {
                     className="flex-row items-center p-3 bg-card/50 rounded-2xl border border-border/50 active:opacity-80"
                     activeOpacity={0.9}
                   >
-                    {/* <Image
-                      source={{ uri: chat.user.avatar }}
-                      className="w-14 h-14 rounded-xl"
-                    /> */}
                     <View className="flex-1 ml-3">
                       <View className="flex-row justify-between items-center mb-1">
                         <Text className="text-base font-semibold">

@@ -8,8 +8,8 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { useQuery } from '@tanstack/react-query';
 import { fetchChannel, sendMessage } from '@/queries/channels';
 import { useAuth } from '@/hooks/useAuth';
-import { Channel, Message, MessageWithSender } from '@/lib/types';
-import { Message as MessageComponent } from '@/components/Message';
+import { Channel, MessageWithSender } from '@/lib/types';
+import { Message as MessageComponent } from '@/components/messages/Message';
 
 import * as Ably from 'ably';
 import { AblyProvider, useChannel, ChannelProvider } from 'ably/react';
@@ -55,8 +55,8 @@ function MessageInput({ onSend }: MessageInputProps) {
   };
 
   return (
-    <BlurView intensity={80} className="border-t border-border">
-      <View className="p-4 space-x-3 flex-row items-end">
+    <BlurView intensity={80} className="border-t border-border pb-4">
+      <View className="p-4 flex flex-row gap-4 items-end">
         <Input
           value={message}
           onChangeText={setMessage}
@@ -132,6 +132,7 @@ function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, i
           headerTitle: chatChannel.property.title,
           headerTransparent: true,
           headerBlurEffect: 'regular',
+          headerBackTitle: 'Messages',
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => navigation.goBack()}
@@ -147,7 +148,7 @@ function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, i
       />
       <MessageList 
         messages={messages} 
-        userId={tenant.id}
+        userId={tenant?.id!}
         scrollViewRef={scrollViewRef}
       />
       <MessageInput onSend={handleSend} />
@@ -166,8 +167,8 @@ export default function ChatScreen() {
 
   const client = useMemo(() => new Ably.Realtime({ 
     key: ABLY_API_KEY, 
-    clientId: tenant.id 
-  }), [tenant.id]);
+    clientId: tenant!.id 
+  }), [tenant!.id]);
   
   if (isLoading) {
     return (
