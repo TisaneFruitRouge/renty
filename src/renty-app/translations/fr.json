@@ -1,0 +1,77 @@
+{
+  "profile": {
+    "title": "Profil",
+    "edit": {
+      "title": "Modifier le profil",
+      "basicInfo": "Informations de base",
+      "contactInfo": "Coordonnées",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "phone": "Téléphone",
+      "verify": "Vérifier",
+      "verified": "Vérifié",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "personalInfo": "Informations personnelles",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "editInfo": "Modifier mes informations",
+    "tenantInfo": "Informations locataire",
+    "property": "Adresse",
+    "leaseStart": "Début du bail",
+    "leaseEnd": "Fin du bail",
+    "monthlyRent": "Loyer mensuel",
+    "notProvided": "Non renseigné",
+    "logout": "Se déconnecter",
+    "security": "Sécurité",
+    "biometricLogin": "Connexion biométrique",
+    "loginWith": "Se connecter avec",
+    "fingerprint": "Empreinte digitale",
+    "biometricError": "Erreur biométrique",
+    "biometricErrorMessage": "Échec de la configuration de l'authentification biométrique"
+  },
+  "auth": {
+    "welcome": "Bienvenue sur Renty",
+    "subtitle": "L'application tout-en-un pour gérer votre location",
+    "login": {
+      "phoneNumber": "Numéro de téléphone",
+      "passcode": "Code à 6 chiffres",
+      "loginButton": "Se connecter",
+      "biometricButton": "Connexion biométrique"
+    }
+  },
+  "home": {
+    "title": "Accueil",
+    "welcome": "Bonjour, {{name}}",
+    "error": "Une erreur est survenue lors du chargement des données",
+    "loading": "Chargement des quittances...",
+    "loadError": "Impossible de charger les quittances"
+  },
+  "messages": {
+    "title": "Messages",
+    "search": "Rechercher des messages"
+  },
+  "tabs": {
+    "home": "Accueil",
+    "messages": "Messages",
+    "profile": "Profil"
+  },
+  "rentReceipts": {
+    "title": "Quittances récentes",
+    "viewAll": "Voir toutes les quittances",
+    "allReceipts": "Quittances",
+    "period": "Période",
+    "amount": "Montant",
+    "status": {
+      "DRAFT": "Brouillon",
+      "PENDING": "En attente",
+      "PAID": "Payée",
+      "LATE": "En retard",
+      "UNPAID": "Non payée",
+      "CANCELLED": "Annulée"
+    }
+  }
+}

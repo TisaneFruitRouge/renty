@@ -162,6 +162,13 @@ model tenantAuth {
   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  
+  // Add these fields for biometric authentication
+  biometricEnabled Boolean @default(false)
+  biometricPublicKey String?  // Store public key for biometric verification
+  
+  // Add an index for faster phone number lookups
+  @@index([phoneNumber])
 }
 
 model channel {
