@@ -50,7 +50,7 @@ export function Message({ message, currentUserId }: MessageProps) {
                         {message.senderId === currentUserId ? t('you') : getSenderName(message)}
                     </span>
                     <span className="text-xs text-gray-400 opacity-0 transition-opacity group-hover:opacity-100">
-                        {format(new Date(message.createdAt), "p")}
+                        {format(message.createdAt, "p")}
                     </span>
                 </div>
                 <div className={cn("relative break-words",

@@ -3,12 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useRef, useState } from "react";
+import { Send } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type MessageInputProps = {
     onSendMessage: (content: string) => Promise<void>;
 };
 
 export function MessageInput({ onSendMessage }: MessageInputProps) {
+    const t = useTranslations("messages");
     const [message, setMessage] = useState("");
     const [isSending, setIsSending] = useState(false);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -38,19 +41,23 @@ export function MessageInput({ onSendMessage }: MessageInputProps) {
 
     return (
         <form onSubmit={handleSubmit} className="border-t p-4">
-            <div className="flex gap-2">
+            <div className="flex items-stretch gap-2">
                 <Textarea
                     ref={textareaRef}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Type your message..."
+                    placeholder={t("input.placeholder")}
                     className="resize-none"
                     rows={1}
                     disabled={isSending}
                 />
-                <Button type="submit" disabled={!message.trim() || isSending}>
-                    Send
+                <Button 
+                    type="submit" 
+                    disabled={!message.trim() || isSending} 
+                    className="px-3 h-16"
+                >
+                    <Send className="h-4 w-4" />
                 </Button>
             </div>
         </form>

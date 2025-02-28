@@ -1,5 +1,8 @@
 {
     "messages": {
+        "input": {
+            "placeholder": "Écrivez votre message..."
+        },
         "default-page": {
             "description": "Sélectionnez une conversation pour commencer à discuter",
             "empty-state": "Vous n'avez pas encore de conversations actives",

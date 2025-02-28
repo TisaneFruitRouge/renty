@@ -28,8 +28,8 @@ function ChatContent({ initialMessages, channelId, user }: Omit<ChannelChatProps
             senderId: message.data.senderId,
             senderType: message.data.senderType,
             content: message.data.content,
-            createdAt: new Date(message.data.timestamp),
-            sender: user
+            createdAt: new Date(),
+            sender: message.data.sender
         };
         setMessages(prev => [...prev, newMessage]);
     });
@@ -51,6 +51,7 @@ function ChatContent({ initialMessages, channelId, user }: Omit<ChannelChatProps
                 senderId: savedMessage.senderId,
                 senderType: savedMessage.senderType,
                 timestamp: savedMessage.createdAt.toISOString(),
+                sender: user
             });
         } catch (error) {
             console.error('Failed to send message:', error);
@@ -72,7 +73,7 @@ export function ChannelChat({ apiKey, initialMessages, channelId, user }: Channe
     useEffect(() => {
         const ablyClient = new Ably.Realtime({
             key: apiKey,
-            clientId: `${user.id}-${Date.now()}`,
+            clientId: user.id,
         });
 
         setClient(ablyClient);
