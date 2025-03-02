@@ -104,14 +104,14 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
           <View style={styles.section}>
             <Text style={styles.label}>PROPRIÉTAIRE</Text>
             <Text style={styles.value}>{property.user.name}</Text>
-            {property.user.address && <Text style={styles.value}>{property.user.address}</Text>}
+            {property.user.address && <Text style={styles.value}>{property.user.address}, {property.user.city}, {property.user.postalCode}, {property.user.state}</Text>}
             {property.user.email && <Text style={styles.value}>Email: {property.user.email}</Text>}
           </View>
 
           <View style={styles.section}>
             <Text style={styles.label}>LOCATAIRE</Text>
             <Text style={styles.value}>{tenant.firstName} {tenant.lastName}</Text>
-            <Text style={styles.value}>{property.address}</Text>
+            <Text style={styles.value}>{property.address}, {property.city}, {property.postalCode}, {property.state}</Text>
           </View>
         </View>
 

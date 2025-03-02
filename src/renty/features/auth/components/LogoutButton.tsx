@@ -30,7 +30,8 @@ export default function LogoutButton() {
     return (
         <Button 
             onClick={signOut}
-            className="w-full"
+            variant="outline"
+            className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
             disabled={isLoading}
         >
             {isLoading && (
