@@ -1,0 +1,8 @@
+I code using Yarn
+
+This repo consists of 3 main projects:
+- landing: A Next.js app that serves as the landing page
+- renty: A Next.js app that serves as the backoffice for landlord users AND as an API for the mobile app (under the /app/api/(mobile) folder)
+- renty-app: A React Native app that serves as the main app for tenants
+
+You may find the database shema in the (renty/prisma/schema.prisma file). Make sure the schema is always up-to-date with the types in the renty-app/types/index.ts file
