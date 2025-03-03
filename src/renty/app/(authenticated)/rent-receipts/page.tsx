@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server"
-import { RentReceiptItem } from "@/features/rent-receipt/components/RentReceiptItem";
 import { getReceiptsOfUser } from "@/features/rent-receipt/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import CreateRentReceiptModal from "@/features/rent-receipt/components/CreateRentReceiptModal";
 import { getPropertiesForUser } from "@/features/properties/db";
-import { RentReceiptFilters } from "./components/RentReceiptFilters";
+import { RentReceiptFilters } from "@/features/rent-receipt/components/RentReceiptFilters";
+import RentReceiptsList from "@/features/rent-receipt/components/RentReceiptsList";
 
 interface RentReceiptsPageSearchParams {
     searchParams: Promise<{ 
@@ -47,20 +47,7 @@ export default async function RentReceiptsPage({ searchParams }: RentReceiptsPag
             
             <RentReceiptFilters properties={properties} />
             
-            <div>
-                {receipts.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
-                        {t('no-receipts')}
-                    </p>
-                ) : (
-                    receipts.map((receipt, index) => (
-                        <RentReceiptItem
-                            key={index}
-                            receipt={receipt}
-                        />
-                    ))
-                )}
-            </div>
+            <RentReceiptsList receipts={receipts} properties={properties} />
         </div>
     )
 }
