@@ -31,12 +31,39 @@
         "monthly-revenues": "Revenus mensuels moyens",
         "payments-waiting": "Paiement en attente",
         "recent-activity": "Activité Récente",
-        "see-more": "Voir plus"
+        "see-more": "Voir plus",
+        "view-all": "Voir tout",
+        "view-pending": "Voir en attente",
+        "view-receipts": "Voir les quittances",
+        "add-first-property": "Ajouter une première propriété",
+        "no-recent-activity": "Aucune activité récente",
+        "create-first-receipt": "Créer une première quittance",
+        "getting-started": "Commencer avec Renty",
+        "complete-steps": "Complétez ces étapes pour configurer votre compte",
+        "step-1-title": "Ajouter une propriété",
+        "step-1-description": "Commencez par ajouter votre première propriété pour gérer vos locations",
+        "step-2-title": "Ajouter des photos",
+        "step-2-description": "Téléchargez des photos pour présenter votre propriété",
+        "step-3-title": "Ajouter un locataire",
+        "step-3-description": "Associez un locataire à votre propriété pour gérer le bail",
+        "step-4-title": "Générer des quittances",
+        "step-4-description": "Créez et envoyez des quittances de loyer à vos locataires",
+        "add-property": "Ajouter une propriété",
+        "manage-properties": "Gérer les propriétés",
+        "properties-description": "Ajoutez et gérez vos biens immobiliers, appartements et maisons",
+        "go-to-properties": "Accéder aux propriétés",
+        "manage-tenants": "Gérer les locataires",
+        "tenants-description": "Ajoutez des locataires et gérez leurs informations personnelles",
+        "go-to-tenants": "Accéder aux locataires",
+        "manage-receipts": "Gérer les quittances",
+        "receipts-description": "Créez et envoyez des quittances de loyer à vos locataires",
+        "go-to-receipts": "Accéder aux quittances"
     },
     "properties": {
         "title": "Mes Propriétés",
         "description": "Gérez vos biens immobiliers",
-        "add": "Ajouter une propriété"
+        "add": "Ajouter une propriété",
+        "explore-features": "Explorer les fonctionnalités"
     },
     "property": {
         "back-to-properties": "Retour aux propriétés",
@@ -51,6 +78,7 @@
         "success": "Succès",
         "error": "Erreur",
         "no-properties-found": "Aucune propriété trouvée",
+        "empty-state-description": "Ajoutez votre première propriété pour commencer à gérer vos locations et vos locataires. C'est rapide et facile !",
         "photos-uploaded-successfully": "Les photos ont été téléchargées avec succès",
         "error-uploading-photos": "Une erreur est survenue lors du téléchargement des photos",
         "photo-removed-successfully": "La photo a été supprimée avec succès",
@@ -219,6 +247,8 @@
     },
     "rent-receipts": {
         "no-receipts": "Aucune quittance trouvée",
+        "empty-state-description": "Créez votre première quittance de loyer pour commencer à gérer vos paiements. Vous pouvez générer des quittances pour vos locataires existants.",
+        "manage-properties": "Gérer les propriétés",
         "title": "Quittances de loyer",
         "status-update": {
             "success": "Statut mis à jour",
@@ -520,6 +550,9 @@
         "title": "Gérez vos locataires",
         "subtitle": "Gérez vos locataires et leurs informations",
         "no-tenants-found": "Aucun locataire trouvé",
+        "empty-state-description": "Ajoutez votre premier locataire pour commencer à gérer vos locations. Vous pouvez associer un locataire à une propriété existante.",
+        "manage-properties": "Gérer les propriétés",
+        "no-notes": "Aucune note",
         "add-tenant": "Ajouter un locataire",
         "remove-tenant": "Supprimer le locataire",
         "select-form": {
