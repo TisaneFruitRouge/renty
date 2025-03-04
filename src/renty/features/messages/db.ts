@@ -151,3 +151,14 @@ export async function saveMessage(data: {
     });
     return message;
 }
+
+export async function getChannelByPropertyId(propertyId: string) {
+    const channel = await prisma.channel.findFirst({
+        where: { 
+            propertyId,
+            type: 'PROPERTY'
+        }
+    });
+    
+    return channel;
+}

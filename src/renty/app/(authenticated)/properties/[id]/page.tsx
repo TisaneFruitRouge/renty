@@ -78,42 +78,53 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
                     />
                     <RecentPaymentsSection propertyId={id} recentPayments={recentPayments} />
                     
-                    {/* TODO: Documents
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                        <div className="p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-lg font-semibold text-gray-900">{t("documents")}</h2>
-                                <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
-                                    <Plus className="w-4 h-4 mr-1" />
-                                    {t("add-document")}
-                                </Button>
+                    {/* Document Vault Card */}
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="flex flex-col md:flex-row">
+                            <div className="p-6 flex-1">
+                                <div className="flex items-center mb-3">
+                                    <svg className="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <h2 className="text-lg font-semibold text-gray-900">{t("documents")}</h2>
+                                </div>
+                                <p className="text-gray-600 mb-4">{t("documents-description")}</p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
+                                        {t("category-lease")}
+                                    </span>
+                                    <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
+                                        {t("category-inventory")}
+                                    </span>
+                                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">
+                                        {t("category-insurance")}
+                                    </span>
+                                    <span className="inline-flex items-center rounded-full bg-violet-50 px-2 py-1 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-700/10">
+                                        {t("category-legal")}
+                                    </span>
+                                </div>
+                                <Link 
+                                    href={`/properties/${id}/vault`}
+                                    className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                                >
+                                    {t("view-document-vault")}
+                                </Link>
                             </div>
-                            <div className="space-y-4">
-                                {[].map((doc: any) => (
-                                    <div key={doc.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                        <div className="flex items-center">
-                                            <FileText className="h-5 w-5 text-gray-400" />
-                                            <div className="ml-4">
-                                                <div className="text-sm font-medium text-gray-900">{doc.name}</div>
-                                                <div className="text-sm text-gray-500">
-                                                    {t("added-on")} {new Date(doc.date).toLocaleDateString()}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <Button variant="ghost" className="text-blue-600 hover:text-blue-800">
-                                            {t("download")}
-                                        </Button>
-                                    </div>
-                                ))}
+                            <div className="bg-primary/5 p-6 flex flex-col justify-center items-center md:w-1/3 border-t md:border-t-0 md:border-l border-gray-200">
+                                <svg className="w-16 h-16 text-primary mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                                </svg>
+                                <p className="text-center text-sm font-medium text-gray-900 mb-1">{t("secure-storage")}</p>
+                                <p className="text-center text-xs text-gray-600">{t("secure-storage-description")}</p>
                             </div>
                         </div>
-                    </div> */}
+                    </div>
                 </div> 
 
                 {/* Sidebar - Property Details */}
                 <div className="space-y-6">
                     <PropertyKeyInformation property={property} />
-                    <PropertyQuickActions property={property} />
+                    <PropertyQuickActions property={property} tenant={tenant} />
                 </div>
             </div>
         </div>
