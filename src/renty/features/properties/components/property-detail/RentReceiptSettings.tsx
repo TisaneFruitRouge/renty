@@ -26,9 +26,10 @@ import {
 
 interface RentReceiptSettingsProps {
   property: property;
+  className?: string;
 }
 
-export default function RentReceiptSettings({ property }: RentReceiptSettingsProps) {
+export default function RentReceiptSettings({ property, className }: RentReceiptSettingsProps) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(property.rentReceiptStartDate || undefined);
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,7 @@ export default function RentReceiptSettings({ property }: RentReceiptSettingsPro
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" className={className}>
           <CalendarSync className="h-4 w-4 mr-2" />
           {property.rentReceiptStartDate 
             ? `${t("configuration.automatic-send")} ${format(property.rentReceiptStartDate, "d MMMM yyyy", { locale: fr })}`

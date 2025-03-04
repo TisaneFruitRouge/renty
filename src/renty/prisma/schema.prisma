@@ -80,6 +80,7 @@ model property {
   tenants      tenant[]
   rentReceipt  rentReceipt[]
   channels     channel[]
+  documents    document[]
 
   rentReceiptStartDate DateTime?
 
@@ -224,4 +225,33 @@ enum ChannelType {
 enum ParticipantType {
   LANDLORD
   TENANT
+}
+
+model document {
+  id          String    @id @default(cuid())
+  name        String    // Document name (e.g., "Lease Agreement")
+  description String?   // Optional description
+  fileUrl     String    // URL to the file in blob storage
+  fileType    String    // File type/extension (e.g., "pdf", "docx")
+  fileSize    Int       // Size in bytes
+  category    DocumentCategory
+  propertyId  String
+  uploadedAt  DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  property    property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@index([propertyId])
+}
+
+enum DocumentCategory {
+  LEASE           // Rental/lease agreement
+  INVENTORY       // "État des lieux" (property inventory)
+  INSURANCE       // Insurance documents
+  MAINTENANCE     // Maintenance records
+  PAYMENT         // Payment records or receipts
+  CORRESPONDENCE  // Important correspondence
+  LEGAL           // Other legal documents
+  UTILITY         // Utility bills or contracts
+  OTHER           // Miscellaneous documents
 }
