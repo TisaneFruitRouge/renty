@@ -13,7 +13,8 @@ import { deleteDocumentFromBlob, uploadDocumentToBlob } from "./blob";
 const uploadDocumentSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
-    category: z.nativeEnum(DocumentCategory)
+    category: z.nativeEnum(DocumentCategory),
+    sharedWithTenant: z.boolean().default(false)
 });
 
 export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;
@@ -58,6 +59,7 @@ export async function uploadDocumentAction(
             fileType,
             size,
             data.category,
+            data.sharedWithTenant,
             data.description
         );
 
@@ -112,6 +114,7 @@ export async function updateDocumentAction(
         name?: string;
         description?: string;
         category?: DocumentCategory;
+        sharedWithTenant?: boolean;
     }
 ) {
     const session = await auth.api.getSession({

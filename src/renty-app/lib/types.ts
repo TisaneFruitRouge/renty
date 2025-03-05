@@ -191,3 +191,18 @@ export type Message = {
 export type MessageWithSender = Message & {
     sender: Tenant | User | null; // Adjust the type of sender based on your actual sender type, e.g., User or Tenant
 }
+
+export type Document = {
+    id: string;
+    name: string;
+    description?: string;
+    fileUrl: string;
+    fileType: string;
+    fileSize: number;
+    category: string;
+    propertyId: string;
+    sharedWithTenant: boolean;
+    property?: Property;
+    uploadedAt: Date;
+    updatedAt: Date;
+}

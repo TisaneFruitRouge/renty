@@ -160,7 +160,7 @@ export default function Navbar() {
                 </Link>
                 
                 <Link
-                  href="/signup"
+                  href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
                   className="block w-full py-3 px-4 rounded-md text-center font-medium text-white bg-black hover:bg-gray-800 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

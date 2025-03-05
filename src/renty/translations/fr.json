@@ -734,6 +734,8 @@
         "document-deleted-successfully": "Le document a été supprimé avec succès",
         "error-deleting-document": "Une erreur est survenue lors de la suppression du document",
         "document-updated-successfully": "Le document a été mis à jour avec succès",
-        "error-updating-document": "Une erreur est survenue lors de la mise à jour du document"
+        "error-updating-document": "Une erreur est survenue lors de la mise à jour du document",
+        "share-with-tenant": "Partager avec le locataire",
+        "share-with-tenant-description": "Le locataire pourra voir et télécharger ce document dans son espace"
     }
 }

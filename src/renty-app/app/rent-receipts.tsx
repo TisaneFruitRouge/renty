@@ -19,8 +19,6 @@ export default function RentReceiptsScreen() {
     queryFn: () => getTenantRentReceipts(tenant!.id),
     enabled: !!tenant?.id,
   });
-
-  console.log(rentReceipts)
   
   return (
     <>
