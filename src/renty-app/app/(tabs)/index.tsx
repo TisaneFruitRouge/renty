@@ -48,9 +48,36 @@ export default function HomeScreen() {
 
         {/* Rent Receipts Section */}
         {isLoading ? (
-          <View style={{ padding: 16 }}>
-            <Text>{t('home.loading')}</Text>
-          </View>
+          <Card className='m-4'>
+            <CardHeader>
+              <CardTitle>{t('rentReceipts.title')}</CardTitle>
+            </CardHeader>
+            <CardContent className='px-0'>
+              {/* Skeleton loader for rent receipts */}
+              {[1, 2, 3].map((_, index) => (
+                <View key={index} className={`bg-white rounded-xl p-4 border-b border-black/20 ${index === 0 && "last:border-t"}`}>
+                  <View className="flex-row justify-between items-center mb-3">
+                    <View className="bg-gray-200 h-5 w-40 rounded-md animate-pulse" />
+                    <View className="bg-gray-200 h-6 w-20 rounded-full animate-pulse" />
+                  </View>
+                  
+                  <View className="space-y-2">
+                    <View className="flex-row justify-between items-center">
+                      <View className="bg-gray-200 h-4 w-24 rounded-md animate-pulse" />
+                      <View className="bg-gray-200 h-4 w-32 rounded-md animate-pulse" />
+                    </View>
+                    <View className="flex-row justify-between items-center">
+                      <View className="bg-gray-200 h-4 w-24 rounded-md animate-pulse" />
+                      <View className="bg-gray-200 h-4 w-16 rounded-md animate-pulse" />
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </CardContent>
+            <CardFooter>
+              <View className="bg-gray-200 h-10 w-full rounded-md animate-pulse" />
+            </CardFooter>
+          </Card>
         ) : error || !rentReceipts ? (
           <View style={{ padding: 16 }}>
             <Text style={{ color: '#EF4444' }}>{t('home.loadError')}</Text>

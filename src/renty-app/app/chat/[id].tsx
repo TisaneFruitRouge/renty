@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Text } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { Input } from '@/components/ui/input';
 import { Stack, useNavigation } from 'expo-router';
@@ -29,13 +29,23 @@ function MessageList({ messages, userId, scrollViewRef }: MessageListProps) {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View className="pb-4 space-y-3">
-        {messages.map((msg) => (
-          <MessageComponent
-            key={msg.id}
-            message={msg}
-            currentUserId={userId}
-          />
-        ))}
+        {messages.length === 0 ? (
+          <View className="items-center justify-center py-12">
+            <View className="w-16 h-16 rounded-lg bg-muted items-center justify-center mb-4 border border-border/50">
+              <IconSymbol name="message.fill" size={28} color="#4b5563" />
+            </View>
+            <Text className="text-lg font-semibold text-center mb-2">No messages yet</Text>
+            <Text className="text-muted-foreground text-center px-8 mb-6">Send a message to start the conversation</Text>
+          </View>
+        ) : (
+          messages.map((msg) => (
+            <MessageComponent
+              key={msg.id}
+              message={msg}
+              currentUserId={userId}
+            />
+          ))
+        )}
       </View>
     </ScrollView>
   );
@@ -61,15 +71,15 @@ function MessageInput({ onSend }: MessageInputProps) {
           value={message}
           onChangeText={setMessage}
           placeholder="Type a message..."
-          className="flex-1 bg-card/50 border-border/50 rounded-2xl px-4 py-2.5"
+          className="flex-1 bg-white border-black/10 rounded-xl px-4 py-2.5"
           multiline
         />
         <TouchableOpacity
           onPress={handleSend}
           disabled={!message.trim()}
           className={`p-2.5 rounded-xl ${message.trim() 
-            ? 'bg-primary active:opacity-80' 
-            : 'bg-muted'}`}
+            ? 'bg-cyan-600 active:opacity-80' 
+            : 'bg-gray-200'}`}
         >
           <IconSymbol 
             name="arrow.up" 
@@ -159,6 +169,7 @@ function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, i
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { tenant } = useAuth();
+  const navigation = useNavigation();
 
   const { data, isLoading } = useQuery({
     queryKey: ['channels', id],
@@ -172,27 +183,65 @@ export default function ChatScreen() {
   
   if (isLoading) {
     return (
-      <View className="flex-1 px-4 pt-2">
-        <View className="pb-4 space-y-3">
-          {[...Array(3)].map((_, index) => (
-            <View
-              key={index}
-              className={`flex-row ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
-            >
-              <View className="max-w-[85%]">
-                <View
-                  className={`rounded-2xl ${index % 2 === 0
-                    ? 'bg-card/50 rounded-tl-md'
-                    : 'bg-primary/50 rounded-tr-md'}`}
-                >
-                  <View className="h-6 w-32 m-3.5 rounded animate-pulse bg-muted" />
+      <KeyboardAvoidingView
+        className="flex-1 bg-background"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={0}
+      >
+        <Stack.Screen
+          options={{
+            headerTitle: 'Loading...',
+            headerTransparent: true,
+            headerBlurEffect: 'regular',
+            headerBackTitle: 'Messages',
+            headerLeft: () => (
+              <TouchableOpacity
+                onPress={() => navigation.goBack()}
+                className="-ml-1 p-2 rounded-full active:bg-muted"
+              >
+                <IconSymbol name="chevron.left" size={20} color="black" />
+              </TouchableOpacity>
+            ),
+            headerStyle: {
+              backgroundColor: 'transparent',
+            },
+          }}
+        />
+        <View className="flex-1 px-4 pt-2">
+          <View className="pb-4 space-y-3">
+            {[...Array(5)].map((_, index) => (
+              <View
+                key={index}
+                className={`flex-row ${index % 2 === 0 ? 'justify-start' : 'justify-end'}`}
+              >
+                <View className="max-w-[85%]">
+                  {index % 2 === 0 && (
+                    <View className="flex-row items-center mb-1 ml-1">
+                      <View className="h-6 w-6 rounded-full bg-gray-200 animate-pulse mr-2" />
+                      <View className="h-3 w-20 rounded animate-pulse bg-gray-200" />
+                    </View>
+                  )}
+                  <View
+                    className={`rounded-xl ${index % 2 === 0
+                      ? 'bg-white border border-black/10 rounded-tl-sm'
+                      : 'bg-black border border-black/10 rounded-tr-sm'}`}
+                  >
+                    <View className="h-6 w-32 m-3.5 rounded animate-pulse bg-gray-200" />
+                    {index % 3 === 1 && <View className="h-6 w-48 mx-3.5 mb-3.5 rounded animate-pulse bg-gray-200" />}
+                  </View>
+                  <View className="h-3 w-16 mt-1 mx-1 rounded animate-pulse bg-gray-200 self-end" />
                 </View>
-                <View className="h-3 w-16 mt-1 mx-1 rounded animate-pulse bg-muted" />
               </View>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
-      </View>
+        <BlurView intensity={80} className="border-t border-border pb-4">
+          <View className="p-4 flex flex-row gap-4 items-end">
+            <View className="flex-1 h-10 bg-gray-200 rounded-xl animate-pulse" />
+            <View className="w-10 h-10 rounded-xl bg-gray-300 animate-pulse" />
+          </View>
+        </BlurView>
+      </KeyboardAvoidingView>
     );
   }
 
