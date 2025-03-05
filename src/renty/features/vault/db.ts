@@ -27,6 +27,7 @@ export async function createDocument(
     fileType: string,
     fileSize: number,
     category: DocumentCategory,
+    sharedWithTenant: boolean = false,
     description?: string
 ) {
     return prisma.document.create({
@@ -37,7 +38,8 @@ export async function createDocument(
             fileUrl,
             fileType,
             fileSize,
-            category
+            category,
+            sharedWithTenant
         }
     });
 }
@@ -56,6 +58,7 @@ export async function updateDocument(
         name?: string;
         description?: string;
         category?: DocumentCategory;
+        sharedWithTenant?: boolean;
     }
 ) {
     return prisma.document.update({

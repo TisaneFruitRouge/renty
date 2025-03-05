@@ -23,6 +23,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
+    FormDescription
 } from "@/components/ui/form"
 import {
     Select,
@@ -34,6 +35,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import { uploadDocumentAction } from "../actions"
 
 interface UploadDocumentDialogProps {
@@ -44,6 +46,7 @@ const formSchema = z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().optional(),
     category: z.nativeEnum(DocumentCategory),
+    sharedWithTenant: z.boolean().default(false),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -62,6 +65,7 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
             name: "",
             description: "",
             category: DocumentCategory.OTHER,
+            sharedWithTenant: false,
         },
     })
 
@@ -212,6 +216,26 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="sharedWithTenant"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">{t('share-with-tenant')}</FormLabel>
+                                        <FormDescription>
+                                            {t('share-with-tenant-description')}
+                                        </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
                                 </FormItem>
                             )}
                         />

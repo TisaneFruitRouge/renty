@@ -74,6 +74,25 @@ export default function HomeScreen() {
             </CardFooter>
           </Card>
         )}
+
+        {/* Documents Section */}
+        <Card className='m-4'>
+          <CardHeader>
+            <CardTitle>{t('documents.title')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Text className='text-muted-foreground'>{t('documents.description')}</Text>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              variant="ghost" 
+              onPress={() => router.push('/documents')}
+              className='justify-center w-full'
+            >
+              <Text>{t('documents.viewAll')}</Text>
+            </Button>
+          </CardFooter>
+        </Card>
       </ScrollView>
     </>
   );

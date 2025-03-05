@@ -46,7 +46,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
           >
             <Link 
-              href="/signup"
+              href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
               className="inline-flex h-12 items-center justify-center rounded-md bg-indigo-600 hover:bg-indigo-700 px-6 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
             >
               {t('cta')}

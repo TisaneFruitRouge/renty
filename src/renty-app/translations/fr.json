@@ -43,6 +43,12 @@
       "biometricButton": "Connexion biométrique"
     }
   },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "unknownError": "Erreur inconnue",
+    "goBack": "Retour"
+  },
   "home": {
     "title": "Accueil",
     "welcome": "Bonjour, {{name}}",
@@ -72,6 +78,32 @@
       "LATE": "En retard",
       "UNPAID": "Non payée",
       "CANCELLED": "Annulée"
+    }
+  },
+  "documents": {
+    "title": "Documents partagés",
+    "description": "Consultez les documents partagés par votre propriétaire",
+    "viewAll": "Voir tous les documents",
+    "allDocuments": "Documents",
+    "filterByCategory": "Filtrer par catégorie",
+    "property": "Propriété",
+    "category": "Catégorie",
+    "uploadedAt": "Date d'ajout",
+    "fileSize": "Taille du fichier",
+    "download": "Télécharger",
+    "noDocuments": "Aucun document partagé",
+    "noDocumentsInCategory": "Aucun document dans cette catégorie",
+    "categories": {
+      "all": "Tous",
+      "LEASE": "Bail",
+      "INVENTORY": "État des lieux",
+      "INSURANCE": "Assurance",
+      "MAINTENANCE": "Maintenance",
+      "PAYMENT": "Paiement",
+      "CORRESPONDENCE": "Correspondance",
+      "LEGAL": "Documents légaux",
+      "UTILITY": "Factures",
+      "OTHER": "Autre"
     }
   }
 }
