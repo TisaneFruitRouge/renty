@@ -26,12 +26,14 @@ export default function AfterSignUp({ name }: AfterSignUpProps) {
             Nous sommes ravis de vous compter parmi nous.
           </Text>
           
-          <Button
-            style={button}
-            href="https://app.renty.cc/"
-          >
-            Commencer
-          </Button>
+          <div style={buttonContainer}>
+            <Button
+              style={button}
+              href="https://app.renty.cc/"
+            >
+              Commencer
+            </Button>
+          </div>
           
           <Text style={helpText}>
             Besoin d&apos;aide ? Contactez notre équipe support à{' '}
@@ -77,6 +79,11 @@ const text = {
   textAlign: 'center' as const,
 };
 
+const buttonContainer = {
+  textAlign: 'center' as const,
+  margin: '0 0 32px',
+};
+
 const button = {
   backgroundColor: '#000',
   borderRadius: '6px',
@@ -86,8 +93,6 @@ const button = {
   textDecoration: 'none',
   textAlign: 'center' as const,
   display: 'inline-block',
-  width: 'auto',
-  margin: '0 auto 32px',
   padding: '16px 24px',
 };
 

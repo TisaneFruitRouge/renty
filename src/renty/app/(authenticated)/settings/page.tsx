@@ -18,6 +18,9 @@ function PersonalInfoTab() {
     if (!data) {
         return null;
     }
+    
+    // Ensure we have all user data including location information
+    const userData = data.user as user;
 
     return (
         <div className="space-y-6">
@@ -29,7 +32,7 @@ function PersonalInfoTab() {
             </div>
             <div className="grid gap-4">
                 <UserInfoForm 
-                    user={data.user as user} 
+                    user={userData}
                     isPending={isPending}
                     error={error}
                 />
@@ -50,7 +53,7 @@ function AppSettingsTab() {
             </div>
             <div className="grid gap-4">
                 {/* Add settings here */}
-                <p className="text-muted-foreground">Coming soon...</p>
+                <p className="text-muted-foreground">Bientôt...</p>
             </div>
         </div>
     )
