@@ -389,7 +389,6 @@
         }
     },
     "sidebar": {
-        "application": "Application",
         "menu": {
             "home": "Accueil",
             "properties": "Propriétés",

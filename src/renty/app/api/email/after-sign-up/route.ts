@@ -1,4 +1,4 @@
-import AfterSignUp from "@/email-templates/AfterSignUp";
+import AfterSignUp from "@/features/auth/email/AfterSignUp";
 import { resend } from "@/lib/resend";
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const { data, error } = await resend.emails.send({
       from: 'Renty <little-bot@renty.cc>',
       to: [recipientEmail],
-      subject: 'Thank you for signing up!',
+      subject: 'Merci pour votre inscription!',
       react: AfterSignUp({ name }),
     });
 
