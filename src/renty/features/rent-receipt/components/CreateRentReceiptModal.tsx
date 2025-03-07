@@ -47,7 +47,7 @@ export default function CreateRentReceiptModal({ properties }: CreateRentReceipt
     const router = useRouter();
     const [open, setOpen] = useState(false);
 
-    const form = useForm<z.infer<NonNullable<typeof createReceiptSchema>>>({
+    const form = useForm<z.infer<typeof createReceiptSchema>>({
         resolver: zodResolver(createReceiptSchema),
         defaultValues: {
             propertyId: "",

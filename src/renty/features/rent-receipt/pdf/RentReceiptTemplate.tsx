@@ -4,7 +4,7 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    fontFamily: 'Helvetica',
+    //fontFamily: 'Helvetica',
   },
   header: {
     marginBottom: 20,
@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  landlordAndTenantSection: {
+    maxWidth: '48%', // Limit width to prevent overlap
+  },
   section: {
     marginBottom: 10,
   },
@@ -29,6 +32,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 12,
+    marginBottom: 3,
   },
   paymentPeriod: {
     textAlign: 'center',
@@ -86,10 +90,17 @@ function formatDate(date: Date) {
 }
 
 function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(amount);
+  // Format the number manually without thousands separators
+  // Convert to string with 2 decimal places
+  const amountStr = amount.toFixed(2);
+  
+  // Split into integer and decimal parts
+  const [intPart, decPart] = amountStr.split('.');
+  
+  console.log(`${intPart},${decPart} €`)
+
+  // Return formatted number with euro symbol, using comma as decimal separator
+  return `${intPart},${decPart} €`;
 }
 
 export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTemplateProps) {
@@ -101,17 +112,29 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
         </View>
 
         <View style={styles.landlordAndTenant}>
-          <View style={styles.section}>
+          <View style={styles.landlordAndTenantSection}>
             <Text style={styles.label}>PROPRIÉTAIRE</Text>
             <Text style={styles.value}>{property.user.name}</Text>
-            {property.user.address && <Text style={styles.value}>{property.user.address}, {property.user.city}, {property.user.postalCode}, {property.user.state}</Text>}
-            {property.user.email && <Text style={styles.value}>Email: {property.user.email}</Text>}
+            {property.user.address && (
+              <Text style={styles.value} wrap>
+                {property.user.address},
+                {property.user.city && ` ${property.user.city}`}
+                {property.user.postalCode && ` ${property.user.postalCode}`}
+                {property.user.state && ` ${property.user.state}`}
+              </Text>
+            )}
+            {property.user.email && <Text style={styles.value} wrap>Email: {property.user.email}</Text>}
           </View>
 
-          <View style={styles.section}>
+          <View style={styles.landlordAndTenantSection}>
             <Text style={styles.label}>LOCATAIRE</Text>
             <Text style={styles.value}>{tenant.firstName} {tenant.lastName}</Text>
-            <Text style={styles.value}>{property.address}, {property.city}, {property.postalCode}, {property.state}</Text>
+            <Text style={styles.value} wrap>
+              {property.address},
+              {property.city && ` ${property.city}`}
+              {property.postalCode && ` ${property.postalCode}`}
+              {property.state && ` ${property.state}`}
+            </Text>
           </View>
         </View>
 

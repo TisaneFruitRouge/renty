@@ -261,6 +261,7 @@
         }
     },
     "rent-receipts": {
+        "back-to-list": "Retour aux quittances",
         "no-receipts": "Aucune quittance trouvée",
         "empty-state-description": "Créez votre première quittance de loyer pour commencer à gérer vos paiements. Vous pouvez générer des quittances pour vos locataires existants.",
         "manage-properties": "Gérer les propriétés",
