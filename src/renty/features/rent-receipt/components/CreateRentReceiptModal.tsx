@@ -60,9 +60,16 @@ export default function CreateRentReceiptModal({ properties }: CreateRentReceipt
 
     async function onSubmit(data: z.infer<NonNullable<typeof createReceiptSchema>>, sendMail: boolean) {
         try {
+            // Normalize dates to midnight UTC to avoid timezone issues
+            const normalizedData = {
+                ...data,
+                startDate: normalizeToUTCMidnight(data.startDate),
+                endDate: normalizeToUTCMidnight(data.endDate)
+            };
+            
             const result = await createRentReceiptAction(
                 sendMail, 
-                data
+                normalizedData
             );
             if (!result) {
                 throw new Error("Error while creating the rent receipt");
@@ -76,6 +83,11 @@ export default function CreateRentReceiptModal({ properties }: CreateRentReceipt
                 description: t('edit-form.error-description'),
             });
         }
+    }
+    
+    // Helper function to normalize dates to midnight UTC
+    function normalizeToUTCMidnight(date: Date): Date {
+        return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
     }
 
     function handleOpenChange(open: boolean) {
