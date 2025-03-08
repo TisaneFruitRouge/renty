@@ -13,6 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogFooter,
+    DialogTrigger,
 } from "@/components/ui/dialog"
 import {
     Form,
@@ -39,8 +40,7 @@ import { updateDocumentAction } from "../actions"
 interface EditDocumentDialogProps {
     document: DocumentType
     propertyId: string
-    open: boolean
-    onOpenChange: (open: boolean) => void
+    children?: React.ReactNode
 }
 
 const formSchema = z.object({
@@ -52,10 +52,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-export function EditDocumentDialog({ document, propertyId, open, onOpenChange }: EditDocumentDialogProps) {
+export function EditDocumentDialog({ document, propertyId, children }: EditDocumentDialogProps) {
     const t = useTranslations('documents')
     const { toast } = useToast()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [open, setOpen] = useState(false)
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -78,7 +79,7 @@ export function EditDocumentDialog({ document, propertyId, open, onOpenChange }:
                 title: t('success'),
                 description: t('document-updated-successfully'),
             })
-            onOpenChange(false)
+            setOpen(false)
         } catch (error) {
             console.error('Error updating document:', error)
             toast({
@@ -92,7 +93,10 @@ export function EditDocumentDialog({ document, propertyId, open, onOpenChange }:
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                {children}
+            </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{t('edit-document')}</DialogTitle>
@@ -180,7 +184,7 @@ export function EditDocumentDialog({ document, propertyId, open, onOpenChange }:
                             <Button 
                                 type="button" 
                                 variant="outline" 
-                                onClick={() => onOpenChange(false)}
+                                onClick={() => setOpen(false)}
                                 disabled={isSubmitting}
                             >
                                 {t('cancel')}

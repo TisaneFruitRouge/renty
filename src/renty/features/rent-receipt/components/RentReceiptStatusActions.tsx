@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils"
 import { rentReceiptStatusVariants } from "../constants"
 import { updateRentReceiptStatusAction, sendRentReceiptAction } from "../actions"
 import { useToast } from "@/hooks/use-toast"
-import { useRouter } from "next/navigation"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
 
 interface RentReceiptStatusActionsProps {
     receiptId: string
@@ -33,23 +33,28 @@ export const availableStatusTransitions: Record<RentReceiptStatus, RentReceiptSt
 
 export function RentReceiptStatusActions({ receiptId, currentStatus }: RentReceiptStatusActionsProps) {
     const t = useTranslations('rent-receipts')
-    const { toast } = useToast()
-    const router = useRouter()
+    const { toast } = useToast();
+    const router = useRouter();
 
-    const handleStatusChange = async (status: RentReceiptStatus) => {
+    const handleStatusChange = async (e: React.MouseEvent, status: RentReceiptStatus) => {
+        
+        // Necessary otherwise, for some reason, the clicks don't get 
+        // registered on the rest of the page unless we refresh it
+        e.stopPropagation();
+        
         try {
             await updateRentReceiptStatusAction(receiptId, status)
             toast({
                 title: t('status-update.success'),
                 description: t('status-update.success-description'),
-            })
-            router.refresh()
+            });
+            router.refresh();
         } catch {
             toast({
                 title: t('status-update.error'),
                 description: t('status-update.error-description'),
                 variant: 'destructive',
-            })
+            });
         }
     }
 
@@ -60,7 +65,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
                 title: t('send.success'),
                 description: t('send.success-description'),
             })
-            router.refresh()
+            router.refresh();
         } catch {
             toast({
                 title: t('send.error'),
@@ -72,7 +77,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
 
     return (
         <div className="flex items-center gap-2">
-            {currentStatus === RentReceiptStatus.PENDING && (
+            {status === RentReceiptStatus.PENDING && (
                 <Button
                     size="sm"
                     onClick={handleSend}
@@ -94,7 +99,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
                         {availableStatusTransitions[currentStatus].map((status) => (
                             <DropdownMenuItem 
                                 key={status}
-                                onClick={() => handleStatusChange(status)}
+                                onClick={(e) => handleStatusChange(e, status)}
                             >
                                 <Badge className={cn(
                                     rentReceiptStatusVariants[status],

@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { format } from "date-fns"
 import { 
@@ -16,25 +15,14 @@ import {
 } from "lucide-react"
 import { type document as DocumentType } from "@prisma/client"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { 
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { EditDocumentDialog } from "./EditDocumentDialog"
-import { deleteDocumentAction } from "../actions"
+import { DeleteDocumentAlert } from "./DeleteDocumentAlert"
 
 interface DocumentCardProps {
     document: DocumentType
@@ -43,10 +31,6 @@ interface DocumentCardProps {
 
 export function DocumentCard({ document, propertyId }: DocumentCardProps) {
     const t = useTranslations('documents')
-    const { toast } = useToast()
-    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false)
-    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-    const [isDeleting, setIsDeleting] = useState(false)
 
     // Function to get the appropriate icon based on file type
     const getFileIcon = () => {
@@ -74,30 +58,7 @@ export function DocumentCard({ document, propertyId }: DocumentCardProps) {
         else return (bytes / 1048576).toFixed(1) + ' MB'
     }
 
-    // Handle document deletion
-    const handleDelete = async () => {
-        setIsDeleting(true)
-        try {
-            const result = await deleteDocumentAction(document.id, propertyId)
-            if (!result.success) {
-                throw new Error(result.error)
-            }
-            toast({
-                title: t('success'),
-                description: t('document-deleted-successfully'),
-            })
-        } catch (error) {
-            console.error('Error deleting document:', error)
-            toast({
-                variant: 'destructive',
-                title: t('error'),
-                description: error instanceof Error ? error.message : t('error-deleting-document'),
-            })
-        } finally {
-            setIsDeleting(false)
-            setIsDeleteAlertOpen(false)
-        }
-    }
+
 
     // Get category label
     const getCategoryLabel = (category: string) => {
@@ -160,54 +121,35 @@ export function DocumentCard({ document, propertyId }: DocumentCardProps) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
-                                <Pencil className="h-4 w-4 mr-2" />
-                                {t('edit')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                                onClick={() => setIsDeleteAlertOpen(true)}
-                                className="text-red-600 focus:text-red-600"
+                            <EditDocumentDialog 
+                                document={document} 
+                                propertyId={propertyId}
                             >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                {t('delete')}
-                            </DropdownMenuItem>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    <Pencil className="h-4 w-4 mr-2" />
+                                    {t('edit')}
+                                </DropdownMenuItem>
+                            </EditDocumentDialog>
+                            <DeleteDocumentAlert
+                                document={document}
+                                propertyId={propertyId}
+                            >
+                                <DropdownMenuItem 
+                                    onSelect={(e) => e.preventDefault()}
+                                    className="text-red-600 focus:text-red-600"
+                                >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    {t('delete')}
+                                </DropdownMenuItem>
+                            </DeleteDocumentAlert>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             </div>
 
-            {/* Delete confirmation dialog */}
-            <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t('confirm-delete')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t('delete-document-confirmation')}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>{t('cancel')}</AlertDialogCancel>
-                        <AlertDialogAction 
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleDelete();
-                            }} 
-                            disabled={isDeleting}
-                            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-                        >
-                            {isDeleting ? t('deleting') : t('delete')}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
 
-            {/* Edit document dialog */}
-            <EditDocumentDialog 
-                document={document}
-                propertyId={propertyId}
-                open={isEditDialogOpen}
-                onOpenChange={setIsEditDialogOpen}
-            />
+
+
         </>
     )
 }
