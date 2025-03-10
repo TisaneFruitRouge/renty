@@ -54,7 +54,8 @@ export const WavyBackground = ({
     if (context === null) return;
     
     ctx = context;
-    w = ctx.canvas.width = window.innerWidth;
+    const container = canvas.parentElement;
+    w = ctx.canvas.width = container ? container.clientWidth : window.innerWidth;
     h = ctx.canvas.height = window.innerHeight;
     ctx.filter = `blur(${blur}px)`;
     nt = 0;
@@ -62,7 +63,7 @@ export const WavyBackground = ({
     window.onresize = function () {
       if (ctx === null) return;
       
-      w = ctx.canvas.width = window.innerWidth;
+      w = ctx.canvas.width = container ? container.clientWidth : window.innerWidth;
       h = ctx.canvas.height = window.innerHeight;
       ctx.filter = `blur(${blur}px)`;
     };
@@ -125,7 +126,7 @@ export const WavyBackground = ({
         ref={canvasRef}
         id="canvas"
       ></canvas>
-      <div className={cn("relative z-10", className)} {...props}>
+      <div className={cn("relative z-10 ", className)} {...props}>
         {children}
       </div>
     </div>

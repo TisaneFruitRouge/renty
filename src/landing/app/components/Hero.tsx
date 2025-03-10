@@ -10,15 +10,16 @@ export default function Hero() {
   const t = useTranslations('home.hero');
   
   return (
-    <WavyBackground 
-      containerClassName="h-screen flex flex-col items-center justify-center overflow-hidden"
-      colors={['#e0e7ff', '#bfdbfe', '#ddd6fe', '#c7d2fe', '#e0f2fe']} 
-      waveWidth={100} 
-      backgroundFill="#ffffff"
-      blur={10}
-      waveOpacity={0.3}
-      speed="slow"
-    >
+    <div className="relative w-full overflow-hidden">
+      <WavyBackground 
+        containerClassName="h-screen w-full flex flex-col items-center justify-center"
+        colors={['#e0e7ff', '#bfdbfe', '#ddd6fe', '#c7d2fe', '#e0f2fe']} 
+        waveWidth={100} 
+        backgroundFill="#ffffff"
+        blur={10}
+        waveOpacity={0.3}
+        speed="fast"
+      >
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
         {/* Text content */}
         <div className="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
@@ -75,5 +76,6 @@ export default function Hero() {
         </motion.div>
       </div>
     </WavyBackground>
+    </div>
   );
 }
