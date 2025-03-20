@@ -1,6 +1,7 @@
 import { prisma } from "@/prisma/db";
 import type { Prisma } from "@prisma/client";
 import { createPropertyChannel } from "../messages/db";
+import { enforceResourceLimit } from "../subscription/limits";
 
 export async function getPropertiesForUser(userId: string) {
     const properties = await prisma.property.findMany({
@@ -121,6 +122,13 @@ export default async function createProperty(
     country: string,
     postalCode: string,
 ) {
+
+    // Get current property count
+    const currentProperties = await getPropertiesForUser(userId);
+    
+    // throws error if the user has exceeded his limits for the current resource
+    await enforceResourceLimit('properties', currentProperties.length);
+
     const property = await prisma.property.create({
         data: {
             id: crypto.randomUUID(),
@@ -165,5 +173,11 @@ export async function calculateMonthlyRevenue(userId: string): Promise<number> {
 
         return total + ((baseRent + charges) * monthlyMultiplier);
     }, 0);
+}
+
+export async function getPropertyCount(userId: string): Promise<number> {
+    return await prisma.property.count({
+        where: { userId }
+    });
 }
 

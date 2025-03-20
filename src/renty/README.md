@@ -145,6 +145,21 @@ yarn db:migrate:dev -- --name describe_your_changes
 yarn db:studio
 ```
 
+## Stripe
+```bash
+stripe login
+```
+
+Forward events to the Next.js API
+```bash
+stripe listen --forward-to localhost:3000/api/auth/stripe/webhook
+```
+
+Trigger events with the CLI
+```bash
+stripe trigger payment_intent.succeeded
+```
+
 ## Troubleshooting
 
 ### Common Issues

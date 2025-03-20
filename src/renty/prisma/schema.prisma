@@ -8,53 +8,53 @@ datasource db {
 }
 
 model account {
-  id           String    @id
-  accountId    String
-  providerId   String
-  userId       String
-  accessToken  String?
-  refreshToken String?
-  accessTokenExpiresAt DateTime?
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  expiresAt             DateTime? @db.Date
+  password              String?
+  accessTokenExpiresAt  DateTime?
+  createdAt             DateTime? @db.Date
   refreshTokenExpiresAt DateTime?
-  scope        String?
-  idToken      String?
-  expiresAt    DateTime? @db.Date
-  password     String?
-  createdAt    DateTime? @db.Date
-  updatedAt    DateTime? @db.Date
-  user         user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  scope                 String?
+  updatedAt             DateTime? @db.Date
+  user                  user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model session {
-  id        String   @id
-  expiresAt DateTime @db.Date
+  id        String    @id
+  expiresAt DateTime  @db.Date
   ipAddress String?
   userAgent String?
   userId    String
-  token     String?
   createdAt DateTime? @db.Date
+  token     String?
   updatedAt DateTime? @db.Date
-  user      user     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user {
-  id            String    @id
-  name          String
-  email         String    @unique
-  emailVerified Boolean
-  image         String?
-  address       String?
-  city          String?
-  country       String?
-  postalCode    String?
-  state         String?
-  createdAt     DateTime  @db.Date
-  updatedAt     DateTime  @db.Date
-  property      property[]
-  account       account[]
-  session       session[]
-  tenants       tenant[]
-
+  id               String     @id
+  name             String
+  email            String     @unique
+  emailVerified    Boolean
+  image            String?
+  createdAt        DateTime   @db.Date
+  updatedAt        DateTime   @db.Date
+  address          String?
+  city             String?
+  country          String?
+  postalCode       String?
+  state            String?
+  stripeCustomerId String?
+  account          account[]
+  property         property[]
+  session          session[]
+  tenants          tenant[]
 }
 
 model verification {
@@ -67,159 +67,170 @@ model verification {
 }
 
 model property {
-  id String @id
-  address String
-  city String
-  country String
-  postalCode String
-  state String
-  title String
-  images String[]
-  userId String
-  user         user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tenants      tenant[]
-  rentReceipt  rentReceipt[]
-  channels     channel[]
-  documents    document[]
-
+  id                   String        @id
+  address              String
+  city                 String
+  country              String
+  postalCode           String
+  state                String
+  title                String
+  images               String[]
+  userId               String
+  createdAt            DateTime?     @default(now())
+  currency             String?       @default("EUR")
+  depositAmount        Float?
+  isFurnished          Boolean       @default(false)
+  paymentFrequency     String        @default("monthly")
+  rentDetails          Json?
+  rentedSince          DateTime?
+  updatedAt            DateTime?     @default(now()) @updatedAt
   rentReceiptStartDate DateTime?
-
-  // Rental information
-  rentDetails Json? // { baseRent: number, charges: number }
-  currency    String? @default("EUR")
-  paymentFrequency String @default("monthly") // "biweekly" | "monthly" | "quarterly" | "yearly"
-  depositAmount Float?
-  rentedSince DateTime?
-  isFurnished Boolean @default(false)
-
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt @default(now())
+  channels             channel[]
+  documents            document[]
+  user                 user          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rentReceipt          rentReceipt[]
+  tenants              tenant[]
 }
 
 model rentReceipt {
-  // we duplicate some of the property data, since the property data might be modified by the user later on
-  id String @id @default(cuid())
-  startDate DateTime
-  endDate DateTime
-  baseRent Float
-  charges Float
-  paymentFrequency String // "biweekly" | "monthly" | "quarterly" | "yearly"
-  propertyId String
-  tenantId String
-  status RentReceiptStatus @default(PENDING)
-
-  blobUrl String?
-
-  property property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  tenant   tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt @default(now())
-}
-
-enum RentReceiptStatus {
-  DRAFT
-  PENDING
-  PAID
-  LATE
-  UNPAID
-  CANCELLED
+  id               String            @id @default(cuid())
+  startDate        DateTime
+  endDate          DateTime
+  paymentFrequency String
+  propertyId       String
+  tenantId         String
+  createdAt        DateTime?         @default(now())
+  updatedAt        DateTime?         @default(now()) @updatedAt
+  baseRent         Float
+  charges          Float
+  blobUrl          String?
+  status           RentReceiptStatus @default(PENDING)
+  property         property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tenant           tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 model tenant {
-  id          String    @id @default(cuid())
-  firstName   String    @default("John")
+  id          String        @id @default(cuid())
   lastName    String
   email       String
   phoneNumber String
-  userId      String
   propertyId  String?
   notes       String?
-  startDate   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userId      String
+  firstName   String        @default("John")
   endDate     DateTime?
-  
-  user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  property    property? @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startDate   DateTime?
   rentReceipt rentReceipt[]
+  property    property?     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user        user          @relation(fields: [userId], references: [id], onDelete: Cascade)
   auth        tenantAuth?
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
 }
 
 model tenantAuth {
-  id          String    @id @default(cuid())
-  tenantId    String    @unique
-  phoneNumber String    @unique
-  passcode    String    // Hashed 6-digit passcode
-  tempCode    String?   // Temporary access code for first login
-  tempCodeExpiresAt DateTime?
-  isActivated Boolean   @default(false)
-  tenant     tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
-  // For handling authentication sessions
-  refreshToken String?
+  id                    String    @id @default(cuid())
+  tenantId              String    @unique
+  phoneNumber           String    @unique
+  passcode              String
+  tempCode              String?
+  tempCodeExpiresAt     DateTime?
+  isActivated           Boolean   @default(false)
+  refreshToken          String?
   refreshTokenExpiresAt DateTime?
-  
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  // Add these fields for biometric authentication
-  biometricEnabled Boolean @default(false)
-  biometricPublicKey String?  // Store public key for biometric verification
-  
-  // Add an index for faster phone number lookups
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  biometricEnabled      Boolean   @default(false)
+  biometricPublicKey    String?
+  tenant                tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
   @@index([phoneNumber])
 }
 
 model channel {
-  id          String    @id @default(cuid())
-  propertyId  String
-  name        String?   // Optional custom name for the channel
-  type        ChannelType @default(PROPERTY)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
-  property    property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  messages    Message[]
+  id           String               @id @default(cuid())
+  propertyId   String
+  name         String?
+  type         ChannelType          @default(PROPERTY)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  messages     Message[]
+  property     property             @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   participants channelParticipant[]
 
   @@index([propertyId])
 }
 
 model channelParticipant {
-  id          String    @id @default(cuid())
-  channelId   String
-  participantId String  // Can be either userId (landlord) or tenantId
+  id              String          @id @default(cuid())
+  channelId       String
+  participantId   String
   participantType ParticipantType
-  joinedAt    DateTime  @default(now())
-  leftAt      DateTime?
-  
-  channel     channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  joinedAt        DateTime        @default(now())
+  leftAt          DateTime?
+  channel         channel         @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
   @@unique([channelId, participantId])
   @@index([participantId])
 }
 
 model Message {
-  id          String    @id @default(cuid())
-  content     String
-  channelId   String
-  senderId    String    // Can be either userId (landlord) or tenantId
-  senderType  ParticipantType
-  createdAt   DateTime  @default(now())
-  
-  channel     channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  id         String          @id @default(cuid())
+  content    String
+  channelId  String
+  senderId   String
+  senderType ParticipantType
+  createdAt  DateTime        @default(now())
+  channel    channel         @relation(fields: [channelId], references: [id], onDelete: Cascade)
 
   @@index([channelId])
   @@index([senderId])
 }
 
+model document {
+  id               String           @id @default(cuid())
+  name             String
+  description      String?
+  fileUrl          String
+  fileType         String
+  fileSize         Int
+  category         DocumentCategory
+  propertyId       String
+  uploadedAt       DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  sharedWithTenant Boolean          @default(false)
+  property         property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+}
+
+model subscription {
+  id                   String    @id
+  plan                 String
+  referenceId          String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String
+  periodStart          DateTime? @db.Timestamp(6)
+  periodEnd            DateTime? @db.Timestamp(6)
+  cancelAtPeriodEnd    Boolean?
+  seats                Int?
+}
+
+enum RentReceiptStatus {
+  PENDING
+  PAID
+  LATE
+  UNPAID
+  CANCELLED
+  DRAFT
+}
+
 enum ChannelType {
-  PROPERTY    // Default channel for property-wide communication
-  MAINTENANCE // Specific channel for maintenance issues
-  PAYMENT     // Specific channel for payment discussions
-  CUSTOM      // For any custom channels you might want to create
+  PROPERTY
+  MAINTENANCE
+  PAYMENT
+  CUSTOM
 }
 
 enum ParticipantType {
@@ -227,32 +238,14 @@ enum ParticipantType {
   TENANT
 }
 
-model document {
-  id               String    @id @default(cuid())
-  name             String    // Document name (e.g., "Lease Agreement")
-  description      String?   // Optional description
-  fileUrl          String    // URL to the file in blob storage
-  fileType         String    // File type/extension (e.g., "pdf", "docx")
-  fileSize         Int       // Size in bytes
-  category         DocumentCategory
-  sharedWithTenant Boolean   @default(false) // Whether the document is shared with the tenant
-  propertyId       String
-  uploadedAt       DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  
-  property    property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  
-  @@index([propertyId])
-}
-
 enum DocumentCategory {
-  LEASE           // Rental/lease agreement
-  INVENTORY       // "État des lieux" (property inventory)
-  INSURANCE       // Insurance documents
-  MAINTENANCE     // Maintenance records
-  PAYMENT         // Payment records or receipts
-  CORRESPONDENCE  // Important correspondence
-  LEGAL           // Other legal documents
-  UTILITY         // Utility bills or contracts
-  OTHER           // Miscellaneous documents
+  LEASE
+  INVENTORY
+  INSURANCE
+  MAINTENANCE
+  PAYMENT
+  CORRESPONDENCE
+  LEGAL
+  UTILITY
+  OTHER
 }

@@ -44,13 +44,13 @@ export default async function VaultPage({ params }: VaultPageProps) {
         <div className="p-8">
             {/* Back button and header */}
             <div className="mb-8">
-                <Link href={`/properties/${id}`} className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4">
+                <Link href={`/properties/${id}`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
                     <ChevronLeft className="w-4 h-4 mr-1" />
                     {t("back-to-property")}
                 </Link>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{property.title} - {t("document-vault")}</h1>
-                    <div className="flex items-center text-gray-600 mt-1">
+                    <h1 className="text-2xl font-bold">{property.title} - {t("document-vault")}</h1>
+                    <div className="flex items-center text-muted-foreground mt-1">
                         <MapPin className="w-4 h-4 mr-2" />
                         <span>{property.address}, {property.postalCode} {property.city}</span>
                     </div>

@@ -144,19 +144,19 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
                             />
                             <div 
                                 onClick={triggerFileInput}
-                                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-md border-gray-300 hover:border-gray-400 cursor-pointer bg-gray-50"
+                                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-md border-border hover:border-gray-400 cursor-pointer bg-gray-50"
                             >
                                 {selectedFile ? (
-                                    <div className="flex flex-col items-center gap-2 text-sm text-gray-600">
+                                    <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
                                         <FileUp className="h-8 w-8 text-blue-500" />
                                         <p className="font-medium">{selectedFile.name}</p>
                                         <p>{(selectedFile.size / 1024).toFixed(1)} KB</p>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-col items-center gap-1 text-sm text-gray-600">
+                                    <div className="flex flex-col items-center gap-1 text-sm text-muted-foreground">
                                         <FileUp className="h-8 w-8" />
                                         <p>{t('drag-drop-or-click')}</p>
-                                        <p className="text-xs text-gray-500">{t('supported-formats')}</p>
+                                        <p className="text-xs text-muted-foreground">{t('supported-formats')}</p>
                                     </div>
                                 )}
                             </div>
@@ -243,7 +243,7 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
                             <Button 
                                 type="button" 
                                 variant="outline" 
-                                onClick={() => setOpen(false)}
+                                onClick={() => { form.reset(); setOpen(false)}}
                                 disabled={isSubmitting}
                             >
                                 {t('cancel')}

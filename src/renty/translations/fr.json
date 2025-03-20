@@ -89,6 +89,7 @@
             "open-title": "Ajouter une propriété",
             "submit": "Créer la propriété",
             "success": "La propriété suivante a été créée:",
+            "disabled-message": "Vous avez atteint le nombre maximum de propriétés autorisé par votre abonnement",
             "error": "Une erreur est survenue lors de la création de la propriété",
             "title": {
                 "label": "Titre",
@@ -170,7 +171,7 @@
         "current-tenants": "Locataires actuels",
         "add-tenant": "Ajouter un locataire",
         "remove-tenant": "Supprimer le locataire",
-        "documents": "Documents",
+        "document-section": "Documents",
         "add-document": "Ajouter un document",
         "added-on": "Ajouté le",
         "download": "Télécharger",
@@ -349,7 +350,98 @@
             "app": {
                 "title": "Paramètres de l'application",
                 "description": "Configurez vos préférences d'application"
+            },
+            "subscription": {
+                "title": "Abonnement",
+                "description": "Gérez votre abonnement et vos options de paiement"
+            },
+            "notifications": {
+                "title": "Notifications",
+                "description": "Gérez vos préférences de notification"
+            },
+            "security": {
+                "title": "Sécurité",
+                "description": "Gérez vos paramètres de sécurité et de connexion"
             }
+        },
+        "app-settings": {
+            "dark-mode": "Mode sombre",
+            "dark-mode-description": "Activer le mode sombre pour l'interface",
+            "email-notifications": "Notifications par email",
+            "email-notifications-description": "Recevoir des notifications par email",
+            "language": "Langue",
+            "language-description": "Choisir la langue de l'interface"
+        },
+        "subscription": {
+            "current-plan": "Plan Basic",
+            "monthly-price": "5,00€/mois",
+            "change-plan": "Changer de plan",
+            "changing-plan": "Changement en cours...",
+            "upgrade-plan": "Passer au plan Pro",
+            "downgrade-plan": "Revenir au plan Basic",
+            "change-plan-error": "Erreur de changement de plan",
+            "change-plan-error-description": "Une erreur est survenue lors du changement de plan. Veuillez réessayer.",
+            "feature-properties": "Jusqu'à 5 propriétés",
+            "feature-receipts": "Quittances de loyer illimitées",
+            "feature-tenants": "Gestion des locataires",
+            "payment-method": "Méthode de paiement",
+            "card-expires": "Expire 12/25",
+            "expires": "Expire le",
+            "no-payment-method": "Aucune méthode de paiement enregistrée",
+            "add-payment-method": "Ajouter une méthode de paiement",
+            "modify": "Modifier",
+            "payment-method-card": "Carte bancaire",
+            "update-payment-method": "Mettre à jour",
+            "card-ending-in": "Carte se terminant par",
+            "billing-history": "Historique de facturation",
+            "download": "Télécharger",
+            "march": "Mars 2025",
+            "february": "Février 2025",
+            "loading": "Chargement...",
+            "error-fetching-payment": "Erreur lors de la récupération des informations de paiement",
+            "redirecting": "Redirection...",
+            "error": "Erreur",
+            "portal-access-error": "Impossible d'accéder au portail de paiement",
+            "general-error": "Une erreur est survenue",
+            "current-plan-title": "Plan actuel",
+            "no-billing-history": "Aucun historique de facturation disponible",
+            "download-invoice": "Télécharger la facture"
+        },
+        "notifications": {
+            "new-tenant": "Nouveau locataire",
+            "new-tenant-description": "Notifications lorsqu'un nouveau locataire est ajouté",
+            "payment-reminders": "Rappels de paiement",
+            "payment-reminders-description": "Rappels pour les paiements à venir",
+            "lease-ending": "Fin de bail",
+            "lease-ending-description": "Alertes avant la fin d'un bail",
+            "messages": "Nouveaux messages",
+            "messages-description": "Notifications pour les nouveaux messages"
+        },
+        "security": {
+            "password": "Mot de passe",
+            "last-modified": "Dernière modification il y a 3 mois",
+            "change-password": "Changer le mot de passe",
+            "two-factor": "Authentification à deux facteurs",
+            "two-factor-description": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+            "configure": "Configurer",
+            "active-sessions": "Sessions actives",
+            "this-device": "Cet appareil",
+            "last-activity-today": "Dernière activité: Aujourd'hui",
+            "last-activity-yesterday": "Dernière activité: Hier",
+            "disconnect": "Déconnecter",
+            "loading-sessions": "Chargement des sessions...",
+            "no-active-sessions": "Aucune session active",
+            "session-disconnected": "Session déconnectée",
+            "session-disconnected-description": "La session a été déconnectée avec succès",
+            "error-fetching-sessions": "Erreur lors de la récupération des sessions",
+            "error-disconnecting-session": "Erreur lors de la déconnexion de la session",
+            "unknown-error": "Une erreur inconnue est survenue",
+            "last-active": "Dernière activité: {time}",
+            "last-active-yesterday": "Hier à {time}",
+            "last-active-date": "Le {date}",
+            "unknown-time": "Date inconnue",
+            "sign-out": "Se déconnecter",
+            "disconnecting": "Déconnexion..."
         },
         "personal-info-form": {
             "name": {
@@ -684,6 +776,38 @@
                 "error": {
                     "title": "Erreur",
                     "description": "Une erreur est survenue lors de la création de votre compte"
+                }
+            }
+        }
+    },
+    "subscription": {
+        "upgrade-subscription": "Améliorer l'abonnement",
+        "required-modal": {
+            "title": "Abonnement requis",
+            "description": "Pour continuer à utiliser Renty, veuillez choisir un abonnement qui correspond à vos besoins.",
+            "subscribe-button": "S'abonner",
+            "disclaimer": "Vous ne serez pas débité avant d'avoir confirmé votre abonnement sur la page de paiement."
+        },
+        "plans": {
+            "basic": {
+                "title": "Basique",
+                "price": "5,00€/mois",
+                "features": {
+                    "properties": "Jusqu'à {count} propriétés",
+                    "receipts": "Quittances de loyer illimitées",
+                    "tenants": "Gestion des locataires",
+                    "messages": "Messagerie instantanée avec vos locataires",
+                    "notifications": "Notifications par email"
+                }
+            },
+            "pro": {
+                "title": "Pro",
+                "price": "20,00€/mois",
+                "features": {
+                    "properties": "Propriétés illimitées",
+                    "all-basic-features": "Toutes les fonctionnalités Basique",
+                    "support": "Support prioritaire",
+                    "reporting": "Rapports avancés"
                 }
             }
         }

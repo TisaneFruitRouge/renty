@@ -41,9 +41,9 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
     }, [isContactModalOpen, property.id, tenant]);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-card rounded-xl shadow-sm border border-border">
             <div className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("quick-actions")}</h2>
+                <h2 className="text-lg font-semibold mb-4">{t("quick-actions")}</h2>
                 <div className="space-y-3">
                     <RentReceiptSettings property={property} className="w-full" />
                     <Button variant="outline" className="w-full flex items-center justify-center">
@@ -69,11 +69,11 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                                         
                                         <div className="space-y-2">
                                             <div className="flex items-center text-sm">
-                                                <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                                                <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
                                                 <span>{tenant.email}</span>
                                             </div>
                                             <div className="flex items-center text-sm">
-                                                <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                                                <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
                                                 <span>{tenant.phoneNumber}</span>
                                             </div>
                                         </div>
@@ -83,7 +83,7 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                                     
                                     <div className="space-y-3">
                                         <h3 className="font-medium">{t("instant-messaging")}</h3>
-                                        <p className="text-sm text-gray-600">{t("instant-messaging-description")}</p>
+                                        <p className="text-sm text-muted-foreground">{t("instant-messaging-description")}</p>
                                         
                                         {isLoadingChannel ? (
                                             <Button disabled className="w-full p-3">
@@ -107,7 +107,7 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                                     </div>
                                 </div>
                             ) : (
-                                <div className="py-6 text-center text-gray-500">
+                                <div className="py-6 text-center text-muted-foreground">
                                     {t("no-tenant-assigned")}
                                 </div>
                             )}

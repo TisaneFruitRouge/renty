@@ -2,6 +2,11 @@ import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
 import { Pool } from "pg";
 
+import { stripe } from "@better-auth/stripe"
+import Stripe from "stripe"
+
+const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
 export const auth = betterAuth({
     database: new Pool({
         user: process.env.POSTGRES_USER,
@@ -14,7 +19,35 @@ export const auth = betterAuth({
     emailAndPassword: {  
         enabled: true
     },
-    plugins: [nextCookies()],
+    plugins: [
+        nextCookies(),
+        stripe({
+            stripeClient,
+            stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+            createCustomerOnSignUp: true,
+            subscription: {
+                enabled: true,
+                plans: [
+                    {
+                        name: "basic",
+                        priceId: process.env.STRIPE_BASIC_PRICE_ID!,
+                        annualDiscountPriceId: process.env.STRIPE_BASIC_ANNUAL_DISCOUNT_PRICE_ID!,
+                        limits: {
+                            properties: 2
+                        }
+                    },
+                    {
+                        name: "pro",
+                        priceId: process.env.STRIPE_PRO_PRICE_ID!,
+                        annualDiscountPriceId: process.env.STRIPE_PRO_ANNUAL_DISCOUNT_PRICE_ID!,
+                        limits: {
+                            properties: 1000
+                        }
+                    }
+                ]
+            }
+        }),
+    ],
     user: {
         additionalFields: {
             address: { type: "string", required: false },

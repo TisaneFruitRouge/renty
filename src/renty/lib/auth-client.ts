@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react"
+import { stripeClient } from "@better-auth/stripe/client"
 
 // Create auth client with configuration to include all user fields
 export const authClient = createAuthClient({
@@ -12,7 +13,12 @@ export const authClient = createAuthClient({
             'country',
             'postalCode'
         ]
-    }
+    },
+    plugins: [
+        stripeClient({
+            subscription: true
+        })
+    ]
 })
 
 export const { signIn, signUp, useSession } = authClient

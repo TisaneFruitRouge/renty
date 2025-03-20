@@ -14,10 +14,10 @@ export default function RecentPaymentsSection({ recentPayments, propertyId }: Re
     const t_rentReceiptsStatus = useTranslations('rent-receipts.status');
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-card rounded-xl shadow-sm border border-border">
             <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">{t("recent-payments")}</h2>
+                    <h2 className="text-lg font-semibold">{t("recent-payments")}</h2>
                     <Link href={`/rent-receipts?propertyId=${propertyId}`}>
                         <Button variant="ghost">
                             {t("see-more")}
@@ -26,21 +26,21 @@ export default function RecentPaymentsSection({ recentPayments, propertyId }: Re
                 </div> 
                 <div className="space-y-4">
                     {recentPayments.map(payment => (
-                        <div key={payment.id} className="flex items-center justify-between p-4 bg-accent/50 rounded-lg border border-solid border-primary/10">
+                        <div key={payment.id} className="flex items-center justify-between p-4 bg-accent/50 rounded-lg">
                             <div className="flex items-center">
-                                <Receipt className="h-5 w-5 text-gray-400" />
+                                <Receipt className="h-5 w-5 text-muted-foreground" />
                                 <div className="ml-4">
-                                    <div className="text-sm font-medium text-gray-900">{payment.tenant.firstName} {payment.tenant.lastName}</div>
-                                    <div className="text-sm text-gray-500">
+                                    <div className="text-sm font-medium">{payment.tenant.firstName} {payment.tenant.lastName}</div>
+                                    <div className="text-sm text-muted-foreground">
                                         {payment.createdAt?.toLocaleDateString('fr-FR')}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                <span className="text-sm font-medium text-gray-900 mr-4">
+                                <span className="text-sm font-medium mr-4">
                                     {payment.baseRent + payment.charges} €
                                 </span>
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${payment.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${payment.status === 'PAID' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300'}`}>
                                     {t_rentReceiptsStatus(`${payment.status}`)}
                                 </span>
                             </div>

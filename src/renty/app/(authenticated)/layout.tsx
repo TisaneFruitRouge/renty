@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { SubscriptionCheck } from "@/features/subscription/SubscriptionCheck";
 
 export default function AuthenticatedLayout({
   children,
@@ -11,7 +12,9 @@ export default function AuthenticatedLayout({
       <AppSidebar />
       <main className="w-full">
         <SidebarTrigger />
-        {children}
+        <SubscriptionCheck>
+          {children}
+        </SubscriptionCheck>
       </main>
     </SidebarProvider>
   );
