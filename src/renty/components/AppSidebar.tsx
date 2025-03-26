@@ -67,7 +67,7 @@ export function AppSidebar() {
                 
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild className="hover:bg-accent hover:text-accent-foreground">
                       <Link 
                         href={item.url}
                         className={cn(
@@ -76,7 +76,7 @@ export function AppSidebar() {
                         )}
                       >
                         <item.icon className={cn(
-                          isActive && "text-accent-foreground"
+                          isActive && "text-accent-foreground hover:text-accent-foreground"
                         )} />
                         <span>{item.title}</span>
                         {isActive && (

@@ -26,7 +26,7 @@ export default function RecentPaymentsSection({ recentPayments, propertyId }: Re
                 </div> 
                 <div className="space-y-4">
                     {recentPayments.map(payment => (
-                        <div key={payment.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div key={payment.id} className="flex items-center justify-between p-4 bg-accent/50 rounded-lg border border-solid border-primary/10">
                             <div className="flex items-center">
                                 <Receipt className="h-5 w-5 text-gray-400" />
                                 <div className="ml-4">

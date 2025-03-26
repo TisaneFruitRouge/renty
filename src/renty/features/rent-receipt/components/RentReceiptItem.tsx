@@ -46,7 +46,7 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
     return (
         <Card 
             className={cn(
-                "p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-gray-100 hover:cursor-pointer duration-300",
+                "p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-accent/70 hover:cursor-pointer duration-300",
                 className
             )}
             onClick={handleView}
@@ -74,7 +74,7 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
                     {receipt?.blobUrl && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-200">
+                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent">
                                     <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>

@@ -24,8 +24,6 @@ export async function POST(req: NextRequest) {
       }
       });
 
-      console.log(validatedData)
-
       if (!tenantAuth) {
         return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
       }
