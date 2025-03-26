@@ -96,8 +96,6 @@ function formatCurrency(amount: number) {
   
   // Split into integer and decimal parts
   const [intPart, decPart] = amountStr.split('.');
-  
-  console.log(`${intPart},${decPart} €`)
 
   // Return formatted number with euro symbol, using comma as decimal separator
   return `${intPart},${decPart} €`;

@@ -73,7 +73,7 @@ export default async function Home() {
                   <div className="text-2xl font-bold">{properties.length}</div>
                 </CardContent>
                 <CardFooter className="pt-0 pb-2">
-                  <Link href="/properties" className="text-xs text-primary flex items-center gap-1 hover:underline">
+                  <Link href="/properties" className="text-xs flex items-center gap-1 hover:underline">
                     {t("view-all")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
@@ -92,7 +92,7 @@ export default async function Home() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 pb-2">
-                  <Link href="/tenants" className="text-xs text-primary flex items-center gap-1 hover:underline">
+                  <Link href="/tenants" className="text-xs flex items-center gap-1 hover:underline">
                     {t("view-all")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
@@ -111,7 +111,7 @@ export default async function Home() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 pb-2">
-                  <Link href={`/rent-receipts?status=${RentReceiptStatus.PENDING}`} className="text-xs text-primary flex items-center gap-1 hover:underline">
+                  <Link href={`/rent-receipts?status=${RentReceiptStatus.PENDING}`} className="text-xs flex items-center gap-1 hover:underline">
                     {t("view-pending")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>
@@ -130,7 +130,7 @@ export default async function Home() {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 pb-2">
-                  <Link href="/rent-receipts" className="text-xs text-primary flex items-center gap-1 hover:underline">
+                  <Link href="/rent-receipts" className="text-xs flex items-center gap-1 hover:underline">
                     {t("view-receipts")}
                     <ArrowRight className="h-3 w-3" />
                   </Link>

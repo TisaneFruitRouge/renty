@@ -11,7 +11,7 @@ type PropertyProps = {
 export default function Property({ property }: PropertyProps) {
     return (
         <Link href={`/properties/${property.id}`}>
-            <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+            <Card className="overflow-hidden hover:shadow-lg hover:scale-[1.02] hover:border-primary/20 transition-all duration-300 ease-in-out">
                 <div className="relative w-full h-48">
                     {property.images.length > 0 ? (
                         <Image
