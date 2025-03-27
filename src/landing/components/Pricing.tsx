@@ -47,7 +47,7 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-gray-50 dark:bg-gray-900">
+    <section id="pricing" className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('title')}</h2>
@@ -61,8 +61,8 @@ export default function Pricing() {
             
             <button 
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 ${
-                billingCycle === 'yearly' ? 'bg-black' : 'bg-gray-200 dark:bg-gray-700'
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                billingCycle === 'yearly' ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'
               }`}
             >
               <span 
@@ -73,7 +73,7 @@ export default function Pricing() {
             </button>
             
             <span className={`text-sm font-medium ${billingCycle === 'yearly' ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
-              {t('yearly')} <span className="text-green-500 font-semibold">{t('save')}</span>
+              {t('yearly')} <span className="text-green-600 font-semibold">{t('save')}</span>
             </span>
           </div>
         </div>
@@ -88,18 +88,18 @@ export default function Pricing() {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={cn(
                 "relative rounded-2xl bg-white dark:bg-gray-800 shadow-lg overflow-hidden",
-                plan.popular && "ring-2 ring-black dark:ring-gray-300"
+                plan.popular && "ring-2 ring-primary dark:ring-gray-300"
               )}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-black text-white text-xs font-semibold py-1 px-3 rounded-bl-lg">
+                <div className="absolute top-0 right-0 bg-primary text-white text-xs font-semibold py-1 px-3 rounded-bl-lg">
                   {t('popular')}
                 </div>
               )}
               
               <div className="p-8">
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">{plan.description}</p>
+                <p className="text-muted-foreground mb-6">{plan.description}</p>
                 
                 <div className="flex items-baseline mb-8">
                   {plan.monthlyPrice !== null ? (
@@ -109,7 +109,7 @@ export default function Pricing() {
                           ? `${plan.monthlyPrice.toFixed(2)}€` 
                           : `${plan.yearlyPrice?.toFixed(2)}€`}
                       </span>
-                      <span className="text-gray-500 dark:text-gray-400 ml-2">
+                      <span className="text-muted-foreground ml-2">
                         {billingCycle === 'monthly' ? t('period.monthly') : t('period.yearly')}
                       </span>
                     </>
@@ -134,8 +134,8 @@ export default function Pricing() {
                   className={cn(
                     "w-full py-3 px-4 rounded-lg font-medium transition-colors",
                     plan.popular 
-                      ? "bg-black hover:bg-gray-800 text-white" 
-                      : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-900 dark:text-white"
+                      ? "bg-primary hover:bg-primary/90" 
+                      : ""
                   )}
                   variant={plan.popular ? "default" : "outline"}
                 >

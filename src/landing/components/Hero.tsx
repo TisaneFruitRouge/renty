@@ -24,7 +24,7 @@ export default function Hero() {
         {/* Text content */}
         <div className="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
           <motion.h1 
-            className="text-4xl md:text-6xl font-bold mb-6 text-gray-900"
+            className="text-4xl md:text-6xl font-bold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -33,7 +33,7 @@ export default function Hero() {
           </motion.h1>
           
           <motion.p 
-            className="text-xl text-gray-600 mb-8 max-w-lg"
+            className="text-xl text-muted-foreground mb-8 max-w-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -48,7 +48,7 @@ export default function Hero() {
           >
             <Link 
               href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
-              className="inline-flex h-12 items-center justify-center rounded-md bg-indigo-600 hover:bg-indigo-700 px-6 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+              className="inline-flex h-12 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-6 font-medium text-primary-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
             >
               {t('cta')}
             </Link>
