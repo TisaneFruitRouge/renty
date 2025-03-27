@@ -39,7 +39,7 @@ export default function Navbar() {
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled 
-            ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md py-3' 
+            ? 'backdrop-blur-md shadow-md py-3' 
             : 'bg-transparent py-5'
         }`}
       >
@@ -55,7 +55,7 @@ export default function Navbar() {
                   className="object-contain"
                 />
               </div>
-              <span className={`ml-2 text-xl font-bold ${isScrolled ? 'text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>
+              <span className="ml-2 text-xl font-bold">
                 Renty
               </span>
             </Link>
@@ -66,11 +66,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isScrolled 
-                      ? 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white' 
-                      : 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
-                  }`}
+                  className="text-sm font-medium transition-colors"
                 >
                   {link.name}
                 </Link>
@@ -81,18 +77,14 @@ export default function Navbar() {
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}
-                className={`text-sm font-medium transition-colors ${
-                  isScrolled 
-                    ? 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white' 
-                    : 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white'
-                }`}
+                className="text-sm font-medium"
               >
                 {t('login')}
               </Link>
               
               <Link
                 href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
-                className="inline-flex h-10 animate-shimmer items-center justify-center rounded-md border border-slate-800 bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] px-4 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+                className="inline-flex h-10 items-center justify-center rounded-md text-primary-foreground bg-primary hover:bg-primary/90 p-4"
               >
                 {t('signup')}
               </Link>
