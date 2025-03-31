@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import LogoutButton from "@/features/auth/components/LogoutButton"
 import { usePathname } from "next/navigation"
@@ -20,7 +21,10 @@ import Link from "next/link"
 export function AppSidebar() {
   const t = useTranslations('sidebar');
   const pathname = usePathname();
-
+  
+  const {
+    state,
+  } = useSidebar()
   // Menu items with translations
   const items = [
     {
@@ -56,7 +60,9 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar>
+    <Sidebar 
+      collapsible="icon"
+    >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -94,7 +100,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <LogoutButton />
+            <LogoutButton sidebarState={state} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
