@@ -29,8 +29,8 @@ export default function Pricing() {
     {
       name: t('basic_plan'),
       description: t('basic_description'),
-      monthlyPrice: 9.99,
-      yearlyPrice: 95.88, // 20% discount for yearly
+      monthlyPrice: 5.00,
+      yearlyPrice: 50.00, // 20% discount for yearly
       features: t.raw('basic_features'),
       cta: commonT('hero.cta'),
       popular: false
@@ -38,8 +38,8 @@ export default function Pricing() {
     {
       name: t('pro_plan'),
       description: t('pro_description'),
-      monthlyPrice: 24.99,
-      yearlyPrice: 239.88, // 20% discount for yearly
+      monthlyPrice: 20.00,
+      yearlyPrice: 200.00, // 20% discount for yearly
       features: t.raw('pro_features'),
       cta: commonT('hero.cta'),
       popular: true

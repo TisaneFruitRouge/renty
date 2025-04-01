@@ -24,15 +24,17 @@ export default function Footer() {
           {/* Logo */}
           <div className="mb-6 md:mb-0">
             <div className="flex items-center">
-              <div className="h-8 w-8 relative">
+              <div className="h-8 w-24 relative flex items-center justify-start">
                 <Image
-                  src="/logo.png"
+                  src="/renty.svg"
                   alt="Renty Logo"
-                  fill
+                  width={96}
+                  height={28}
+                  priority
                   className="object-contain"
+                  style={{ maxWidth: '100%', height: 'auto' }}
                 />
               </div>
-              <span className="ml-3 text-xl font-bold text-gray-900 dark:text-white">Renty</span>
             </div>
           </div>
           

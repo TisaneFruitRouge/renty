@@ -47,17 +47,17 @@ export default function Navbar() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center">
-              <div className="h-8 w-8 relative">
+              <div className="h-10 w-32 relative flex items-center justify-center">
                 <Image
-                  src="/logo.png"
+                  src="/renty.svg"
                   alt="Renty Logo"
-                  fill
+                  width={120}
+                  height={36}
+                  priority
                   className="object-contain"
+                  style={{ maxWidth: '100%', height: 'auto' }}
                 />
               </div>
-              <span className="ml-2 text-xl font-bold">
-                Renty
-              </span>
             </Link>
             
             {/* Desktop navigation */}
