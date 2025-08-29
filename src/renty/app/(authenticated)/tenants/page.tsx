@@ -3,9 +3,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAllTenants } from "@/features/tenant/actions";
-import { getAllProperties } from "@/features/properties/actions";
 import CreateTenantModal from "@/features/tenant/components/CreateTenantModal";
 import TenantsList from "@/features/tenant/components/TenantsList";
+import { getAllLeases } from "@/features/lease/actions";
 
   /**
    * The TenantsPage component displays a list of all tenants.
@@ -29,22 +29,31 @@ export default async function TenantsPage() {
     redirect("/sign-in");
   }
 
-  const tenants = await getAllTenants();
-  const properties = await getAllProperties();
+  const rawTenants = await getAllTenants();
+  const leases = await getAllLeases();
+
+  // Transform tenants to include property and lease dates directly from lease
+  const tenants = rawTenants.map(tenant => ({
+    ...tenant,
+    property: tenant.lease?.property || null,
+    startDate: tenant.lease?.startDate || null,
+    endDate: tenant.lease?.endDate || null,
+    lease: undefined // Remove lease from the transformed object
+  }));
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("subtitle")}</p>
         </div>
-        <CreateTenantModal properties={properties} />
+        <CreateTenantModal leases={leases} />
       </div>
 
       {/* Tenants List */}
-      <TenantsList tenants={tenants} properties={properties} />
+      <TenantsList leases={leases}  tenants={tenants} />
     </div>
   );
 }

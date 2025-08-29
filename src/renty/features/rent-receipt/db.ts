@@ -14,7 +14,8 @@ export default async function createReceipt(
     charges: number,
     paymentFrequency: string, // "biweekly" | "monthly" | "quarterly" | "yearly"
     propertyId: string,
-    tenantId: string
+    tenantId: string,
+    leaseId?: string
 ) {
     return await prisma.$transaction(async (tx) => {
         return await tx.rentReceipt.create({
@@ -25,7 +26,41 @@ export default async function createReceipt(
                 charges,
                 paymentFrequency,
                 propertyId,
-                tenantId
+                tenantId,
+                leaseId
+            }
+        });
+    });
+}
+
+// Create receipt for shared lease (multiple tenants, one receipt)
+export async function createSharedReceipt(
+    startDate: Date,
+    endDate: Date,
+    baseRent: number,
+    charges: number,
+    paymentFrequency: string,
+    propertyId: string,
+    tenants: string[], // Array of tenant IDs
+    leaseId?: string
+) {
+    if (tenants.length === 0) {
+        throw new Error('At least one tenant is required for shared receipt');
+    }
+
+    return await prisma.$transaction(async (tx) => {
+        // Create receipt with first tenant as primary tenant
+        // In a shared lease, all tenants are on the same receipt
+        return await tx.rentReceipt.create({
+            data: {
+                startDate,
+                endDate,
+                baseRent,
+                charges,
+                paymentFrequency,
+                propertyId,
+                tenantId: tenants[0], // Store first tenant as primary
+                leaseId
             }
         });
     });
@@ -47,14 +82,19 @@ export async function getReceiptById(receiptId: string) {
                     user: true
                 }
             },
-            tenant: true
+            tenant: true,
+            lease: {
+                include: {
+                    tenants: true
+                }
+            }
         }
     });
 }
 
 export async function getReceiptsOfUser(userId: string, limit?: number) {
     return await prisma.rentReceipt.findMany({
-        where: { 
+        where: {
             property: {
                 userId
             }
@@ -79,7 +119,7 @@ export async function updateReceiptStatus(receiptId: string, status: RentReceipt
 
 export async function countWaitingReceiptsForUser(userId: string): Promise<number> {
     return await prisma.rentReceipt.count({
-        where: { 
+        where: {
             property: {
                 userId
             },
@@ -92,7 +132,7 @@ export async function countWaitingReceiptsForUser(userId: string): Promise<numbe
 
 export async function getRentReceiptsOfProperty(propertyId: string, limit?: number) {
     return await prisma.rentReceipt.findMany({
-        where: { 
+        where: {
             propertyId
         },
         include: {
@@ -110,17 +150,17 @@ export async function getPendingReceiptsForDate(date: Date) {
     // Create a date range for the entire day
     const startOfDay = new Date(date);
     startOfDay.setHours(0, 0, 0, 0);
-    
+
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
     return await prisma.rentReceipt.findMany({
         where: {
             status: RentReceiptStatus.PENDING,
-            startDate: {
-                gte: startOfDay,
-                lte: endOfDay
-            }
+            // startDate: {
+            //     gte: startOfDay,
+            //     lte: endOfDay
+            // }
         },
         include: {
             property: {

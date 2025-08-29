@@ -37,11 +37,11 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
     const router = useRouter();
 
     const handleStatusChange = async (e: React.MouseEvent, status: RentReceiptStatus) => {
-        
-        // Necessary otherwise, for some reason, the clicks don't get 
+
+        // Necessary otherwise, for some reason, the clicks don't get
         // registered on the rest of the page unless we refresh it
         e.stopPropagation();
-        
+
         try {
             await updateRentReceiptStatusAction(receiptId, status)
             toast({
@@ -77,7 +77,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
 
     return (
         <div className="flex items-center gap-2">
-            {status === RentReceiptStatus.PENDING && (
+            {currentStatus === RentReceiptStatus.PENDING && (
                 <Button
                     size="sm"
                     onClick={handleSend}
@@ -86,7 +86,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
                     {t('actions.send')}
                 </Button>
             )}
-            
+
             {availableStatusTransitions[currentStatus].length > 0 && (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -97,7 +97,7 @@ export function RentReceiptStatusActions({ receiptId, currentStatus }: RentRecei
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {availableStatusTransitions[currentStatus].map((status) => (
-                            <DropdownMenuItem 
+                            <DropdownMenuItem
                                 key={status}
                                 onClick={(e) => handleStatusChange(e, status)}
                             >

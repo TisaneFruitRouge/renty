@@ -16,12 +16,17 @@ export async function POST(req: NextRequest) {
     try {
       const tenantAuth = await prisma.tenantAuth.findUnique({
         where: { phoneNumber: validatedData.phoneNumber },
-        include: { tenant: {
-          include: {
-            property: true
-          }    
-        } 
-      }
+        include: { 
+          tenant: {
+            include: {
+              lease: {
+                include: {
+                  property: true
+                }
+              }
+            }
+          } 
+        }
       });
 
       if (!tenantAuth) {
@@ -56,9 +61,9 @@ export async function POST(req: NextRequest) {
           lastName: tenantAuth.tenant.lastName,
           email: tenantAuth.tenant.email,
           phoneNumber: tenantAuth.tenant.phoneNumber,
-          startDate: tenantAuth.tenant.startDate,
-          endDate: tenantAuth.tenant.endDate,
-          property: tenantAuth.tenant.property
+          startDate: tenantAuth.tenant.lease?.startDate,
+          endDate: tenantAuth.tenant.lease?.endDate,
+          property: tenantAuth.tenant.lease?.property
         }
       });
     } catch (err) {

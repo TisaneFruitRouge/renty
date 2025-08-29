@@ -6,24 +6,34 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import type { property, tenant } from "@prisma/client";
-import RentReceiptSettings from "./RentReceiptSettings";
+import type { property, tenant, lease, tenantAuth } from "@prisma/client";
+
 import { useState, useEffect } from "react";
 import { getChannelByPropertyIdAction } from "@/features/messages/actions";
 
-interface PropertyQuickActionsProps {
-    property: property;
-    tenant?: tenant;
+type LeaseWithDetails = lease & {
+    property: property
+    tenants: (tenant & {
+        auth: tenantAuth | null
+    })[]
 }
 
-export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsProps) {
+interface PropertyQuickActionsProps {
+    property: property;
+    leases: LeaseWithDetails[];
+}
+
+export function PropertyQuickActions({ property, leases }: PropertyQuickActionsProps) {
     const t = useTranslations('property');
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [channelId, setChannelId] = useState<string | null>(null);
     const [isLoadingChannel, setIsLoadingChannel] = useState(false);
     
+    const allTenants = leases.flatMap(lease => lease.tenants);
+    const hasActiveTenants = allTenants.length > 0;
+    
     useEffect(() => {
-        if (isContactModalOpen && tenant) {
+        if (isContactModalOpen && hasActiveTenants) {
             setIsLoadingChannel(true);
             getChannelByPropertyIdAction(property.id)
                 .then((result) => {
@@ -38,14 +48,14 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                     setIsLoadingChannel(false);
                 });
         }
-    }, [isContactModalOpen, property.id, tenant]);
+    }, [isContactModalOpen, property.id, hasActiveTenants]);
 
     return (
         <div className="bg-card rounded-xl shadow-sm border border-border">
             <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">{t("quick-actions")}</h2>
                 <div className="space-y-3">
-                    <RentReceiptSettings property={property} className="w-full" />
+
                     <Button variant="outline" className="w-full flex items-center justify-center">
                         <History className="w-4 h-4 mr-2" />
                         {t("rent-receipts-history")}
@@ -62,21 +72,32 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                                 <DialogTitle>{t("contact-tenant")}</DialogTitle>
                             </DialogHeader>
                             
-                            {tenant ? (
+                            {hasActiveTenants ? (
                                 <div className="space-y-4">
-                                    <div className="rounded-lg border p-3">
-                                        <h3 className="text-sm font-medium mb-2">{tenant.firstName} {tenant.lastName}</h3>
-                                        
-                                        <div className="space-y-2">
-                                            <div className="flex items-center text-sm">
-                                                <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                                                <span>{tenant.email}</span>
+                                    <div className="space-y-3 max-h-60 overflow-y-auto">
+                                        {allTenants.map((tenant) => (
+                                            <div key={tenant.id} className="rounded-lg border p-3">
+                                                <h3 className="text-sm font-medium mb-2">
+                                                    {tenant.firstName} {tenant.lastName}
+                                                    {leases.length > 1 && (
+                                                        <span className="ml-2 text-xs text-muted-foreground">
+                                                            ({leases.find(l => l.tenants.some(t => t.id === tenant.id))?.leaseType})
+                                                        </span>
+                                                    )}
+                                                </h3>
+                                                
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center text-sm">
+                                                        <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
+                                                        <span>{tenant.email}</span>
+                                                    </div>
+                                                    <div className="flex items-center text-sm">
+                                                        <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                                                        <span>{tenant.phoneNumber}</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center text-sm">
-                                                <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
-                                                <span>{tenant.phoneNumber}</span>
-                                            </div>
-                                        </div>
+                                        ))}
                                     </div>
                                     
                                     <Separator />
@@ -108,7 +129,7 @@ export function PropertyQuickActions({ property, tenant }: PropertyQuickActionsP
                                 </div>
                             ) : (
                                 <div className="py-6 text-center text-muted-foreground">
-                                    {t("no-tenant-assigned")}
+                                    {t("no-tenants-assigned")}
                                 </div>
                             )}
                         </DialogContent>

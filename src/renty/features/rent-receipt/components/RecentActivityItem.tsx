@@ -25,9 +25,9 @@ export function RecentActivityItem({ receipt, className }: RecentActivityItemPro
     };
 
     return (
-        <div 
+        <div
             className={cn(
-                "first:border-t flex items-center justify-between p-4 hover:bg-gray-50 cursor-pointer",
+                "first:border-t flex items-center justify-between p-4 hover:bg-black/70 cursor-pointer",
                 className
             )}
             onClick={() => router.push(`/rent-receipts/${receipt.id}`)}

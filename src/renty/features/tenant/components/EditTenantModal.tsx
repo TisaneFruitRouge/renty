@@ -12,15 +12,15 @@ import {
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Edit } from "lucide-react"
-import type { property, tenant } from "@prisma/client"
+import type { lease, property, tenant } from "@prisma/client"
 import EditTenantForm from "./EditTenantForm"
 
 interface EditTenantModalProps {
   tenant: tenant;
-  properties: property[]
+  leases: (lease & { property: property })[]
 }
 
-export default function EditTenantModal({ tenant, properties }: EditTenantModalProps) {
+export default function EditTenantModal({ tenant, leases }: EditTenantModalProps) {
   const [open, setOpen] = useState(false)
   const t = useTranslations('tenant')
 
@@ -38,9 +38,9 @@ export default function EditTenantModal({ tenant, properties }: EditTenantModalP
             {t('edit-form.description')}
           </DialogDescription>
         </DialogHeader>
-        <EditTenantForm 
+        <EditTenantForm
           tenant={tenant}
-          properties={properties}
+          leases={leases}
           onSuccess={() => setOpen(false)}
         />
       </DialogContent>

@@ -1,6 +1,20 @@
 import type { property, rentReceipt, tenant, user } from '@prisma/client';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
+interface Translations {
+  landlordTitle: string;
+  tenantTitle: string;
+  tenantsTitle: string;
+  propertyTitle: string;
+  periodTitle: string;
+  rentDetailsTitle: string;
+  baseRent: string;
+  charges: string;
+  totalAmount: string;
+  receiptDeclaration: string;
+  madeOn: string;
+}
+
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -33,6 +47,10 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 12,
     marginBottom: 3,
+  },
+  tenantValue: {
+    fontSize: 11,
+    marginBottom: 2,
   },
   paymentPeriod: {
     textAlign: 'center',
@@ -78,7 +96,9 @@ const styles = StyleSheet.create({
 interface RentReceiptTemplateProps {
   receipt: rentReceipt;
   property: property & {user: user};
-  tenant: tenant;
+  tenant?: tenant; // For individual/colocation leases
+  tenants?: tenant[]; // For shared leases
+  translations: Translations;
 }
 
 function formatDate(date: Date) {
@@ -101,7 +121,24 @@ function formatCurrency(amount: number) {
   return `${intPart},${decPart} €`;
 }
 
-export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTemplateProps) {
+function formatTenantNames(tenants: tenant[]): string {
+  if (tenants.length === 1) {
+    return `${tenants[0].firstName} ${tenants[0].lastName}`;
+  } else if (tenants.length === 2) {
+    return `${tenants[0].firstName} ${tenants[0].lastName} et ${tenants[1].firstName} ${tenants[1].lastName}`;
+  } else {
+    const allButLast = tenants.slice(0, -1).map(t => `${t.firstName} ${t.lastName}`).join(', ');
+    const last = tenants[tenants.length - 1];
+    return `${allButLast} et ${last.firstName} ${last.lastName}`;
+  }
+}
+
+export function RentReceiptTemplate({ receipt, property, tenant, tenants, translations }: RentReceiptTemplateProps) {
+  // Determine which tenants to use
+  const allTenants = tenants && tenants.length > 0 ? tenants : (tenant ? [tenant] : []);
+  const isSharedLease = allTenants.length > 1;
+  const tenantNames = formatTenantNames(allTenants);
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -125,8 +162,18 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
           </View>
 
           <View style={styles.landlordAndTenantSection}>
-            <Text style={styles.label}>LOCATAIRE</Text>
-            <Text style={styles.value}>{tenant.firstName} {tenant.lastName}</Text>
+            <Text style={styles.label}>
+              {isSharedLease ? translations.tenantsTitle.toUpperCase() : translations.tenantTitle.toUpperCase()}
+            </Text>
+            {isSharedLease ? (
+              allTenants.map((t) => (
+                <Text key={t.id} style={styles.tenantValue}>
+                  {t.firstName} {t.lastName}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.value}>{allTenants[0]?.firstName} {allTenants[0]?.lastName}</Text>
+            )}
             <Text style={styles.value} wrap>
               {property.address},
               {property.city && ` ${property.city}`}
@@ -151,7 +198,7 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
             </View>
             <View style={styles.tableRow}>
               <View style={styles.tableCell}>
-                <Text>Loyer</Text>
+                <Text>{translations.baseRent}:</Text>
               </View>
               <View style={[styles.tableCell, styles.tableCellBorder]}>
                 <Text>{formatCurrency(receipt.baseRent)}</Text>
@@ -159,7 +206,7 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
             </View>
             <View style={styles.tableRow}>
               <View style={styles.tableCell}>
-                <Text>Charges</Text>
+                <Text>{translations.charges}:</Text>
               </View>
               <View style={[styles.tableCell, styles.tableCellBorder]}>
                 <Text>{formatCurrency(receipt.charges)}</Text>
@@ -178,12 +225,10 @@ export function RentReceiptTemplate({ receipt, property, tenant }: RentReceiptTe
 
         <View style={styles.footer}>
           <Text>
-            Je soussigné(e) {property.user.name}, propriétaire du logement désigné ci-dessus,
-            déclare avoir reçu de {tenant.firstName} {tenant.lastName} la somme de {formatCurrency(receipt.baseRent + receipt.charges)}
-            {" "}au titre du paiement du loyer et des charges pour la période indiquée ci-dessus.
+            {translations.receiptDeclaration}
           </Text>
           <Text style={{ marginTop: 20 }}>
-            Fait le {formatDate(new Date())}
+            {translations.madeOn} {formatDate(new Date())}
           </Text>
         </View>
       </Page>

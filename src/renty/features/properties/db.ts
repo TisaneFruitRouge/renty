@@ -7,24 +7,40 @@ export async function getPropertiesForUser(userId: string) {
     const properties = await prisma.property.findMany({
         where: {
             userId
-        }, 
+        },
         include: {
-            tenants: true
+            leases: {
+                include: {
+                  tenants: true
+                }
+            }
         }
     });
 
     return properties;
 }
 
-export async function getAllPropertiesWithActiveTenants() {
+export async function getAllPropertiesWithActiveLeases() {
     return await prisma.property.findMany({
         where: {
-            tenants: {
-                some: {}
+            leases: {
+                some: {
+                    status: 'ACTIVE',
+                    tenants: {
+                        some: {}
+                    }
+                }
             }
         },
         include: {
-            tenants: true,
+            leases: {
+                where: {
+                    status: 'ACTIVE'
+                },
+                include: {
+                    tenants: true
+                }
+            },
             user: true
         }
     });
@@ -70,12 +86,6 @@ export async function updateProperty(id: string, data: Omit<Prisma.propertyUpdat
             state: data.state,
             country: data.country,
             postalCode: data.postalCode,
-            rentDetails: data.rentDetails,
-            currency: data.currency,
-            paymentFrequency: data.paymentFrequency,
-            depositAmount: data.depositAmount,
-            rentedSince: data.rentedSince,
-            isFurnished: data.isFurnished,
         },
     });
 }
@@ -88,34 +98,43 @@ export async function updatePropertyRental(id: string, data: {
     rentedSince: string;
     isFurnished: boolean;
 }) {
+    // Note: This function is deprecated as rental details are now managed at the lease level
+    // For backward compatibility, we'll update the active lease for this property
+    const activeLease = await prisma.lease.findFirst({
+        where: {
+            propertyId: id,
+            status: 'ACTIVE'
+        }
+    });
+
+    if (!activeLease) {
+        throw new Error('No active lease found for this property');
+    }
+
     const rentDetails = data.rentDetails ?? { baseRent: 0, charges: 0 };
-    
-    const property = await prisma.property.update({
-        where: { id },
+
+    await prisma.lease.update({
+        where: { id: activeLease.id },
         data: {
-            rentDetails: rentDetails as Prisma.JsonObject,
+            rentAmount: rentDetails.baseRent,
+            charges: rentDetails.charges,
             currency: data.currency,
             paymentFrequency: data.paymentFrequency,
             depositAmount: data.depositAmount,
-            rentedSince: new Date(data.rentedSince),
+            startDate: new Date(data.rentedSince),
             isFurnished: data.isFurnished,
         },
     });
-    return property;
+
+    // Return the property for backward compatibility
+    return await getPropertyById(id);
 }
 
-export async function updatePropertyRentReceiptSettings(id: string, rentReceiptStartDate: Date | null) {
-    return await prisma.property.update({
-        where: { id },
-        data: {
-            rentReceiptStartDate,
-        },
-    });
-}
+
 
 export default async function createProperty(
-    userId: string, 
-    title: string, 
+    userId: string,
+    title: string,
     address: string,
     city: string,
     state: string,
@@ -125,7 +144,7 @@ export default async function createProperty(
 
     // Get current property count
     const currentProperties = await getPropertiesForUser(userId);
-    
+
     // throws error if the user has exceeded his limits for the current resource
     await enforceResourceLimit('properties', currentProperties.length);
 
@@ -149,27 +168,31 @@ export default async function createProperty(
 }
 
 export async function calculateMonthlyRevenue(userId: string): Promise<number> {
-    const properties = await prisma.property.findMany({
+    const leases = await prisma.lease.findMany({
         where: {
-            userId,
+            property: {
+                userId
+            },
+            status: 'ACTIVE'
         },
         select: {
-            rentDetails: true,
+            rentAmount: true,
+            charges: true,
             paymentFrequency: true
         }
     });
 
-    return properties.reduce((total, property) => {
-        const rentDetails = property.rentDetails as { baseRent: number; charges: number } | null;
-        if (!rentDetails || !property.paymentFrequency) return total;
+    return leases.reduce((total, lease) => {
+        if (!lease.rentAmount || !lease.paymentFrequency) return total;
 
-        const { baseRent, charges } = rentDetails;
+        const baseRent = lease.rentAmount;
+        const charges = lease.charges || 0;
         const monthlyMultiplier = {
             'biweekly': 2.17, // (52 weeks / 2) / 12 months
             'monthly': 1,
             'quarterly': 1/3,
             'yearly': 1/12
-        }[property.paymentFrequency] || 0;
+        }[lease.paymentFrequency] || 0;
 
         return total + ((baseRent + charges) * monthlyMultiplier);
     }, 0);
@@ -180,4 +203,3 @@ export async function getPropertyCount(userId: string): Promise<number> {
         where: { userId }
     });
 }
-

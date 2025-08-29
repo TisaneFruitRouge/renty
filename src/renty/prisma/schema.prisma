@@ -67,29 +67,22 @@ model verification {
 }
 
 model property {
-  id                   String        @id
-  address              String
-  city                 String
-  country              String
-  postalCode           String
-  state                String
-  title                String
-  images               String[]
-  userId               String
-  createdAt            DateTime?     @default(now())
-  currency             String?       @default("EUR")
-  depositAmount        Float?
-  isFurnished          Boolean       @default(false)
-  paymentFrequency     String        @default("monthly")
-  rentDetails          Json?
-  rentedSince          DateTime?
-  updatedAt            DateTime?     @default(now()) @updatedAt
-  rentReceiptStartDate DateTime?
-  channels             channel[]
-  documents            document[]
-  user                 user          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  rentReceipt          rentReceipt[]
-  tenants              tenant[]
+  id          String        @id
+  address     String
+  city        String
+  country     String
+  postalCode  String
+  state       String
+  title       String
+  images      String[]
+  userId      String
+  createdAt   DateTime?     @default(now())
+  updatedAt   DateTime?     @default(now()) @updatedAt
+  channels    channel[]
+  documents   document[]
+  leases      lease[]
+  user        user          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rentReceipt rentReceipt[]
 }
 
 model rentReceipt {
@@ -99,6 +92,7 @@ model rentReceipt {
   paymentFrequency String
   propertyId       String
   tenantId         String
+  leaseId          String?
   createdAt        DateTime?         @default(now())
   updatedAt        DateTime?         @default(now()) @updatedAt
   baseRent         Float
@@ -107,6 +101,7 @@ model rentReceipt {
   status           RentReceiptStatus @default(PENDING)
   property         property          @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   tenant           tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lease            lease?            @relation(fields: [leaseId], references: [id], onDelete: Cascade)
 }
 
 model tenant {
@@ -114,18 +109,42 @@ model tenant {
   lastName    String
   email       String
   phoneNumber String
-  propertyId  String?
+  leaseId     String?
   notes       String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   userId      String
   firstName   String        @default("John")
-  endDate     DateTime?
-  startDate   DateTime?
   rentReceipt rentReceipt[]
-  property    property?     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  lease       lease?        @relation(fields: [leaseId], references: [id], onDelete: Cascade)
   user        user          @relation(fields: [userId], references: [id], onDelete: Cascade)
   auth        tenantAuth?
+}
+
+model lease {
+  id                     String      @id @default(cuid())
+  propertyId             String
+  startDate              DateTime
+  endDate                DateTime?
+  rentAmount             Float
+  depositAmount          Float?
+  charges                Float?      @default(0)
+  leaseType              LeaseType   @default(INDIVIDUAL)
+  isFurnished            Boolean     @default(false)
+  paymentFrequency       String      @default("monthly")
+  currency               String      @default("EUR")
+  status                 LeaseStatus @default(ACTIVE)
+  notes                  String?
+  autoGenerateReceipts   Boolean     @default(false)
+  receiptGenerationDate  Int?
+  nextReceiptDate        DateTime?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  property               property      @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  tenants                tenant[]
+  rentReceipts           rentReceipt[]
+
+  @@index([propertyId])
 }
 
 model tenantAuth {
@@ -236,6 +255,19 @@ enum ChannelType {
 enum ParticipantType {
   LANDLORD
   TENANT
+}
+
+enum LeaseType {
+  INDIVIDUAL
+  SHARED
+  COLOCATION
+}
+
+enum LeaseStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  PENDING
 }
 
 enum DocumentCategory {

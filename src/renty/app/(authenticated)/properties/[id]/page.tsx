@@ -3,12 +3,11 @@ import { ChevronLeft, MapPin } from "lucide-react"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
-import { getAvailableTenants, getTenantByPropertyId } from "@/features/tenant/actions"
+import { prisma } from "@/prisma/db"
 import { getRentReceiptsOfProperty } from "@/features/rent-receipt/db"
 import PhotosSection from "@/features/properties/components/property-detail/PhotosSection"
-import TenantsSection from "@/features/properties/components/property-detail/TenantsSection"
+import SimpleLeasesSection from "@/features/properties/components/property-detail/SimpleLeasesSection"
 import RecentPaymentsSection from "@/features/properties/components/property-detail/RecentPaymentsSection"
-import { PropertyKeyInformation } from "@/features/properties/components/property-detail/PropertyKeyInformation"
 import { PropertyQuickActions } from "@/features/properties/components/property-detail/PropertyQuickActions"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -22,7 +21,7 @@ interface PropertyPageProps {
 
 export default async function PropertyPage({ params }: PropertyPageProps) {
     const t = await getTranslations('property');
-    
+
     let property;
     const { id } = await params;
     try {
@@ -45,8 +44,19 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
         notFound();
     }
 
-    const tenant = await getTenantByPropertyId(id);
-    const availableTenants = await getAvailableTenants();
+    const leases = await prisma.lease.findMany({
+        where: {
+            propertyId: id,
+            status: 'ACTIVE'
+        },
+        include: {
+            tenants: {
+                include: {
+                    auth: true
+                }
+            }
+        }
+    });
     const recentPayments = await getRentReceiptsOfProperty(property.id, 2);
 
     return (
@@ -73,13 +83,22 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
                 {/* Main content - 2 columns */}
                 <div className="col-span-2 space-y-6">
                     <PhotosSection property={property} />
-                    <TenantsSection 
-                        propertyId={id} 
-                        initialTenant={tenant} 
-                        availableTenants={availableTenants}
+                    <SimpleLeasesSection
+                        leases={leases.map(lease => ({
+                            id: lease.id,
+                            startDate: lease.startDate.toISOString(),
+                            endDate: lease.endDate?.toISOString() || null,
+                            rentAmount: lease.rentAmount,
+                            charges: lease.charges,
+                            leaseType: lease.leaseType,
+                            status: lease.status,
+                            isFurnished: lease.isFurnished,
+                            tenants: lease.tenants
+                        }))}
+                        property={property}
                     />
-                    <RecentPaymentsSection propertyId={id} recentPayments={recentPayments} />
-                    
+                    {recentPayments.length > 0 && <RecentPaymentsSection propertyId={id} recentPayments={recentPayments} />}
+
                     {/* Document Vault Card */}
                     <Card className="rounded-xl shadow-sm overflow-hidden">
                         <div className="flex flex-col md:flex-row">
@@ -120,12 +139,18 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
                             </div>
                         </div>
                     </Card>
-                </div> 
+                </div>
 
                 {/* Sidebar - Property Details */}
                 <div className="space-y-6">
-                    <PropertyKeyInformation property={property} />
-                    <PropertyQuickActions property={property} tenant={tenant} />
+                    <PropertyQuickActions
+                        property={property}
+                        leases={leases.map(lease => ({
+                            ...lease,
+                            property: property,
+                            tenants: lease.tenants
+                        }))}
+                    />
                 </div>
             </div>
         </div>

@@ -26,7 +26,7 @@ export default async function Home() {
   const waitingCount = await countWaitingReceiptsForUser(session.user.id);
   const estimatedMonthlyRevenues = await calculateMonthlyRevenue(session.user.id);
   const threeMostRecentReceipts = await getReceiptsOfUser(session.user.id, 3);
-  
+
   // Check if user has no properties (new user)
   const isNewUser = properties.length === 0;
 
@@ -44,7 +44,7 @@ export default async function Home() {
               {t("welcome-subtext")}
             </p>
           </div>
-          
+
           {/* Quick action button for adding property */}
           {isNewUser && (
             <Link href="/properties">
@@ -55,7 +55,7 @@ export default async function Home() {
             </Link>
           )}
         </div>
-        
+
         {isNewUser ? (
           <OnboardingSection />
         ) : (
@@ -88,7 +88,7 @@ export default async function Home() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {properties.filter(p => p.tenants.length > 0).length}
+                    {properties.filter(p => p.leases.reduce((acc, lease) => acc + lease.tenants.length, 0) > 0).length}
                   </div>
                 </CardContent>
                 <CardFooter className="pt-0 pb-2">
@@ -137,7 +137,7 @@ export default async function Home() {
                 </CardFooter>
               </Card>
             </div>
-            
+
             {/* Recent Activity */}
             {threeMostRecentReceipts.length > 0 ? (
               <MostRecentRentReceipts receipts={threeMostRecentReceipts} />
@@ -166,7 +166,7 @@ export default async function Home() {
 
 // Onboarding component for new users
 async function OnboardingSection() {
-  
+
   const t = await getTranslations('home');
 
   return (
@@ -193,7 +193,7 @@ async function OnboardingSection() {
                 </Link>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 p-4 bg-background rounded-lg shadow-sm border border-border">
               <div className="bg-primary/10 p-2 rounded-full">
                 <ImagePlus className="h-5 w-5 text-primary" />
@@ -203,7 +203,7 @@ async function OnboardingSection() {
                 <p className="text-sm text-muted-foreground">{t('step-2-description')}</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 p-4 bg-background rounded-lg shadow-sm border border-border">
               <div className="bg-primary/10 p-2 rounded-full">
                 <UserPlus className="h-5 w-5 text-primary" />
@@ -213,7 +213,7 @@ async function OnboardingSection() {
                 <p className="text-sm text-muted-foreground">{t('step-3-description')}</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4 p-4 bg-background rounded-lg shadow-sm border border-border">
               <div className="bg-primary/10 p-2 rounded-full">
                 <ReceiptText className="h-5 w-5 text-primary" />
@@ -226,7 +226,7 @@ async function OnboardingSection() {
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Quick access cards */}
       <Card className="hover:shadow-md transition-shadow duration-200">
         <CardHeader>
@@ -244,7 +244,7 @@ async function OnboardingSection() {
           </Link>
         </CardFooter>
       </Card>
-      
+
       <Card className="hover:shadow-md transition-shadow duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -261,7 +261,7 @@ async function OnboardingSection() {
           </Link>
         </CardFooter>
       </Card>
-      
+
       <Card className="hover:shadow-md transition-shadow duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
