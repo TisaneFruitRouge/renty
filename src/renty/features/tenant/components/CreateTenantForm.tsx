@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react"
-import type { property } from "@prisma/client"
+import type { lease, property } from "@prisma/client"
 import { toast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
@@ -31,8 +31,8 @@ const formSchema = z.object({
     message: "Phone number must be at least 10 characters.",
   }),
   notes: z.string().optional(),
-  propertyId: z.string({
-    required_error: "Please select a property.",
+  leaseId: z.string({
+    required_error: "Please select a lease.",
   }),
 })
 
@@ -40,11 +40,11 @@ export type CreateTenantFormData = z.infer<typeof formSchema>
 
 interface CreateTenantFormProps {
   onSuccess?: () => void
-  propertyId?: string
-  properties?: property[]
+  leaseId?: string
+  leases?: (lease & { property: property })[]
 }
 
-export default function CreateTenantForm({ onSuccess, propertyId: initialPropertyId, properties }: CreateTenantFormProps) {
+export default function CreateTenantForm({ onSuccess, leaseId: initialLeaseId, leases }: CreateTenantFormProps) {
   const t = useTranslations('tenant.create-form')
   const [open, setOpen] = useState(false)
 
@@ -56,7 +56,7 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
       email: "",
       phoneNumber: "",
       notes: "",
-      propertyId: initialPropertyId || "",
+      leaseId: initialLeaseId || "",
     },
   })
 
@@ -134,10 +134,10 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
         />
         <FormField
           control={form.control}
-          name="propertyId"
+          name="leaseId"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>{t('property')}</FormLabel>
+              <FormLabel>{t('lease')}</FormLabel>
               <Popover open={open} onOpenChange={setOpen} modal>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -151,36 +151,36 @@ export default function CreateTenantForm({ onSuccess, propertyId: initialPropert
                       )}
                     >
                       {field.value
-                        ? properties?.find((property) => property.id === field.value)?.title
-                        : t('select-property')}
+                        ? leases?.find((lease) => lease.id === field.value)?.property.title
+                        : t('select-lease')}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0">
                   <Command>
-                    <CommandInput placeholder={t('search-property')} />
+                    <CommandInput placeholder={t('search-lease')} />
                     <CommandList>
-                      <CommandEmpty>{t('no-property-found')}</CommandEmpty>
+                      <CommandEmpty>{t('no-lease-found')}</CommandEmpty>
                       <CommandGroup>
-                        {properties?.map((property) => (
+                        {leases?.map((lease) => (
                           <CommandItem
-                            value={property.id}
-                            key={property.id}
+                            value={lease.id}
+                            key={lease.id}
                             onSelect={() => {
-                              form.setValue("propertyId", property.id)
+                              form.setValue("leaseId", lease.id)
                               setOpen(false)
                             }}
                           >
                             <Check
                               className={cn(
                                 "mr-2 h-4 w-4",
-                                property.id === field.value ? "opacity-100" : "opacity-0"
+                                lease.id === field.value ? "opacity-100" : "opacity-0"
                               )}
                             />
-                            {property.title}
+                            {lease.property.title}
                             <span className="ml-2 text-muted-foreground">
-                              {property.address}
+                              {lease.property.address}
                             </span>
                           </CommandItem>
                         ))}

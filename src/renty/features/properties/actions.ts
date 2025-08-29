@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import createProperty, { getPropertiesForUser, updateProperty, getPropertyForUser, updatePropertyRentReceiptSettings, getPropertyCount } from "./db"
+import createProperty, { getPropertiesForUser, updateProperty, getPropertyForUser, getPropertyCount } from "./db"
 import { createPropertySchema, updatePropertySchema } from "./schemas"
 import { deleteImageFromBlob, uploadImageToBlob } from "./blob"
 import { addUserIdToAction } from "@/lib/helpers"
@@ -63,19 +63,7 @@ export const getAllProperties = addUserIdToAction(async (userId: string) => {
     return getPropertiesForUser(userId);
 });
 
-export const updateRentReceiptSettingsAction = addUserIdToAction(async (userId: string, propertyId: string, rentReceiptStartDate: Date) => {
-    await getPropertyForUser(propertyId, userId);
-    const updatedProperty = await updatePropertyRentReceiptSettings(propertyId, rentReceiptStartDate);
 
-    return { data: updatedProperty };
-});
-
-export const deleteRentReceiptSettingsAction = addUserIdToAction(async (userId: string, propertyId: string) => {
-    await getPropertyForUser(propertyId, userId);
-    const updatedProperty = await updatePropertyRentReceiptSettings(propertyId, null);
-
-    return { data: updatedProperty };
-});
 
 export const uploadPropertyImagesAction = addUserIdToAction(async (userId: string, propertyId: string, files: File[]) => {
     const property = await getPropertyForUser(propertyId, userId);

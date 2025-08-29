@@ -142,8 +142,9 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
                                 onChange={handleFileChange}
                                 accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.txt"
                             />
-                            <div 
+                            <div
                                 onClick={triggerFileInput}
+                                onKeyUp={triggerFileInput}
                                 className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-md border-border hover:border-gray-400 cursor-pointer bg-gray-50"
                             >
                                 {selectedFile ? (
@@ -240,9 +241,9 @@ export function UploadDocumentDialog({ propertyId }: UploadDocumentDialogProps) 
                             )}
                         />
                         <DialogFooter>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
+                            <Button
+                                type="button"
+                                variant="outline"
                                 onClick={() => { form.reset(); setOpen(false)}}
                                 disabled={isSubmitting}
                             >

@@ -1,4 +1,4 @@
-import type { property, tenant } from "@prisma/client"
+import type { property, tenant, lease } from "@prisma/client"
 import { Building2, Mail, Phone, Users, ArrowRight } from "lucide-react"
 import { getTranslations } from "next-intl/server"
 import {
@@ -16,11 +16,11 @@ import Link from "next/link"
 import CreateTenantModal from "@/features/tenant/components/CreateTenantModal"
 
 interface TenantsListProps {
-  tenants: (tenant & { property: property | null })[]
-  properties: property[]
+  leases: (lease & { property: property })[]
+  tenants: (tenant & { property: property | null, startDate: Date | null, endDate: Date | null })[]
 }
 
-export default async function TenantsList({ tenants, properties }: TenantsListProps) {
+export default async function TenantsList({ leases, tenants }: TenantsListProps) {
   const t = await getTranslations('tenants')
   const isEmpty = tenants.length === 0
 
@@ -31,17 +31,17 @@ export default async function TenantsList({ tenants, properties }: TenantsListPr
           <div className="bg-background p-4 rounded-full shadow-sm border border-border">
             <Users className="h-16 w-16 text-primary" />
           </div>
-          
+
           <div className="space-y-2 max-w-md">
             <h2 className="text-xl font-semibold">{t("no-tenants-found")}</h2>
             <p className="text-muted-foreground">
               {t("empty-state-description")}
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-3 mt-2">
-            <CreateTenantModal properties={properties} />
-            
+            <CreateTenantModal leases={leases} />
+
             <Link href="/properties">
               <Button variant="outline" className="gap-2 w-full">
                 {t("manage-properties")}
@@ -114,7 +114,7 @@ export default async function TenantsList({ tenants, properties }: TenantsListPr
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
-                      <EditTenantModal properties={properties} tenant={tenant} />
+                      <EditTenantModal leases={leases} tenant={tenant} />
                       <DeleteTenantModal tenant={tenant} />
                     </div>
                   </TableCell>

@@ -14,16 +14,15 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Trash } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { removeTenantFromProperty } from "../actions"
+import { removeTenantFromLeaseAction } from "../actions"
 import { useToast } from "@/hooks/use-toast"
 
 interface RemoveTenantModalProps {
-  propertyId: string
   tenantId: string
   onSuccess?: () => void
 }
 
-export default function RemoveTenantModal({ propertyId, tenantId, onSuccess }: RemoveTenantModalProps) {
+export default function RemoveTenantModal({ tenantId, onSuccess }: RemoveTenantModalProps) {
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const t = useTranslations('tenants')
@@ -33,7 +32,7 @@ export default function RemoveTenantModal({ propertyId, tenantId, onSuccess }: R
   const handleConfirm = async () => {
     try {
       setIsLoading(true)
-      await removeTenantFromProperty(propertyId, tenantId)
+      await removeTenantFromLeaseAction(tenantId)
       toast({
         title: t('remove.success'),
       })

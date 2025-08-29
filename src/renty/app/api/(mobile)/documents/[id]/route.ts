@@ -43,7 +43,9 @@ export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
     const tenant = await prisma.tenant.findFirst({
       where: {
         id: tenantId,
-        propertyId: document.propertyId,
+        lease: {
+          propertyId: document.propertyId,
+        },
       },
     });
 

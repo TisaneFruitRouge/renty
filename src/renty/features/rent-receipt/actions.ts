@@ -1,13 +1,13 @@
 'use server'
 
-import { z } from "zod"
+import type { z } from "zod"
 import { prisma } from "@/prisma/db"
 import createReceipt, { addBlobUrlToRceipt, deleteReceipt } from "./db"
 import { generatePDF } from "./pdf/generatePDF"
 import { deleteReceiptFromBlob, saveReceiptToBlob } from "./blob"
 import { sendReceiptEmail } from "./email/sendEmail"
-import { createReceiptSchema } from "./schemas"
-import { RentReceiptStatus } from "@prisma/client";
+import type { createReceiptSchema } from "./schemas"
+import { RentReceiptStatus, type rentReceipt } from "@prisma/client";
 import { updateReceiptStatus } from "./db";
 
 type createRentReceiptInput = z.infer<typeof createReceiptSchema>
@@ -25,7 +25,14 @@ export async function createRentReceiptAction(sendMail = true, {
             id: propertyId
         },
         include: {
-            tenants: true,
+            leases: {
+                where: {
+                    status: 'ACTIVE'
+                },
+                include: {
+                    tenants: true
+                }
+            },
             user: true
         }
     })
@@ -34,7 +41,16 @@ export async function createRentReceiptAction(sendMail = true, {
       throw new Error(`Property with id: ${propertyId} was not found`);
     }
 
-    let createdReceipt;
+    if (!property.leases || property.leases.length === 0) {
+      throw new Error(`No active leases found for property ${propertyId}`);
+    }
+
+    const activeLease = property.leases[0];
+    if (!activeLease.tenants || activeLease.tenants.length === 0) {
+      throw new Error(`No tenants found in active lease for property ${propertyId}`);
+    }
+
+    let createdReceipt: rentReceipt | null = null;
 
     try {
     
@@ -43,9 +59,9 @@ export async function createRentReceiptAction(sendMail = true, {
           endDate,
           baseRent,
           charges,
-          property.paymentFrequency,
+          activeLease.paymentFrequency,
           property.id,
-          property.tenants[0].id
+          activeLease.tenants[0].id
         );
   
         if (!createdReceipt) {
@@ -56,7 +72,7 @@ export async function createRentReceiptAction(sendMail = true, {
         const pdfBuffer = await generatePDF(
           createdReceipt,
           property,
-          property.tenants[0] 
+          activeLease.tenants[0] 
         );
   
         const url = await saveReceiptToBlob(pdfBuffer);
@@ -71,7 +87,7 @@ export async function createRentReceiptAction(sendMail = true, {
             // send mail
             await sendReceiptEmail(
                 createdReceipt,
-                property.tenants[0],
+                activeLease.tenants[0],
                 property.user.email,
                 pdfBuffer
             );
