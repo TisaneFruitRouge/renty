@@ -1,13 +1,12 @@
 'use server'
 
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { DocumentCategory } from "@prisma/client";
 import { getPropertyForUser } from "../properties/db";
 import { createDocument, deleteDocument, updateDocument } from "./db";
 import { deleteDocumentFromBlob, uploadDocumentToBlob } from "./blob";
+import { addUserIdToAction } from "@/lib/helpers";
 
 // Schema for document upload validation
 const uploadDocumentSchema = z.object({
@@ -19,21 +18,14 @@ const uploadDocumentSchema = z.object({
 
 export type UploadDocumentInput = z.infer<typeof uploadDocumentSchema>;
 
-export async function uploadDocumentAction(
+export const uploadDocumentAction = addUserIdToAction(async (
+    userId: string,
     propertyId: string, 
     file: File, 
     data: UploadDocumentInput
-) {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
-
-    if (!session?.user?.id) {
-        throw new Error("Not authenticated");
-    }
-
+) => {
     // Verify property belongs to user
-    const property = await getPropertyForUser(propertyId, session.user.id);
+    const property = await getPropertyForUser(propertyId, userId);
     if (!property) {
         throw new Error("Property not found");
     }
@@ -72,19 +64,15 @@ export async function uploadDocumentAction(
             error: error instanceof Error ? error.message : "Failed to upload document" 
         };
     }
-}
+});
 
-export async function deleteDocumentAction(documentId: string, propertyId: string) {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
-
-    if (!session?.user?.id) {
-        throw new Error("Not authenticated");
-    }
-
+export const deleteDocumentAction = addUserIdToAction(async (
+    userId: string,
+    documentId: string, 
+    propertyId: string
+) => {
     // Verify property belongs to user
-    const property = await getPropertyForUser(propertyId, session.user.id);
+    const property = await getPropertyForUser(propertyId, userId);
     if (!property) {
         throw new Error("Property not found");
     }
@@ -105,9 +93,10 @@ export async function deleteDocumentAction(documentId: string, propertyId: strin
             error: error instanceof Error ? error.message : "Failed to delete document" 
         };
     }
-}
+});
 
-export async function updateDocumentAction(
+export const updateDocumentAction = addUserIdToAction(async (
+    userId: string,
     documentId: string, 
     propertyId: string, 
     data: {
@@ -116,17 +105,9 @@ export async function updateDocumentAction(
         category?: DocumentCategory;
         sharedWithTenant?: boolean;
     }
-) {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
-
-    if (!session?.user?.id) {
-        throw new Error("Not authenticated");
-    }
-
+) => {
     // Verify property belongs to user
-    const property = await getPropertyForUser(propertyId, session.user.id);
+    const property = await getPropertyForUser(propertyId, userId);
     if (!property) {
         throw new Error("Property not found");
     }
@@ -143,4 +124,4 @@ export async function updateDocumentAction(
             error: error instanceof Error ? error.message : "Failed to update document" 
         };
     }
-}
+});

@@ -78,24 +78,24 @@ export function DocumentCard({ document, propertyId }: DocumentCardProps) {
 
     return (
         <>
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:border-border/80 transition-colors">
                 <div className="flex items-center flex-1 min-w-0">
-                    <div className="text-gray-400 mr-3">
+                    <div className="text-muted-foreground mr-3">
                         {getFileIcon()}
                     </div>
                     <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-medium text-gray-900 truncate">{document.name}</h3>
-                            <span className="text-xs text-gray-500 ml-2">{formatFileSize(document.fileSize)}</span>
+                            <h3 className="text-sm font-medium truncate">{document.name}</h3>
+                            <span className="text-xs text-muted-foreground ml-2">{formatFileSize(document.fileSize)}</span>
                         </div>
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
+                        <div className="flex items-center text-xs text-muted-foreground mt-1">
                             <span className="truncate">
                                 {document.description && `${document.description} • `}
                                 {t('uploaded-on')} {format(new Date(document.uploadedAt), 'PPP')}
                             </span>
                         </div>
                         <div className="mt-1">
-                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                            <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
                                 {getCategoryLabel(document.category)}
                             </span>
                         </div>

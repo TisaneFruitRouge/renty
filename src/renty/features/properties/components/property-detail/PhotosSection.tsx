@@ -20,10 +20,10 @@ export default function PhotosSection({ property }: PhotosSectionProps) {
     const t = useTranslations('property')
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
             <div className="py-6 px-4">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">{t("photos")}</h2>
+                    <h2 className="text-lg font-semibold">{t("photos")}</h2>
                     <EditPropertyPhotosModal property={property} />
                 </div>
                 {property.images.length > 0 ? (

@@ -1,6 +1,6 @@
 "use client"
 
-import { Building2, Home, MessageSquare, ReceiptText, Settings, Users } from "lucide-react"
+import { Building2, FileText, Home, MessageSquare, ReceiptText, Settings, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 import {
   Sidebar,
@@ -41,6 +41,11 @@ export function AppSidebar() {
       title: t('menu.tenants'),
       url: "/tenants",
       icon: Users,
+    },
+    {
+      title: t('menu.leases'),
+      url: "/leases",
+      icon: FileText,
     },
     {
       title: t('menu.rent-receipts'),

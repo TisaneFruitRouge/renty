@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import { assignTenantToProperty } from "../actions"
+import { assignTenantToLeaseAction } from "../actions"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import type { tenant } from "@prisma/client"
@@ -51,7 +51,8 @@ export function SelectTenantForm({ propertyId, availableTenants, onSuccess }: Se
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setIsLoading(true)
-      await assignTenantToProperty(propertyId, values.tenantId)
+      // Temporarily disabled: tenant assignment now requires leaseId instead of propertyId
+      throw new Error("Tenant assignment has been moved to lease level - please use lease management instead")
       toast({
         title: t('select-form.success'),
       })
