@@ -1,5 +1,10 @@
-import { type property } from "@prisma/client";
+import type { lease, tenant } from "@prisma/client";
 import type { JsonValue } from "@prisma/client/runtime/library";
+
+// Define a lease type that includes the tenants relation
+export type LeaseWithTenants = lease & {
+  tenants: tenant[];
+};
 
 interface MonthRange {
   startDate: Date;
@@ -9,31 +14,11 @@ interface MonthRange {
 export function getMonthRange(date: Date): MonthRange {
   const year = date.getFullYear();
   const month = date.getMonth();
-  
+
   return {
     startDate: new Date(year, month, 1),
     endDate: new Date(year, month + 1, 0)
   };
-}
-
-function daysInMonth(month: number, year: number) {
-    return new Date(year, month, 0).getDate();
-}
-
-function isLastDayOfMonth(date: Date): boolean {
-    const daysInCurrentMonth = daysInMonth(date.getFullYear(), date.getMonth() + 1);
-    return date.getDate() === daysInCurrentMonth;
-}
-
-function shouldGenerateMonthlyReceipt(startDate: Date, today: Date): boolean {
-    const startDayOfMonth = startDate.getDate();
-    
-    // Special handling for end-of-month dates (29th, 30th, 31st)
-    if (startDayOfMonth >= 29) {
-        return isLastDayOfMonth(today);
-    }
-    
-    return today.getDate() === startDayOfMonth;
 }
 
 export interface RentDetails {
@@ -57,12 +42,94 @@ export function parseRentDetails(rentDetails: JsonValue): RentDetails | null {
     return { baseRent, charges };
 }
 
-export function shouldGenerateReceipt(property: property, today: Date = new Date()): boolean {
-    const { rentReceiptStartDate } = property;
-    
-    if (!rentReceiptStartDate) {
+export function shouldGenerateReceipt(lease: LeaseWithTenants, today: Date = new Date()): boolean {
+    // Check if auto generation is enabled
+    if (!lease.autoGenerateReceipts) {
         return false;
     }
 
-    return shouldGenerateMonthlyReceipt(rentReceiptStartDate, today);
+    // Check if lease is active
+    if (lease.status !== 'ACTIVE') {
+        return false;
+    }
+
+    // Check if there are tenants
+    if (!lease.tenants || lease.tenants.length === 0) {
+        return false;
+    }
+
+    // Check if next receipt date is due
+    if (lease.nextReceiptDate && new Date(lease.nextReceiptDate) <= today) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Determines the receipt generation strategy based on lease type
+ */
+export function getReceiptStrategy(leaseType: string): 'individual' | 'shared' | 'colocation' {
+    switch (leaseType) {
+        case 'INDIVIDUAL':
+            return 'individual';
+        case 'SHARED':
+            return 'shared';
+        case 'COLOCATION':
+            return 'colocation';
+        default:
+            return 'individual'; // Default fallback
+    }
+}
+
+/**
+ * Validates if a lease can generate receipts
+ */
+export function validateLeaseForReceiptGeneration(lease: LeaseWithTenants): {
+    isValid: boolean;
+    errors: string[];
+} {
+    const errors: string[] = [];
+
+    if (!lease.tenants || lease.tenants.length === 0) {
+        errors.push('No tenants assigned to lease');
+    }
+
+    if (!lease.rentAmount || lease.rentAmount <= 0) {
+        errors.push('Invalid rent amount');
+    }
+
+    if (lease.charges === null || lease.charges < 0) {
+        errors.push('Invalid charges amount');
+    }
+
+    if (!lease.propertyId) {
+        errors.push('No property associated with lease');
+    }
+
+    if (lease.status !== 'ACTIVE') {
+        errors.push('Lease is not active');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+}
+
+/**
+ * Gets the expected number of receipts to be generated for a lease
+ */
+export function getExpectedReceiptCount(lease: LeaseWithTenants): number {
+    const strategy = getReceiptStrategy(lease.leaseType);
+
+    switch (strategy) {
+        case 'individual':
+        case 'colocation':
+            return lease.tenants?.length || 0;
+        case 'shared':
+            return 1; // One receipt for all tenants
+        default:
+            return 0;
+    }
 }

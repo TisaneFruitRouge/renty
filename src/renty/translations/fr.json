@@ -89,6 +89,7 @@
             "open-title": "Ajouter une propriété",
             "submit": "Créer la propriété",
             "success": "La propriété suivante a été créée:",
+            "disabled-message": "Vous avez atteint le nombre maximum de propriétés autorisé par votre abonnement",
             "error": "Une erreur est survenue lors de la création de la propriété",
             "title": {
                 "label": "Titre",
@@ -170,7 +171,7 @@
         "current-tenants": "Locataires actuels",
         "add-tenant": "Ajouter un locataire",
         "remove-tenant": "Supprimer le locataire",
-        "documents": "Documents",
+        "document-section": "Documents",
         "add-document": "Ajouter un document",
         "added-on": "Ajouté le",
         "download": "Télécharger",
@@ -235,32 +236,208 @@
             "title": "Gestion du locataire"
         },
         "see-more": "Voir plus",
-        "rent-receipt": {
-            "title": "Configuration de l'envoie des quittances de loyer",
-            "no-date": "Aucune date de début de génération des quittances n'a été définie.",
-            "configure": "Configuration de l'envoie des quittances de loyer",
-            "configuration": {
-                "title": "Configuration des quittances de loyer",
-                "description": "Configurez l'envoi automatique des quittances de loyer",
-                "automatic-send": "Envoi automatique à partir du",
-                "next-receipt-info": "Les quittances seront envoyées le {date} de chaque mois. Vous les receverez quelques jours avant et pourrez les modifier/annuler.",
-                "success": "Configuration des quittances de loyer mise à jour",
-                "deleted": "Configuration des quittances de loyer supprimée"
+
+        "no-lease-title": "Aucun bail",
+        "no-lease-description": "Cette propriété n'a pas encore de bail associé.",
+        "create-lease": "Créer un bail",
+        "period": "Période",
+        "revenue": "Revenus"
+    },
+    "leases": {
+        "no-leases-title": "Aucun bail",
+        "no-leases-description": "Vous n'avez pas encore de baux. Créez votre premier bail pour commencer.",
+        "view-properties": "Voir les propriétés",
+        "no-active-leases-title": "Aucun bail actif",
+        "no-active-leases-description": "Vous n'avez pas encore de baux actifs. Créez votre premier bail pour commencer.",
+        "create-first-lease": "Créer le premier bail",
+        "title": "Gestion des Baux",
+        "subtitle": "Gérez tous vos contrats de location en un seul endroit",
+        "all-leases": "Tous les baux",
+        "per-month": "/mois",
+        "notes": "Notes",
+        "view-all-leases": "Voir tous les baux",
+        "total-leases": "Total des baux",
+        "total-tenants": "Total des locataires",
+        "across-all-leases": "dans tous les baux",
+        "period": "Période",
+        "furnished": "Meublé",
+        "total-properties": "total des propriétés"
+    },
+    "lease": {
+        "create-form": {
+            "open-title": "Créer un bail",
+            "success": {
+                "created": "Bail créé avec succès",
+                "description": "Le bail a été créé et enregistré."
             },
-            "edit": {
-                "title": "Modification de la configuration",
-                "description": "Modifiez la date à laquelle vous souhaitez envoyer les quittances de loyer.",
-                "button": "Modifier la configuration"
+            "error": {
+                "create": "Erreur lors de la création",
+                "description": "Une erreur est survenue lors de la création du bail."
             },
-            "generated-from": "Les quittances sont générées à partir du",
-            "actions": {
-                "save": "Enregistrer",
-                "cancel": "Annuler",
-                "delete": "Supprimer"
-            }
+            "property": "Propriété",
+            "select-property": "Sélectionner une propriété",
+            "search-property": "Rechercher une propriété...",
+            "no-property-found": "Aucune propriété trouvée",
+            "start-date": "Date de début",
+            "select-start-date": "Sélectionner la date de début",
+            "end-date": {
+                "label": "Date de fin",
+                "description": "Laissez vide pour un bail à durée indéterminée"
+            },
+            "select-end-date": "Sélectionner la date de fin",
+            "rent-amount": "Montant du loyer",
+            "deposit-amount": {
+                "label": "Montant du dépôt de garantie",
+                "description": "Optionnel"
+            },
+            "charges": {
+                "label": "Charges",
+                "description": "Charges locatives mensuelles"
+            },
+            "lease-type": {
+                "label": "Type de bail",
+                "individual": "Individuel",
+                "shared": "Partagé",
+                "colocation": "Colocation"
+            },
+            "select-lease-type": "Sélectionner le type de bail",
+            "payment-frequency": {
+                "label": "Fréquence de paiement",
+                "monthly": "Mensuel",
+                "quarterly": "Trimestriel",
+                "yearly": "Annuel"
+            },
+            "select-payment-frequency": "Sélectionner la fréquence",
+            "furnished": {
+                "label": "Logement meublé",
+                "description": "Cochez si le logement est fourni avec des meubles"
+            },
+            "notes": {
+                "label": "Notes",
+                "placeholder": "Notes additionnelles sur le bail...",
+                "description": "Informations complémentaires sur le bail"
+            },
+            "submit": "Créer le bail"
+        },
+        "edit-form": {
+            "title": "Modifier le bail",
+            "success": {
+                "updated": "Bail modifié avec succès",
+                "description": "Les modifications ont été enregistrées."
+            },
+            "error": {
+                "update": "Erreur lors de la modification",
+                "description": "Une erreur est survenue lors de la modification du bail."
+            },
+            "submit": "Modifier le bail",
+            "updating": "Modification..."
+        },
+        "delete": {
+            "title": "Supprimer le bail",
+            "description": "Êtes-vous sûr de vouloir supprimer ce bail ? Cette action est irréversible et supprimera également tous les locataires associés.",
+            "confirm": "Supprimer",
+            "cancel": "Annuler",
+            "success": "Bail supprimé avec succès",
+            "error": "Erreur lors de la suppression"
+        },
+        "optional": "Optionnel",
+        "creating": "Création...",
+        "create-lease": "Créer le bail",
+        "notes-placeholder": "Notes additionnelles sur le bail...",
+        "currency": "Devise",
+        "select-currency": "Sélectionner la devise",
+        "tenants": "Locataires",
+        "activated": "Activé",
+        "pending": "En attente",
+        "no-tenants-assigned": "Aucun locataire assigné",
+        "rent": "Loyer",
+        "charges": "Charges",
+        "deposit": "Dépôt de garantie",
+        "period": "Période",
+        "furnished": "Meublé",
+        "start": "Début",
+        "end": "Fin",
+        "expired": "Expiré",
+        "expires-soon": "Expire bientôt",
+        "indefinite": "Indéterminée",
+        "notes": "Notes",
+        "edit": "Modifier",
+        "manage-tenants": "Gérer les locataires",
+        "view-documents": "Voir les documents",
+        "link-document": "Associer un document",
+        "frequency": {
+            "monthly": "mensuel",
+            "quarterly": "trimestriel",
+            "yearly": "annuel"
+        },
+        "status": {
+            "active": "Actif",
+            "expired": "Expiré",
+            "terminated": "Résilié",
+            "pending": "En attente"
+        },
+        "type": {
+            "individual": "Individuel",
+            "shared": "Partagé",
+            "colocation": "Colocation"
+        },
+        "back-to-leases": "Retour aux baux",
+        "lease-title": "Bail",
+        "expired-lease": "Bail expiré",
+        "since": "depuis le",
+        "expiring-soon": "Bail expire bientôt",
+        "on": "le",
+        "property-information": "Informations sur la propriété",
+        "title-label": "Titre",
+        "full-address": "Adresse complète",
+        "view-property": "Voir la propriété",
+        "lease-details": "Détails du bail",
+        "financial-details": "Détails financiers",
+        "per-month": "/mois",
+        "monthly-total": "Total mensuel",
+        "lease-type": "Type de bail",
+        "payment-frequency-label": "Fréquence de paiement",
+        "housing": "Logement",
+        "furnished-yes": "Meublé",
+        "furnished-no": "Non meublé",
+        "statistics": "Statistiques",
+        "duration": "Durée",
+        "months": "mois",
+        "annual-revenue": "Revenus annuels",
+        "created-on": "Créé le",
+        "assign-tenant": "Assigner un locataire",
+        "rent-receipt-settings": {
+            "title": "Configuration des quittances de loyer",
+            "auto-generate": "Génération automatique",
+            "auto-generate-description": "Générer et envoyer automatiquement les quittances de loyer chaque mois",
+            "generation-date": "Date de génération",
+            "generation-date-help": "Les quittances seront générées ce jour de chaque mois",
+            "day-of-month": "Le {day} du mois",
+            "next-receipt": "Prochaine quittance",
+            "not-configured": "La génération automatique des quittances n'est pas activée pour ce bail",
+            "updating": "Mise à jour en cours...",
+            "success": "Succès",
+            "error": "Erreur",
+            "enabled-description": "La génération automatique des quittances a été activée",
+            "disabled-description": "La génération automatique des quittances a été désactivée",
+            "date-updated": "La date de génération a été mise à jour",
+            "update-error": "Une erreur est survenue lors de la mise à jour des paramètres"
         }
     },
     "rent-receipts": {
+        "pdf": {
+            "landlord-title": "Propriétaire",
+            "tenant-title": "Locataire",
+            "tenants-title": "Locataires",
+            "property-title": "Logement",
+            "period-title": "Période",
+            "rent-details-title": "Détails du loyer",
+            "base-rent": "Loyer",
+            "charges": "Charges",
+            "total-amount": "Montant total",
+            "receipt-declaration": "Je soussigné(e) {landlordName}, propriétaire du logement désigné ci-dessus, déclare avoir reçu de {tenantName} la somme de {amount} au titre du paiement du loyer et des charges pour la période indiquée ci-dessus.",
+            "made-on": "Fait le"
+        },
         "back-to-list": "Retour aux quittances",
         "no-receipts": "Aucune quittance trouvée",
         "empty-state-description": "Créez votre première quittance de loyer pour commencer à gérer vos paiements. Vous pouvez générer des quittances pour vos locataires existants.",
@@ -349,7 +526,98 @@
             "app": {
                 "title": "Paramètres de l'application",
                 "description": "Configurez vos préférences d'application"
+            },
+            "subscription": {
+                "title": "Abonnement",
+                "description": "Gérez votre abonnement et vos options de paiement"
+            },
+            "notifications": {
+                "title": "Notifications",
+                "description": "Gérez vos préférences de notification"
+            },
+            "security": {
+                "title": "Sécurité",
+                "description": "Gérez vos paramètres de sécurité et de connexion"
             }
+        },
+        "app-settings": {
+            "dark-mode": "Mode sombre",
+            "dark-mode-description": "Activer le mode sombre pour l'interface",
+            "email-notifications": "Notifications par email",
+            "email-notifications-description": "Recevoir des notifications par email",
+            "language": "Langue",
+            "language-description": "Choisir la langue de l'interface"
+        },
+        "subscription": {
+            "current-plan": "Plan Basic",
+            "monthly-price": "5,00€/mois",
+            "change-plan": "Changer de plan",
+            "changing-plan": "Changement en cours...",
+            "upgrade-plan": "Passer au plan Pro",
+            "downgrade-plan": "Revenir au plan Basic",
+            "change-plan-error": "Erreur de changement de plan",
+            "change-plan-error-description": "Une erreur est survenue lors du changement de plan. Veuillez réessayer.",
+            "feature-properties": "Jusqu'à 5 propriétés",
+            "feature-receipts": "Quittances de loyer illimitées",
+            "feature-tenants": "Gestion des locataires",
+            "payment-method": "Méthode de paiement",
+            "card-expires": "Expire 12/25",
+            "expires": "Expire le",
+            "no-payment-method": "Aucune méthode de paiement enregistrée",
+            "add-payment-method": "Ajouter une méthode de paiement",
+            "modify": "Modifier",
+            "payment-method-card": "Carte bancaire",
+            "update-payment-method": "Mettre à jour",
+            "card-ending-in": "Carte se terminant par",
+            "billing-history": "Historique de facturation",
+            "download": "Télécharger",
+            "march": "Mars 2025",
+            "february": "Février 2025",
+            "loading": "Chargement...",
+            "error-fetching-payment": "Erreur lors de la récupération des informations de paiement",
+            "redirecting": "Redirection...",
+            "error": "Erreur",
+            "portal-access-error": "Impossible d'accéder au portail de paiement",
+            "general-error": "Une erreur est survenue",
+            "current-plan-title": "Plan actuel",
+            "no-billing-history": "Aucun historique de facturation disponible",
+            "download-invoice": "Télécharger la facture"
+        },
+        "notifications": {
+            "new-tenant": "Nouveau locataire",
+            "new-tenant-description": "Notifications lorsqu'un nouveau locataire est ajouté",
+            "payment-reminders": "Rappels de paiement",
+            "payment-reminders-description": "Rappels pour les paiements à venir",
+            "lease-ending": "Fin de bail",
+            "lease-ending-description": "Alertes avant la fin d'un bail",
+            "messages": "Nouveaux messages",
+            "messages-description": "Notifications pour les nouveaux messages"
+        },
+        "security": {
+            "password": "Mot de passe",
+            "last-modified": "Dernière modification il y a 3 mois",
+            "change-password": "Changer le mot de passe",
+            "two-factor": "Authentification à deux facteurs",
+            "two-factor-description": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+            "configure": "Configurer",
+            "active-sessions": "Sessions actives",
+            "this-device": "Cet appareil",
+            "last-activity-today": "Dernière activité: Aujourd'hui",
+            "last-activity-yesterday": "Dernière activité: Hier",
+            "disconnect": "Déconnecter",
+            "loading-sessions": "Chargement des sessions...",
+            "no-active-sessions": "Aucune session active",
+            "session-disconnected": "Session déconnectée",
+            "session-disconnected-description": "La session a été déconnectée avec succès",
+            "error-fetching-sessions": "Erreur lors de la récupération des sessions",
+            "error-disconnecting-session": "Erreur lors de la déconnexion de la session",
+            "unknown-error": "Une erreur inconnue est survenue",
+            "last-active": "Dernière activité: {time}",
+            "last-active-yesterday": "Hier à {time}",
+            "last-active-date": "Le {date}",
+            "unknown-time": "Date inconnue",
+            "sign-out": "Se déconnecter",
+            "disconnecting": "Déconnexion..."
         },
         "personal-info-form": {
             "name": {
@@ -395,6 +663,7 @@
             "properties": "Propriétés",
             "rent-receipts": "Quittances de loyer",
             "tenants": "Locataires",
+            "leases": "Baux",
             "channels": "Messages",
             "settings": "Paramètres"
         },
@@ -501,6 +770,7 @@
             "first-name-placeholder": "Entrez le prénom",
             "last-name": "Nom",
             "last-name-placeholder": "Entrez le nom",
+            "lease": "Bail",
             "email": "Email",
             "email-placeholder": "Entrez l'email",
             "phone": "Téléphone",
@@ -508,6 +778,8 @@
             "notes": "Notes",
             "notes-placeholder": "Entrez des notes (optionnel)",
             "property": "Propriété",
+            "search-lease": "Cherchez un bail",
+            "select-lease": "Séléctionnez un bail",
             "select-property": "Sélectionnez une propriété",
             "search-property": "Rechercher une propriété...",
             "no-property-found": "Aucune propriété trouvée",
@@ -617,7 +889,8 @@
             "title": "Ajouter un nouveau locataire",
             "description": "Remplissez les informations du locataire ci-dessous"
         },
-        "your-renters": "Vos locataires"
+        "your-renters": "Vos locataires",
+        "tenants": "Locataires"
     },
     "auth": {
         "signIn": {
@@ -684,6 +957,38 @@
                 "error": {
                     "title": "Erreur",
                     "description": "Une erreur est survenue lors de la création de votre compte"
+                }
+            }
+        }
+    },
+    "subscription": {
+        "upgrade-subscription": "Améliorer l'abonnement",
+        "required-modal": {
+            "title": "Abonnement requis",
+            "description": "Pour continuer à utiliser Renty, veuillez choisir un abonnement qui correspond à vos besoins.",
+            "subscribe-button": "S'abonner",
+            "disclaimer": "Vous ne serez pas débité avant d'avoir confirmé votre abonnement sur la page de paiement."
+        },
+        "plans": {
+            "basic": {
+                "title": "Basique",
+                "price": "5,00€/mois",
+                "features": {
+                    "properties": "Jusqu'à {count} propriétés",
+                    "receipts": "Quittances de loyer illimitées",
+                    "tenants": "Gestion des locataires",
+                    "messages": "Messagerie instantanée avec vos locataires",
+                    "notifications": "Notifications par email"
+                }
+            },
+            "pro": {
+                "title": "Pro",
+                "price": "20,00€/mois",
+                "features": {
+                    "properties": "Propriétés illimitées",
+                    "all-basic-features": "Toutes les fonctionnalités Basique",
+                    "support": "Support prioritaire",
+                    "reporting": "Rapports avancés"
                 }
             }
         }

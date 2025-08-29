@@ -1,172 +1,243 @@
-"use server"
+"use server";
 
-import { auth } from "@/lib/auth"
-import { revalidatePath } from "next/cache"
-import { headers } from "next/headers"
-import { addTenantToPropertyChannel } from "@/features/messages/db"
-import { generateRandomCode, hash } from "@/features/auth/lib"
-import { CreateTenantFormData } from "./components/CreateTenantForm"
-import { EditTenantFormData } from "./components/EditTenantForm"
+import { revalidatePath } from "next/cache";
+import { addUserIdToAction } from "@/lib/helpers";
+import { generateRandomCode } from "@/features/auth/lib";
+import { hash } from "bcryptjs";
+import { prisma } from "@/prisma/db";
+import type { CreateTenantFormData } from "./components/CreateTenantForm";
+import type { EditTenantFormData } from "./components/EditTenantForm";
 import {
   createTenantInDb,
   createTenantAuthInDb,
-  getTenantsByPropertyId,
   getAllTenantsForUser,
   getAvailableTenantsForUser,
-  updateTenantPropertyInDb,
-  editTenantInDb,
+  getTenantById,
+  getTenantWithLease,
+  updateTenantInDb,
+  assignTenantToLease,
+  removeTenantFromLease,
   deleteTenantFromDb,
-  findPropertyForUser,
-  assignTenantToPropertyInDb,
-  removeTenantFromPropertyInDb
-} from './db'
+  addTenantToPropertyChannelByLeaseId,
+  removeTenantFromPropertyChannelByLeaseId,
+  getTenantsByPropertyId
+} from './db';
 
-export async function createTenant(data: CreateTenantFormData) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  const tenant = await createTenantInDb({ ...data, userId: session.user.id });
+export const createTenant = addUserIdToAction(async (userId: string, data: CreateTenantFormData) => {
+  const tenant = await createTenantInDb({ ...data, userId });
 
   const tempCode = generateRandomCode(6);
-  await createTenantAuthInDb(tenant.id, tenant.phoneNumber, await hash(tempCode));
+  const hashedTempCode = await hash(tempCode, 10);
+  await createTenantAuthInDb(tenant.id, tenant.phoneNumber, hashedTempCode);
 
-  // If propertyId is provided, add tenant to property channel
-  if (data.propertyId) {
-    await addTenantToPropertyChannel(data.propertyId, tenant.id);
+  // If leaseId is provided, add tenant to property channel
+  if (data.leaseId) {
+    await addTenantToPropertyChannelByLeaseId(data.leaseId, tenant.id);
   }
 
   // TODO: send code to tenant's phone number
+  // await sendSMS(tenant.phoneNumber, `Your access code is: ${tempCode}`);
 
-  revalidatePath('/tenants')
-  revalidatePath(`/properties/${data.propertyId}`)
-  revalidatePath('/channels')
-  return tenant
-}
+  revalidatePath('/tenants');
+  if (data.leaseId) {
+    const lease = await prisma.lease.findUnique({
+      where: { id: data.leaseId },
+      select: { propertyId: true }
+    });
+    if (lease) {
+      revalidatePath(`/properties/${lease.propertyId}`);
+    }
+  }
+  return tenant;
+});
 
 export async function getTenantByPropertyId(propertyId: string) {
   const tenants = await getTenantsByPropertyId(propertyId);
-  return tenants[0];
+  return tenants[0] || null;
 }
 
-export async function getAllTenants() {
-  const session = await auth.api.getSession({
-    headers: await headers()
+export const getAvailableTenants = addUserIdToAction(async (userId: string) => {
+  return getAvailableTenantsForUser(userId);
+});
+
+export const getAllTenants = addUserIdToAction(async (userId: string) => {
+  return getAllTenantsForUser(userId);
+});
+
+export const editTenant = addUserIdToAction(async (userId: string, tenantId: string, data: EditTenantFormData) => {
+  // Get current tenant to check lease changes
+  const currentTenant = await getTenantById(tenantId);
+  if (!currentTenant || currentTenant.userId !== userId) {
+    throw new Error("Tenant not found or access denied");
+  }
+
+  const oldLeaseId = currentTenant.leaseId;
+  const newLeaseId = data.leaseId || null;
+
+  // Update tenant
+  const tenant = await updateTenantInDb(tenantId, userId, data);
+
+  // Handle channel participation changes
+  if (oldLeaseId !== newLeaseId) {
+    // Remove from old lease's property channel
+    if (oldLeaseId) {
+      await removeTenantFromPropertyChannelByLeaseId(oldLeaseId, tenantId);
+    }
+
+    // Add to new lease's property channel
+    if (newLeaseId) {
+      await addTenantToPropertyChannelByLeaseId(newLeaseId, tenantId);
+    }
+  }
+
+  revalidatePath('/tenants');
+  
+  // Revalidate both old and new properties if applicable
+  if (oldLeaseId) {
+    const oldLease = await prisma.lease.findUnique({
+      where: { id: oldLeaseId },
+      select: { propertyId: true }
+    });
+    if (oldLease) {
+      revalidatePath(`/properties/${oldLease.propertyId}`);
+    }
+  }
+  
+  if (newLeaseId) {
+    const newLease = await prisma.lease.findUnique({
+      where: { id: newLeaseId },
+      select: { propertyId: true }
+    });
+    if (newLease) {
+      revalidatePath(`/properties/${newLease.propertyId}`);
+    }
+  }
+
+  return tenant;
+});
+
+export const deleteTenant = addUserIdToAction(async (userId: string, tenantId: string) => {
+  // Get tenant details before deletion
+  const tenantWithLease = await getTenantWithLease(tenantId);
+  
+  if (!tenantWithLease.tenant || tenantWithLease.tenant.userId !== userId) {
+    throw new Error("Tenant not found or access denied");
+  }
+
+  // Remove from property channel if assigned to a lease
+  if (tenantWithLease.tenant.leaseId) {
+    await removeTenantFromPropertyChannelByLeaseId(tenantWithLease.tenant.leaseId, tenantId);
+  }
+
+  const tenant = await deleteTenantFromDb(tenantId, userId);
+
+  revalidatePath('/tenants');
+  if (tenantWithLease.property) {
+    revalidatePath(`/properties/${tenantWithLease.property.id}`);
+  }
+  
+  return tenant;
+});
+
+export const assignTenantToLeaseAction = addUserIdToAction(async (userId: string, leaseId: string, tenantId: string) => {
+  // Verify lease belongs to user
+  const lease = await prisma.lease.findFirst({
+    where: {
+      id: leaseId,
+      property: {
+        userId
+      }
+    },
+    include: { property: true }
   });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
+  
+  if (!lease) {
+    throw new Error("Lease not found or access denied");
   }
 
-  return getAllTenantsForUser(session.user.id);
-}
+  // Verify tenant belongs to user
+  const tenant = await getTenantById(tenantId);
+  if (!tenant || tenant.userId !== userId) {
+    throw new Error("Tenant not found or access denied");
+  }
 
-export async function getAvailableTenants() {
-  const session = await auth.api.getSession({
-    headers: await headers()
+  // Remove from old lease channel if applicable
+  if (tenant.leaseId) {
+    await removeTenantFromPropertyChannelByLeaseId(tenant.leaseId, tenantId);
+  }
+
+  // Assign tenant to lease
+  await assignTenantToLease(tenantId, leaseId);
+
+  // Add to new property channel
+  await addTenantToPropertyChannelByLeaseId(leaseId, tenantId);
+
+  revalidatePath('/tenants');
+  revalidatePath('/leases');
+  revalidatePath(`/properties/${lease.propertyId}`);
+
+  return { success: true };
+});
+
+export const removeTenantFromLeaseAction = addUserIdToAction(async (userId: string, tenantId: string) => {
+  // Get tenant with lease info
+  const tenantWithLease = await getTenantWithLease(tenantId);
+  
+  if (!tenantWithLease.tenant || tenantWithLease.tenant.userId !== userId) {
+    throw new Error("Tenant not found or access denied");
+  }
+
+  if (!tenantWithLease.tenant.leaseId) {
+    throw new Error("Tenant is not assigned to any lease");
+  }
+
+  // Remove from property channel
+  await removeTenantFromPropertyChannelByLeaseId(tenantWithLease.tenant.leaseId, tenantId);
+
+  // Remove from lease
+  await removeTenantFromLease(tenantId);
+
+  revalidatePath('/tenants');
+  revalidatePath('/leases');
+  if (tenantWithLease.property) {
+    revalidatePath(`/properties/${tenantWithLease.property.id}`);
+  }
+
+  return { success: true };
+});
+
+// Helper to get tenant details with lease information
+export const getTenantDetails = addUserIdToAction(async (userId: string, tenantId: string) => {
+  const tenantWithLease = await getTenantWithLease(tenantId);
+  
+  if (!tenantWithLease.tenant || tenantWithLease.tenant.userId !== userId) {
+    throw new Error("Tenant not found or access denied");
+  }
+
+  return tenantWithLease;
+});
+
+// Get all active leases for tenant forms
+export const getActiveLeasesForUser = addUserIdToAction(async (userId: string) => {
+  return prisma.lease.findMany({
+    where: {
+      property: {
+        userId
+      },
+      status: 'ACTIVE'
+    },
+    include: {
+      property: {
+        select: {
+          id: true,
+          title: true,
+          address: true,
+          city: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
   });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  return getAvailableTenantsForUser(session.user.id);
-}
-
-export async function updateTenantProperty(tenantId: string, propertyId: string) {
-  const tenant = await updateTenantPropertyInDb(tenantId, propertyId);
-
-  revalidatePath('/tenants')
-  revalidatePath(`/properties/${propertyId}`)
-  return tenant
-}
-
-export async function editTenant(tenantId: string, data: EditTenantFormData) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  const tenant = await editTenantInDb(tenantId, session.user.id, data);
-
-  revalidatePath('/tenants')
-  if (data.propertyId) {
-    revalidatePath(`/properties/${data.propertyId}`)
-  }
-  return tenant
-}
-
-export async function deleteTenant(tenantId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  const tenant = await deleteTenantFromDb(tenantId, session.user.id);
-
-  revalidatePath('/tenants')
-  if (tenant.propertyId) {
-    revalidatePath(`/properties/${tenant.propertyId}`)
-  }
-  return tenant
-}
-
-export async function assignTenantToProperty(propertyId: string, tenantId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  // Check if property belongs to user
-  const property = await findPropertyForUser(propertyId, session.user.id);
-
-  if (!property) {
-    throw new Error("Property not found or unauthorized");
-  }
-
-  const tenant = await assignTenantToPropertyInDb(tenantId, session.user.id, propertyId);
-
-  // Add tenant to the property's channel
-  await addTenantToPropertyChannel(propertyId, tenantId);
-
-  revalidatePath('/tenants')
-  revalidatePath(`/properties/${propertyId}`)
-  revalidatePath('/channels')
-  return tenant
-}
-
-export async function removeTenantFromProperty(propertyId: string, tenantId: string) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
-  if (!session?.user?.id) {
-    throw new Error("Not authenticated");
-  }
-
-  // Check if property belongs to user
-  const property = await findPropertyForUser(propertyId, session.user.id);
-
-  if (!property) {
-    throw new Error("Property not found or unauthorized");
-  }
-
-  const tenant = await removeTenantFromPropertyInDb(tenantId, session.user.id, propertyId);
-
-  revalidatePath('/tenants')
-  revalidatePath(`/properties/${propertyId}`)
-  return tenant
-}
+});

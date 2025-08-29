@@ -43,8 +43,10 @@ export default function SignUpForm() {
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		try {
 			const { email, password, name } = values;
+
+			// sign up the user
 			await signUp(email, password, name);
-			
+
 			await fetch('/api/email/after-sign-up', {
 				method: 'POST',
 				headers: {

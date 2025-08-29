@@ -39,9 +39,9 @@ export default async function RentReceiptsPage({ searchParams }: RentReceiptsPag
     }
 
     return (
-        <div className="p-6">
-            <div className="flex justify-between mb-6">
-                <h1 className="text-3xl font-semibold mb-4">{t('title')}</h1>
+        <div className="container mx-auto p-6 space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-3xl font-bold">{t('title')}</h1>
                 <CreateRentReceiptModal properties={properties} />
             </div>
             

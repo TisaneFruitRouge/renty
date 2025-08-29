@@ -23,11 +23,12 @@ import {
 } from "@/components/ui/dialog"
 import { Loader2, Plus } from "lucide-react"
 import { createPropertySchema } from "../schemas"
-import { createPropertyAction } from "../actions"
+import { createPropertyAction, getPropertyCountAction } from "../actions"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { z } from "zod"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { ResourceLimitButton } from "@/features/subscription/hooks/useResourceLimit"
 
 export default function CreatePropertyModal() {
     const { toast } = useToast();
@@ -35,6 +36,25 @@ export default function CreatePropertyModal() {
     const t = useTranslations('property');
 
     const [loading, setLoading] = useState(false);
+    const [propertyCount, setPropertyCount] = useState(0);
+    
+    // Fetch property count using server action
+    useEffect(() => {
+        async function fetchPropertyCount() {
+            try {
+                const result = await getPropertyCountAction();
+                if (result.success && result.data !== undefined) {
+                    setPropertyCount(result.data);
+                } else {
+                    console.error('Failed to fetch property count:', result.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Failed to fetch property count:', error);
+            }
+        }
+        
+        fetchPropertyCount();
+    }, []);
 
     const form = useForm<z.infer<typeof createPropertySchema>>({
         resolver: zodResolver(createPropertySchema),
@@ -51,7 +71,14 @@ export default function CreatePropertyModal() {
     async function onSubmit(values: z.infer<typeof createPropertySchema>) {
         try {
             setLoading(true);
-            const {data: property} = await createPropertyAction(values)
+            const result = await createPropertyAction(values)
+            
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+            
+            const property = result.data;
+            
             toast({
                 title: t('create-form.success'),
                 description: property?.title || "",
@@ -72,10 +99,14 @@ export default function CreatePropertyModal() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>
+                <ResourceLimitButton
+                    resource="properties"
+                    count={propertyCount}
+                    disabledMessage={t('create-form.disabled-message')}
+                >
                     <Plus className="mr-2 h-4 w-4" />
                     {t('create-form.open-title')}
-                </Button>
+                </ResourceLimitButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>

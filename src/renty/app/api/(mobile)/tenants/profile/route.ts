@@ -48,7 +48,11 @@ export const PUT = withAuth(async (req: NextRequest, tenantId: string) => {
         // phoneVerified: validatedData.phoneNumber ? false : undefined
       },
       include: {
-        property: true
+        lease: {
+          include: {
+            property: true
+          }
+        }
       }
     });
     

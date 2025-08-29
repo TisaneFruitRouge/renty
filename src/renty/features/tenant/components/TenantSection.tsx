@@ -18,7 +18,6 @@ export default function TenantSection({ propertyId, initialTenant, availableTena
         <TenantCard tenant={initialTenant} />
         <div className="flex justify-end">
           <RemoveTenantModal
-            propertyId={propertyId}
             tenantId={initialTenant.id}
           />
         </div>

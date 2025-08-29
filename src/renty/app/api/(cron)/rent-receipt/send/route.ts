@@ -1,5 +1,6 @@
-import { getPendingReceiptsForDate } from '@/features/rent-receipt/db';
+import { getPendingReceiptsForDate, updateReceiptStatus } from '@/features/rent-receipt/db';
 import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
+import { RentReceiptStatus } from '@prisma/client';
 import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -23,13 +24,15 @@ export async function GET(request: NextRequest) {
           throw new Error(`Failed to fetch PDF from blob storage: ${pdfResponse.statusText}`);
         }
         const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
-        
+
         await sendReceiptEmail(
           receipt,
           receipt.tenant,
           receipt.property.user.email,
           pdfBuffer
         );
+
+        await updateReceiptStatus(receipt.id, RentReceiptStatus.PAID);
       }
     } catch (error) {
       console.error(`Error sending receipt ${receipt.id}: ${error}`);

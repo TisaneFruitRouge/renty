@@ -71,17 +71,17 @@ export function DocumentVault({ documents, propertyId }: DocumentVaultProps) {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-card rounded-xl shadow-sm border border-border">
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-lg font-semibold text-gray-900">{t('document-vault')}</h2>
+                    <h2 className="text-lg font-semibold">{t('document-vault')}</h2>
                     <UploadDocumentDialog propertyId={propertyId} />
                 </div>
 
                 {/* Search and filter */}
                 <div className="flex flex-col sm:flex-row gap-3 mb-6">
                     <div className="relative flex-grow">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder={t('search-documents')}
                             value={searchQuery}
@@ -90,7 +90,7 @@ export function DocumentVault({ documents, propertyId }: DocumentVaultProps) {
                         />
                     </div>
                     <div className="w-full sm:w-48 flex items-center">
-                        <Filter className="mr-2 h-4 w-4 text-gray-400" />
+                        <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
                         <Select
                             value={categoryFilter}
                             onValueChange={setCategoryFilter}
@@ -135,7 +135,7 @@ export function DocumentVault({ documents, propertyId }: DocumentVaultProps) {
                         {Object.entries(groupedDocuments).map(([category, docs]) => (
                             <div key={category}>
                                 {categoryFilter === "ALL" && (
-                                    <h3 className="text-sm font-medium text-gray-500 mb-3">
+                                    <h3 className="text-sm font-medium text-muted-foreground mb-3">
                                         {getCategoryLabel(category)} ({docs.length})
                                     </h3>
                                 )}

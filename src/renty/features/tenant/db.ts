@@ -10,7 +10,7 @@ export async function createTenantInDb(data: CreateTenantFormData & { userId: st
       email: data.email,
       phoneNumber: data.phoneNumber,
       notes: data.notes,
-      propertyId: data.propertyId,
+      leaseId: data.leaseId || null,
       userId: data.userId
     },
   });
@@ -29,12 +29,53 @@ export async function createTenantAuthInDb(tenantId: string, phoneNumber: string
   });
 }
 
-export async function getTenantsByPropertyId(propertyId: string) {
-  return prisma.tenant.findMany({
-    where: {
-      propertyId
+export async function getTenantById(tenantId: string) {
+  return prisma.tenant.findUnique({
+    where: { id: tenantId }
+  });
+}
+
+export async function getTenantWithLease(tenantId: string) {
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId }
+  });
+  
+  if (!tenant || !tenant.leaseId) {
+    return { tenant, lease: null, property: null };
+  }
+  
+  const lease = await prisma.lease.findUnique({
+    where: { id: tenant.leaseId },
+    include: {
+      property: true
     }
   });
+  
+  return {
+    tenant,
+    lease: lease || null,
+    property: lease?.property || null
+  };
+}
+
+export async function getTenantsByLeaseId(leaseId: string) {
+  return prisma.tenant.findMany({
+    where: {
+      leaseId: leaseId
+    }
+  });
+}
+
+export async function getTenantsByPropertyId(propertyId: string) {
+  // Find all tenants through their leases for a given property
+  const leases = await prisma.lease.findMany({
+    where: { propertyId },
+    include: {
+      tenants: true
+    }
+  });
+  
+  return leases.flatMap(lease => lease.tenants);
 }
 
 export async function getAllTenantsForUser(userId: string) {
@@ -43,7 +84,11 @@ export async function getAllTenantsForUser(userId: string) {
       userId
     },
     include: {
-      property: true
+      lease: {
+        include: {
+          property: true
+        }
+      }
     },
     orderBy: {
       createdAt: 'desc',
@@ -54,7 +99,7 @@ export async function getAllTenantsForUser(userId: string) {
 export async function getAvailableTenantsForUser(userId: string) {
   return prisma.tenant.findMany({
     where: {
-      propertyId: undefined,
+      leaseId: null,
       userId
     },
     orderBy: {
@@ -63,97 +108,7 @@ export async function getAvailableTenantsForUser(userId: string) {
   });
 }
 
-export async function updateTenantPropertyInDb(tenantId: string, propertyId: string | null) {
-  // Get the current tenant to check their previous property
-  const currentTenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-    select: { propertyId: true }
-  });
-
-  // If there was a previous property, remove tenant from that property's channel
-  if (currentTenant?.propertyId) {
-    const previousChannel = await prisma.channel.findFirst({
-      where: { propertyId: currentTenant.propertyId }
-    });
-    if (previousChannel) {
-      await prisma.channelParticipant.deleteMany({
-        where: {
-          channelId: previousChannel.id,
-          participantId: tenantId,
-          participantType: 'TENANT'
-        }
-      });
-    }
-  }
-
-  // Update the tenant's property
-  const updatedTenant = await prisma.tenant.update({
-    where: { id: tenantId },
-    data: { propertyId },
-  });
-
-  // If there's a new property, add tenant to that property's channel
-  if (propertyId) {
-    const newChannel = await prisma.channel.findFirst({
-      where: { propertyId }
-    });
-    if (newChannel) {
-      await prisma.channelParticipant.create({
-        data: {
-          channelId: newChannel.id,
-          participantId: tenantId,
-          participantType: 'TENANT'
-        }
-      });
-    }
-  }
-
-  return updatedTenant;
-}
-
-export async function editTenantInDb(tenantId: string, userId: string, data: EditTenantFormData) {
-  // Get the current tenant to check their previous property
-  const currentTenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-    select: { propertyId: true }
-  });
-
-  // Handle property channel changes if the property is being updated
-  if (data.propertyId !== currentTenant?.propertyId) {
-    // If there was a previous property, remove tenant from that property's channel
-    if (currentTenant?.propertyId) {
-      const previousChannel = await prisma.channel.findFirst({
-        where: { propertyId: currentTenant.propertyId }
-      });
-      if (previousChannel) {
-        await prisma.channelParticipant.deleteMany({
-          where: {
-            channelId: previousChannel.id,
-            participantId: tenantId,
-            participantType: 'TENANT'
-          }
-        });
-      }
-    }
-
-    // If there's a new property, add tenant to that property's channel
-    if (data.propertyId) {
-      const newChannel = await prisma.channel.findFirst({
-        where: { propertyId: data.propertyId }
-      });
-      if (newChannel) {
-        await prisma.channelParticipant.create({
-          data: {
-            channelId: newChannel.id,
-            participantId: tenantId,
-            participantType: 'TENANT'
-          }
-        });
-      }
-    }
-  }
-
-  // Update the tenant's information
+export async function updateTenantInDb(tenantId: string, userId: string, data: EditTenantFormData) {
   return prisma.tenant.update({
     where: {
       id: tenantId,
@@ -165,9 +120,22 @@ export async function editTenantInDb(tenantId: string, userId: string, data: Edi
       email: data.email,
       phoneNumber: data.phoneNumber,
       notes: data.notes,
-      propertyId: data.propertyId,
-      startDate: data.startDate
+      leaseId: data.leaseId || null,
     },
+  });
+}
+
+export async function assignTenantToLease(tenantId: string, leaseId: string | null) {
+  return prisma.tenant.update({
+    where: { id: tenantId },
+    data: { leaseId }
+  });
+}
+
+export async function removeTenantFromLease(tenantId: string) {
+  return prisma.tenant.update({
+    where: { id: tenantId },
+    data: { leaseId: null }
   });
 }
 
@@ -189,27 +157,66 @@ export async function findPropertyForUser(propertyId: string, userId: string) {
   });
 }
 
-export async function assignTenantToPropertyInDb(tenantId: string, userId: string, propertyId: string) {
-  return prisma.tenant.update({
+// Channel management helpers
+export async function addTenantToPropertyChannelByLeaseId(leaseId: string, tenantId: string) {
+  const lease = await prisma.lease.findUnique({
+    where: { id: leaseId },
+    select: { propertyId: true }
+  });
+  
+  if (!lease) return;
+  
+  const channel = await prisma.channel.findFirst({
+    where: { propertyId: lease.propertyId }
+  });
+  
+  if (!channel) return;
+  
+  // Check if participant already exists
+  const existingParticipant = await prisma.channelParticipant.findFirst({
     where: {
-      id: tenantId,
-      userId
-    },
-    data: {
-      propertyId
+      channelId: channel.id,
+      participantId: tenantId,
+      participantType: 'TENANT'
+    }
+  });
+  
+  if (!existingParticipant) {
+    await prisma.channelParticipant.create({
+      data: {
+        channelId: channel.id,
+        participantId: tenantId,
+        participantType: 'TENANT'
+      }
+    });
+  }
+}
+
+export async function removeTenantFromPropertyChannelByLeaseId(leaseId: string, tenantId: string) {
+  const lease = await prisma.lease.findUnique({
+    where: { id: leaseId },
+    select: { propertyId: true }
+  });
+  
+  if (!lease) return;
+  
+  const channel = await prisma.channel.findFirst({
+    where: { propertyId: lease.propertyId }
+  });
+  
+  if (!channel) return;
+  
+  await prisma.channelParticipant.deleteMany({
+    where: {
+      channelId: channel.id,
+      participantId: tenantId,
+      participantType: 'TENANT'
     }
   });
 }
 
-export async function removeTenantFromPropertyInDb(tenantId: string, userId: string, propertyId: string) {
-  return prisma.tenant.update({
-    where: {
-      id: tenantId,
-      userId,
-      propertyId
-    },
-    data: {
-      propertyId: null
-    }
-  });
-}
+// Legacy function names for backward compatibility (if needed elsewhere)
+export const editTenantInDb = updateTenantInDb;
+export const assignTenantToLeaseInDb = assignTenantToLease;
+export const removeTenantFromLeaseInDb = removeTenantFromLease;
+export const updateTenantLeaseInDb = assignTenantToLease;

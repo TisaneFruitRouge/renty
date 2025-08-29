@@ -125,6 +125,7 @@
       "basic_features": ["2 biens immobiliers", "Gestion des locataires", "Génération et envoi des quittances", "Documents numériques", "Support par email"],
       "pro_plan": "Professionnel",
       "pro_description": "Pour les propriétaires expérimentés",
+      "pro_price": "20,00€",
       "pro_period": "/mois",
       "pro_features": ["∞ biens immobiliers", "Toutes les fonctionnalités Basique", "Comptabilité avancée", "Rapports personnalisés", "Support prioritaire"],
       "guarantee": "Satisfait ou remboursé pendant 14 jours. Facturation sans engagement mensuel ou annuel.",

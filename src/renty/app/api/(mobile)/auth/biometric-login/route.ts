@@ -24,7 +24,11 @@ export async function POST(request: Request) {
       include: {
         tenant: {
           include: {
-            property: true
+            lease: {
+              include: {
+                property: true
+              }
+            }
           }
         }
       }
