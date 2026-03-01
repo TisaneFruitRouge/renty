@@ -1,5 +1,6 @@
 import type { lease, tenant } from "@prisma/client";
 import type { JsonValue } from "@prisma/client/runtime/library";
+import { addMonths } from "date-fns";
 
 // Define a lease type that includes the tenants relation
 export type LeaseWithTenants = lease & {
@@ -132,4 +133,17 @@ export function getExpectedReceiptCount(lease: LeaseWithTenants): number {
         default:
             return 0;
     }
+}
+
+/**
+ * Computes the next receipt date, honouring the landlord-configured day of month.
+ * If `generationDay` is set, the next date lands on that day in the following month
+ * (capped to the last day of the month to handle e.g. day 31 in February).
+ */
+export function computeNextReceiptDate(from: Date, generationDay?: number | null): Date {
+    const next = addMonths(from, 1);
+    if (!generationDay) return next;
+    const lastDayOfMonth = new Date(next.getFullYear(), next.getMonth() + 1, 0).getDate();
+    const day = Math.min(generationDay, lastDayOfMonth);
+    return new Date(next.getFullYear(), next.getMonth(), day);
 }

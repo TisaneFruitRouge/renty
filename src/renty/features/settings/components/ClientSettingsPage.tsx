@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import type { user } from "@prisma/client";
 import type { Plan } from "@/features/subscription/plans";
 import type { SessionInfo } from "@/features/settings/actions";
-import { 
+import {
   UserProfileCard,
   SettingsNav,
   PersonalInfoTab,
@@ -21,17 +22,22 @@ type ClientSettingsPageProps = {
   activeSessions?: SessionInfo[];
 };
 
-export function ClientSettingsPage({ 
-  userData, 
-  subscriptionPlans, 
-  activeSessions 
+export function ClientSettingsPage({
+  userData,
+  subscriptionPlans,
+  activeSessions
 }: ClientSettingsPageProps) {
-  const [activeTab, setActiveTab] = useState('personal');
-  
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'personal'
+
+  const setActiveTab = useCallback((tab: string) => {
+    router.replace(`?tab=${tab}`)
+  }, [router])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6">
       <div className="space-y-4">
-        {/* Pass server-fetched user data to client components */}
         <UserProfileCard user={userData} />
         <Card>
           <CardContent className="p-4">
@@ -39,7 +45,7 @@ export function ClientSettingsPage({
           </CardContent>
         </Card>
       </div>
-      
+
       <div>
         {activeTab === 'personal' && <PersonalInfoTab user={userData} />}
         {activeTab === 'app' && <AppSettingsTab />}

@@ -1,7 +1,7 @@
 import { getPropertyById } from "@/features/properties/db"
-import { ChevronLeft, MapPin } from "lucide-react"
+import { ChevronLeft, ChevronRight, MapPin } from "lucide-react"
 import Link from "next/link"
-import { notFound, redirect } from "next/navigation"
+import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { prisma } from "@/prisma/db"
 import { getRentReceiptsOfProperty } from "@/features/rent-receipt/db"
@@ -9,8 +9,7 @@ import PhotosSection from "@/features/properties/components/property-detail/Phot
 import SimpleLeasesSection from "@/features/properties/components/property-detail/SimpleLeasesSection"
 import RecentPaymentsSection from "@/features/properties/components/property-detail/RecentPaymentsSection"
 import { PropertyQuickActions } from "@/features/properties/components/property-detail/PropertyQuickActions"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getSession } from "@/lib/session"
 import EditPropertyModal from "@/features/properties/components/property-detail/EditPropertyModal"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -30,14 +29,12 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
         notFound();
     }
 
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
+    const session = await getSession()
 
     const userId = session?.user?.id;
 
     if (userId !== property.userId) {
-        redirect("/");
+        notFound();
     }
 
     if (!property) {
@@ -63,10 +60,14 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
         <div className="p-8">
             {/* Back button and header */}
             <div className="mb-8">
-                <Link href="/properties" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
-                    <ChevronLeft className="w-4 h-4 mr-1" />
-                    {t("back-to-properties")}
-                </Link>
+                <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
+                    <Link href="/properties" className="hover:text-foreground transition-colors flex items-center gap-1">
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        {t("back-to-properties")}
+                    </Link>
+                    <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span className="text-foreground font-medium truncate">{property.title}</span>
+                </nav>
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-2xl font-bold">{property.title}</h1>

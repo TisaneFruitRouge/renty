@@ -1,7 +1,6 @@
 import { getTranslations } from "next-intl/server"
 import { getReceiptsOfUser } from "@/features/rent-receipt/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import CreateRentReceiptModal from "@/features/rent-receipt/components/CreateRentReceiptModal";
 import { getPropertiesForUser } from "@/features/properties/db";
 import { RentReceiptFilters } from "@/features/rent-receipt/components/RentReceiptFilters";
@@ -19,9 +18,7 @@ export default async function RentReceiptsPage({ searchParams }: RentReceiptsPag
 
     const { propertyId, receiptStatus } = await searchParams;
 
-    const data = await auth.api.getSession({
-        headers: await headers()
-    })
+    const data = await getSession()
 
     if (!data?.user) {
         throw new Error("Not authenticated");

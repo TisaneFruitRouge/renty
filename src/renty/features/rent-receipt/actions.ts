@@ -2,7 +2,7 @@
 
 import type { z } from "zod"
 import { prisma } from "@/prisma/db"
-import createReceipt, { addBlobUrlToRceipt, deleteReceipt } from "./db"
+import createReceipt, { addBlobUrlToReceipt, deleteReceipt, createSharedReceipt } from "./db"
 import { generatePDF } from "./pdf/generatePDF"
 import { deleteReceiptFromBlob, saveReceiptToBlob } from "./blob"
 import { sendReceiptEmail } from "./email/sendEmail"
@@ -51,30 +51,52 @@ export async function createRentReceiptAction(sendMail = true, {
     }
 
     let createdReceipt: rentReceipt | null = null;
+    const isShared = activeLease.leaseType === 'SHARED' && activeLease.tenants.length > 1;
 
     try {
+        let pdfBuffer: Buffer;
 
-        createdReceipt = await createReceipt(
-          startDate,
-          endDate,
-          baseRent,
-          charges,
-          activeLease.paymentFrequency,
-          property.id,
-          activeLease.tenants[0].id
-        );
+        if (isShared) {
+            createdReceipt = await createSharedReceipt(
+                startDate,
+                endDate,
+                baseRent,
+                charges,
+                activeLease.paymentFrequency,
+                property.id,
+                activeLease.tenants.map(t => t.id)
+            );
 
-        if (!createdReceipt) {
-          throw new Error(`Error creating receipt for property ${property.id}`);
+            if (!createdReceipt) {
+                throw new Error(`Error creating shared receipt for property ${property.id}`);
+            }
+
+            pdfBuffer = await generatePDF({
+                receipt: createdReceipt,
+                property,
+                tenants: activeLease.tenants
+            });
+        } else {
+            createdReceipt = await createReceipt(
+                startDate,
+                endDate,
+                baseRent,
+                charges,
+                activeLease.paymentFrequency,
+                property.id,
+                activeLease.tenants[0].id
+            );
+
+            if (!createdReceipt) {
+                throw new Error(`Error creating receipt for property ${property.id}`);
+            }
+
+            pdfBuffer = await generatePDF({
+                receipt: createdReceipt,
+                property,
+                tenant: activeLease.tenants[0]
+            });
         }
-
-        // Generate PDF
-        const pdfBuffer = await generatePDF({
-          receipt:createdReceipt,
-          property,
-          tenant: activeLease.tenants[0],
-          tenants: activeLease.tenants
-        });
 
         const url = await saveReceiptToBlob(pdfBuffer);
 
@@ -82,18 +104,19 @@ export async function createRentReceiptAction(sendMail = true, {
           throw new Error(`Error saving receipt for property ${property.id}`);
         }
 
-        await addBlobUrlToRceipt(createdReceipt.id, url);
+        await addBlobUrlToReceipt(createdReceipt.id, url);
 
         if (sendMail) {
-            // send mail
-            await sendReceiptEmail(
-                createdReceipt,
-                activeLease.tenants[0],
-                property.user.email,
-                pdfBuffer
-            );
+            const recipients = isShared ? activeLease.tenants : [activeLease.tenants[0]];
+            for (const recipient of recipients) {
+                await sendReceiptEmail(
+                    createdReceipt,
+                    recipient,
+                    property.user.email,
+                    pdfBuffer
+                );
+            }
         }
-
 
         return createdReceipt;
 
@@ -125,7 +148,12 @@ export async function sendRentReceiptAction(id: string) {
           user: true
         }
       },
-      tenant: true
+      tenant: true,
+      lease: {
+        include: {
+          tenants: true
+        }
+      }
     }
   });
 
@@ -140,14 +168,18 @@ export async function sendRentReceiptAction(id: string) {
   }
   const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
 
-  // Send the email
-  await sendReceiptEmail(
-    receipt,
-    receipt.tenant,
-    receipt.property.user.email,
-    pdfBuffer
-  );
+  const isShared = receipt.lease?.leaseType === 'SHARED' && (receipt.lease?.tenants?.length ?? 0) > 1;
+  const recipients = isShared ? receipt.lease!.tenants : [receipt.tenant];
 
-  // Update status to SENT
+  for (const recipient of recipients) {
+    await sendReceiptEmail(
+      receipt,
+      recipient,
+      receipt.property.user.email,
+      pdfBuffer
+    );
+  }
+
+  // Update status to PAID
   await updateReceiptStatus(id, RentReceiptStatus.PAID);
 }

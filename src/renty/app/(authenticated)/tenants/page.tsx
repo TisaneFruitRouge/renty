@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { getAllTenants } from "@/features/tenant/actions";
 import CreateTenantModal from "@/features/tenant/components/CreateTenantModal";
@@ -21,9 +20,7 @@ import { getAllLeases } from "@/features/lease/actions";
 export default async function TenantsPage() {
   const t = await getTranslations('tenants');
 
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  const session = await getSession();
 
   if (!session) {
     redirect("/sign-in");

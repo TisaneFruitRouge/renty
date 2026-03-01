@@ -2,7 +2,7 @@ import { put, del } from '@vercel/blob';
 
 export async function saveReceiptToBlob(pdfBuffer: Buffer): Promise<string | null> {
     try {
-        const blobName = new Date().toISOString().replace(/:/g, "-") + ".pdf";
+        const blobName = `${new Date().toISOString().replace(/:/g, "-")}-${crypto.randomUUID()}.pdf`;
         
         const { url } = await put(blobName, pdfBuffer, {
             access: 'public',

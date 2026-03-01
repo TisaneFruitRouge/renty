@@ -1,21 +1,13 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import { Pool } from "pg";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { prisma } from "@/prisma/db";
 
 import { stripe } from "@better-auth/stripe"
-import Stripe from "stripe"
-
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!)
+import { stripe as stripeClient } from "@/lib/stripe"
 
 export const auth = betterAuth({
-    database: new Pool({
-        user: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        host: process.env.POSTGRES_HOST,
-        port: parseInt(process.env.POSTGRES_PORT || '5432'),
-        database: process.env.POSTGRES_DB,
-        ssl: process.env.NODE_ENV === "production" // if production, yes, else no     
-    }),
+    database: prismaAdapter(prisma, { provider: "postgresql" }),
     emailAndPassword: {  
         enabled: true
     },

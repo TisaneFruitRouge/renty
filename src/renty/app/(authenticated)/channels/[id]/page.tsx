@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { getChannelMessages, getChannelParticipants } from "@/features/messages/db";
 import { ChannelHeader } from "@/features/messages/components/ChannelHeader";
 import { ChannelChat } from "@/features/messages/components/ChannelChat";
@@ -14,9 +13,7 @@ type ChannelProps = {
 export default async function Channel({ params }: ChannelProps) {
     const { id } = await params;
     
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
+    const session = await getSession();
 
     if (!session?.user?.id) {
         throw new Error("Not authenticated");

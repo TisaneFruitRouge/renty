@@ -27,7 +27,7 @@ export function RecentActivityItem({ receipt, className }: RecentActivityItemPro
     return (
         <div
             className={cn(
-                "first:border-t flex items-center justify-between p-4 hover:bg-black/70 cursor-pointer",
+                "first:border-t flex items-center justify-between p-4 hover:bg-primary/15 cursor-pointer",
                 className
             )}
             onClick={() => router.push(`/rent-receipts/${receipt.id}`)}
@@ -43,16 +43,16 @@ export function RecentActivityItem({ receipt, className }: RecentActivityItemPro
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end gap-1">
+                <div className="font-semibold text-sm">
+                    {receipt.baseRent + receipt.charges} €
+                </div>
                 <Badge className={cn(
                     rentReceiptStatusVariants[receipt.status],
                     "font-medium shadow-none"
                 )}>
                     {t(`status.${receipt.status}`)}
                 </Badge>
-                <div className="font-medium">
-                    {receipt.baseRent + receipt.charges} €
-                </div>
             </div>
         </div>
     );

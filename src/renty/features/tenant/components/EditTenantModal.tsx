@@ -27,7 +27,7 @@ export default function EditTenantModal({ tenant, leases }: EditTenantModalProps
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="ghost" size="icon" aria-label={t('edit-form.title')}>
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>

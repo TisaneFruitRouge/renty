@@ -4,8 +4,7 @@ import { ChevronLeft, MapPin } from "lucide-react"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getSession } from "@/lib/session"
 import { DocumentVault } from "@/features/vault/components/DocumentVault"
 
 interface VaultPageProps {
@@ -23,9 +22,7 @@ export default async function VaultPage({ params }: VaultPageProps) {
         notFound();
     }
 
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
+    const session = await getSession()
 
     const userId = session?.user?.id;
 

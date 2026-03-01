@@ -1,8 +1,7 @@
 import { Suspense } from "react"
 import { notFound, redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getSession } from "@/lib/session"
 import { prisma } from "@/prisma/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
   ArrowLeft,
+  ChevronRight,
   Home,
   Calendar,
   Euro,
@@ -68,9 +68,7 @@ interface LeaseDetailPageProps {
 
 async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
   const t = await getTranslations('lease')
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const session = await getSession()
 
   if (!session?.user?.id) {
     redirect("/sign-in")
@@ -89,14 +87,17 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
 
   return (
     <div className="container mx-auto p-6 space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <Link href="/leases" className="hover:text-foreground transition-colors flex items-center gap-1">
+          <ArrowLeft className="h-3.5 w-3.5" />
+          {t('back-to-leases')}
+        </Link>
+        <ChevronRight className="h-3.5 w-3.5 flex-shrink-0" />
+        <span className="text-foreground font-medium truncate">{lease.property.title}</span>
+      </nav>
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/leases" className="flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            {t('back-to-leases')}
-          </Link>
-        </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">
@@ -334,7 +335,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
                   {t('tenants')} ({lease.tenants.length})
                 </CardTitle>
                 <ManageTenantsModal lease={lease}>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" aria-label={t('assign-tenant')}>
                     <UserPlus className="h-4 w-4" />
                   </Button>
                 </ManageTenantsModal>

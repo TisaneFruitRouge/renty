@@ -8,9 +8,10 @@ import { useTranslations } from "next-intl";
 
 interface ChannelsSidebarProps {
   channels: Awaited<ReturnType<typeof getChannelsOfUser>>;
+  onClose?: () => void;
 }
 
-export function ChannelsSidebar({ channels }: ChannelsSidebarProps) {
+export function ChannelsSidebar({ channels, onClose }: ChannelsSidebarProps) {
   const t = useTranslations("messages");
 
   return (
@@ -27,7 +28,7 @@ export function ChannelsSidebar({ channels }: ChannelsSidebarProps) {
             </div>
           ) : (
             channels.map((channel) => (
-              <ChannelItem key={channel.id} channel={channel} />
+              <ChannelItem key={channel.id} channel={channel} onClose={onClose} />
             ))
           )}
         </div>

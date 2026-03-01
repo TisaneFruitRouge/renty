@@ -74,7 +74,7 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
                     {receipt?.blobUrl && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent">
+                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent" aria-label={t('actions.more')}>
                                     <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>
