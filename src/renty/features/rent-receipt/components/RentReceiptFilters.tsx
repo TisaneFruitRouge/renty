@@ -3,8 +3,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { RentReceiptStatus, type property } from "@prisma/client"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useTransition } from "react"
 import { useTranslations } from "next-intl"
+import { Loader2 } from "lucide-react"
 
 interface RentReceiptFiltersProps {
     properties: property[];
@@ -15,6 +16,7 @@ export function RentReceiptFilters({ properties }: RentReceiptFiltersProps) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const t = useTranslations('rent-receipts')
+    const [isPending, startTransition] = useTransition()
 
     const createQueryString = useCallback(
         (name: string, value: string | null) => {
@@ -33,16 +35,20 @@ export function RentReceiptFilters({ properties }: RentReceiptFiltersProps) {
     const currentStatus = searchParams.get('receiptStatus')
 
     return (
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-6 items-center">
+            {isPending && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
             <Select
                 value={currentPropertyId || ""}
+                disabled={isPending}
                 onValueChange={(value) => {
-                    router.push(
-                        `${pathname}?${createQueryString(
-                            'propertyId',
-                            value === "" ? null : value
-                        )}`
-                    )
+                    startTransition(() => {
+                        router.push(
+                            `${pathname}?${createQueryString(
+                                'propertyId',
+                                value === "" ? null : value
+                            )}`
+                        )
+                    })
                 }}
             >
                 <SelectTrigger className="w-[200px]">
@@ -60,13 +66,16 @@ export function RentReceiptFilters({ properties }: RentReceiptFiltersProps) {
 
             <Select
                 value={currentStatus || ""}
+                disabled={isPending}
                 onValueChange={(value) => {
-                    router.push(
-                        `${pathname}?${createQueryString(
-                            'receiptStatus',
-                            value === "" ? null : value
-                        )}`
-                    )
+                    startTransition(() => {
+                        router.push(
+                            `${pathname}?${createQueryString(
+                                'receiptStatus',
+                                value === "" ? null : value
+                            )}`
+                        )
+                    })
                 }}
             >
                 <SelectTrigger className="w-[200px]">

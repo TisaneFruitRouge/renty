@@ -1,6 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -26,19 +37,32 @@ export default function LogoutButton({ sidebarState }: { sidebarState: 'expanded
             setIsLoading(false);
         }
     }
-    
-    return (
-        <Button 
-            onClick={signOut}
-            variant="destructive"
-            className="w-full"
-            disabled={isLoading}
-        >
-            {isLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
 
-            {sidebarState === 'collapsed' ? <LogOutIcon /> : t('logout')}
-        </Button>
+    return (
+        <AlertDialog>
+            <AlertDialogTrigger asChild>
+                <Button
+                    variant="destructive"
+                    className="w-full"
+                    disabled={isLoading}
+                    aria-label={t('logout')}
+                >
+                    {isLoading && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {sidebarState === 'collapsed' ? <LogOutIcon /> : t('logout')}
+                </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{t('logout-confirm-title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('logout-confirm-description')}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>{t('logout-cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={signOut}>{t('logout-confirm')}</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
     )
 }

@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import { getTranslations } from "next-intl/server"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 import { prisma } from "@/prisma/db"
 import { Card, CardContent } from "@/components/ui/card"
@@ -9,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 import { FileText } from "lucide-react"
 import CreateLeaseModal from "@/features/lease/components/CreateLeaseModal"
-import LeaseCard from "@/features/lease/components/LeaseCard"
+import LeasesListSearch from "@/features/lease/components/LeasesListSearch"
 
 async function getProperties(userId: string) {
   return prisma.property.findMany({
@@ -45,9 +44,7 @@ async function getLeases(userId: string) {
 
 async function LeasesContent() {
   const t = await getTranslations('leases')
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const session = await getSession()
 
   if (!session?.user?.id) {
     redirect("/sign-in")
@@ -73,11 +70,7 @@ async function LeasesContent() {
       <div>
         <h2 className="text-xl font-semibold mb-4">{t('all-leases')}</h2>
         {leases.length > 0 ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {leases.map((lease) => (
-              <LeaseCard key={lease.id} lease={lease} />
-            ))}
-          </div>
+          <LeasesListSearch leases={leases} />
         ) : (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12">

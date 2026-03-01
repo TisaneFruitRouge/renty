@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -15,7 +14,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { signIn } from "../actions"
+import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -37,26 +36,25 @@ export default function SignInForm() {
     const router = useRouter();
 
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		try {
-			const { email, password } = values;
-			await signIn(email, password);
-			toast({
-				title: t('toast.success.title'),
-				description: t('toast.success.description'),
-			});
-            router.push("/");
-		} catch (error) {
-			console.error("Form submission error", error)
+		const { email, password } = values;
+		const { error } = await authClient.signIn.email({ email, password });
+		if (error) {
 			toast({
 				variant: "destructive",
 				title: t('toast.error.title'),
 				description: t('toast.error.description'),
 			});
+			return;
 		}
+		toast({
+			title: t('toast.success.title'),
+			description: t('toast.success.description'),
+		});
+        router.push("/");
 	}
 
 	return (
-		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md p-6 bg-background border rounded-xl shadow-lg">
+		<div className="w-full max-w-md p-6 bg-background border rounded-xl shadow-lg">
 			<div className="space-y-2 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
 				<p className="text-sm text-muted-foreground">{t('subtitle')}</p>
@@ -77,7 +75,6 @@ export default function SignInForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('email.description')}</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -95,7 +92,6 @@ export default function SignInForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('password.description')}</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}

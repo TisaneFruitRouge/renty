@@ -1,10 +1,9 @@
 import { getLeasesRequiringReceiptGeneration, updateNextReceiptDate } from '@/features/lease/db';
 import { deleteReceiptFromBlob, saveReceiptToBlob } from '@/features/rent-receipt/blob';
-import createReceipt, { addBlobUrlToRceipt, deleteReceipt, createSharedReceipt } from '@/features/rent-receipt/db';
+import createReceipt, { addBlobUrlToReceipt, deleteReceipt, createSharedReceipt } from '@/features/rent-receipt/db';
 import { sendReceiptReviewEmail } from '@/features/rent-receipt/email/sendReviewEmail';
 import { generatePDF } from '@/features/rent-receipt/pdf/generatePDF';
-import { getMonthRange } from '@/features/rent-receipt/utils';
-import { addMonths } from 'date-fns';
+import { getMonthRange, computeNextReceiptDate } from '@/features/rent-receipt/utils';
 import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -18,7 +17,7 @@ export async function GET(request: NextRequest) {
   const leases = await getLeasesRequiringReceiptGeneration();
   const today = new Date();
   console.log(`Processing ${leases.length} leases for receipt generation`);
-  
+
   for (const lease of leases) {
     const createdReceipts: Array<{ id: string; blobUrl: string | null }> = [];
     try {
@@ -77,7 +76,7 @@ export async function GET(request: NextRequest) {
               throw new Error(`Error saving receipt for tenant ${tenant.id} in lease ${lease.id}`);
             }
 
-            await addBlobUrlToRceipt(receipt.id, url);
+            await addBlobUrlToReceipt(receipt.id, url);
 
             // Send review email to landlord for each receipt
             await sendReceiptReviewEmail(receipt, lease.property);
@@ -119,7 +118,7 @@ export async function GET(request: NextRequest) {
             throw new Error(`Error saving shared receipt for lease ${lease.id}`);
           }
 
-          await addBlobUrlToRceipt(sharedReceipt.id, sharedUrl);
+          await addBlobUrlToReceipt(sharedReceipt.id, sharedUrl);
 
           // Send one review email to landlord for the shared receipt
           await sendReceiptReviewEmail(sharedReceipt, lease.property);
@@ -133,15 +132,15 @@ export async function GET(request: NextRequest) {
           continue;
       }
 
-      // Update next receipt date regardless of lease type
-      const nextDate = addMonths(today, 1);
+      // Update next receipt date, respecting the landlord-configured day of month
+      const nextDate = computeNextReceiptDate(today, lease.receiptGenerationDate);
       await updateNextReceiptDate(lease.id, nextDate);
 
       console.log(`Successfully processed lease ${lease.id}, next receipt date: ${nextDate.toISOString()}`);
 
     } catch (error) {
       console.error(`Error processing receipt for lease ${lease.id}: ${error}`);
-      
+
       // Clean up any created receipts on error
       for (const receipt of createdReceipts) {
         try {
@@ -158,8 +157,8 @@ export async function GET(request: NextRequest) {
   }
 
   console.log(`Finished processing ${leases.length} leases`);
-  return Response.json({ 
-    success: true, 
+  return Response.json({
+    success: true,
     processedLeases: leases.length,
     message: `Processed ${leases.length} leases for receipt generation`
   });

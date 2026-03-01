@@ -4,9 +4,10 @@
             "placeholder": "Écrivez votre message..."
         },
         "default-page": {
-            "description": "Sélectionnez une conversation pour commencer à discuter",
+            "description": "Les conversations sont créées depuis vos fiches propriété. Ouvrez une propriété et cliquez sur « Contacter le locataire » pour démarrer.",
             "empty-state": "Vous n'avez pas encore de conversations actives",
-            "title": "Vos messages"
+            "title": "Vos messages",
+            "go-to-properties": "Voir mes propriétés"
         },
         "direct-messages": "Messages directs",
         "no-conversations": "Aucune conversation",
@@ -57,13 +58,16 @@
         "go-to-tenants": "Accéder aux locataires",
         "manage-receipts": "Gérer les quittances",
         "receipts-description": "Créez et envoyez des quittances de loyer à vos locataires",
-        "go-to-receipts": "Accéder aux quittances"
+        "go-to-receipts": "Accéder aux quittances",
+        "leases-expiring-soon": "Baux expirant bientôt"
     },
     "properties": {
         "title": "Mes Propriétés",
         "description": "Gérez vos biens immobiliers",
         "add": "Ajouter une propriété",
-        "explore-features": "Explorer les fonctionnalités"
+        "explore-features": "Explorer les fonctionnalités",
+        "search-placeholder": "Rechercher une propriété...",
+        "no-results": "Aucune propriété ne correspond à votre recherche"
     },
     "property": {
         "back-to-properties": "Retour aux propriétés",
@@ -261,7 +265,9 @@
         "across-all-leases": "dans tous les baux",
         "period": "Période",
         "furnished": "Meublé",
-        "total-properties": "total des propriétés"
+        "total-properties": "total des propriétés",
+        "search-placeholder": "Rechercher un bail...",
+        "no-results": "Aucun bail ne correspond à votre recherche"
     },
     "lease": {
         "create-form": {
@@ -496,6 +502,7 @@
             "send": "Envoyer",
             "view": "Voir la quittance",
             "download": "Télécharger",
+            "more": "Plus d'actions",
             "mark-as": "Marquer comme",
             "mark-as-draft": "Brouillon",
             "mark-as-pending": "En attente",
@@ -667,7 +674,11 @@
             "channels": "Messages",
             "settings": "Paramètres"
         },
-        "logout": "Se déconnecter"
+        "logout": "Se déconnecter",
+        "logout-confirm-title": "Se déconnecter ?",
+        "logout-confirm-description": "Vous serez redirigé vers la page de connexion.",
+        "logout-cancel": "Annuler",
+        "logout-confirm": "Se déconnecter"
     },
     "tenant": {
         "status": {
@@ -860,6 +871,7 @@
             "error": "Une erreur est survenue lors de la suppression du locataire"
         },
         "search-placeholder": "Rechercher un locataire...",
+        "no-results": "Aucun locataire ne correspond à votre recherche",
         "filter-all": "Tous les locataires",
         "filter-active": "Locataires actuels",
         "filter-former": "Anciens locataires",
@@ -967,6 +979,7 @@
             "title": "Abonnement requis",
             "description": "Pour continuer à utiliser Renty, veuillez choisir un abonnement qui correspond à vos besoins.",
             "subscribe-button": "S'abonner",
+            "remind-later": "Me rappeler plus tard",
             "disclaimer": "Vous ne serez pas débité avant d'avoir confirmé votre abonnement sur la page de paiement."
         },
         "plans": {

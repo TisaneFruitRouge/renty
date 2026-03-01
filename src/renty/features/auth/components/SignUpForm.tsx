@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import {
 	Form,
 	FormControl,
-	FormDescription,
+
 	FormField,
 	FormItem,
 	FormLabel,
@@ -71,7 +71,7 @@ export default function SignUpForm() {
 	}
 
 	return (
-		<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 max-w-md p-6 bg-background border rounded-xl shadow-lg">
+		<div className="w-full max-w-md p-6 bg-background border rounded-xl shadow-lg">
 			<div className="space-y-2 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
 				<p className="text-sm text-muted-foreground">{t('subtitle')}</p>
@@ -92,8 +92,7 @@ export default function SignUpForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('email.description')}</FormDescription>
-								<FormMessage />
+		<FormMessage />
 							</FormItem>
 						)}
 					/>
@@ -111,8 +110,7 @@ export default function SignUpForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('name.description')}</FormDescription>
-								<FormMessage />
+		<FormMessage />
 							</FormItem>
 						)}
 					/>
@@ -130,8 +128,7 @@ export default function SignUpForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('password.description')}</FormDescription>
-								<FormMessage />
+		<FormMessage />
 							</FormItem>
 						)}
 					/>
@@ -149,8 +146,7 @@ export default function SignUpForm() {
 										{...field} 
 									/>
 								</FormControl>
-								<FormDescription>{t('confirmPassword.description')}</FormDescription>
-								<FormMessage />
+		<FormMessage />
 							</FormItem>
 						)}
 					/>

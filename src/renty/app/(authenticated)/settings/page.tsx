@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
-import { auth } from '@/lib/auth'
+import { getSession } from '@/lib/session'
 import type { user } from '@prisma/client'
-import { headers } from 'next/headers';
+import { Suspense } from 'react'
 import { ClientSettingsPage } from '@/features/settings/components/ClientSettingsPage';
 import { getActiveSessionsAction } from '@/features/settings/actions';
 import { authPlans } from '@/features/subscription/plans';
@@ -49,9 +49,7 @@ async function getServerSubscriptionPlans() {
 
 export default async function SettingsPage() {
   // Fetch user data on the server
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  const session = await getSession();
 
   const userData = session?.user as user | undefined
   
@@ -78,11 +76,13 @@ export default async function SettingsPage() {
       </div>
       
       {/* Pass the server-fetched data to the client component */}
-      <ClientSettingsPage 
-        userData={userData} 
-        subscriptionPlans={subscriptionPlans}
-        activeSessions={activeSessions}
-      />
+      <Suspense>
+        <ClientSettingsPage
+          userData={userData}
+          subscriptionPlans={subscriptionPlans}
+          activeSessions={activeSessions}
+        />
+      </Suspense>
     </div>
   );
 }

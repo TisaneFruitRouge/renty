@@ -3,12 +3,7 @@
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { getActiveSubscription } from "./db"
-import Stripe from "stripe"
-
-// Initialize Stripe with the API key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-02-24.acacia",
-})
+import { stripe } from "@/lib/stripe"
 
 export async function getPaymentMethodAction() {
   try {

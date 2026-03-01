@@ -5,14 +5,16 @@ import type { getChannelsOfUser } from "../db";
 
 interface ChannelItemProps {
   channel: Awaited<ReturnType<typeof getChannelsOfUser>>[number];
+  onClose?: () => void;
 }
 
-export function ChannelItem({ channel }: ChannelItemProps) {
+export function ChannelItem({ channel, onClose }: ChannelItemProps) {
   const pathname = usePathname();
 
   return (
     <Link
       href={`/channels/${channel.id}`}
+      onClick={onClose}
       className={cn(
         "relative flex flex-col gap-1 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground",
         pathname === `/channels/${channel.id}` && "bg-accent text-accent-foreground",

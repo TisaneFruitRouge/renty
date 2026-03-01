@@ -327,6 +327,22 @@ export async function updateNextReceiptDate(leaseId: string, nextDate: Date) {
   });
 }
 
+export async function countExpiringLeasesForUser(userId: string, days = 30): Promise<number> {
+  const now = new Date()
+  const future = new Date(now)
+  future.setDate(future.getDate() + days)
+  return prisma.lease.count({
+    where: {
+      property: { userId },
+      status: 'ACTIVE',
+      endDate: {
+        gte: now,
+        lte: future,
+      },
+    },
+  })
+}
+
 export async function getLeaseWithReceiptSettings(leaseId: string) {
   return prisma.lease.findUnique({
     where: { id: leaseId },

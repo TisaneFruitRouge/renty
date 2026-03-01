@@ -1,15 +1,12 @@
 import { getTranslations } from "next-intl/server";
 import { getPropertiesForUser } from "@/features/properties/db";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import PropertiesList from "@/features/properties/components/PropertiesList";
 import CreatePropertyModal from "@/features/properties/components/CreatePropertyModal";
-import { headers } from "next/headers";
 
 export default async function PropertiesPage() {
     const t = await getTranslations('properties');
-    const session = await auth.api.getSession({
-        headers: await headers()
-      });
+    const session = await getSession();
 
     if (!session?.user) {
         return null;

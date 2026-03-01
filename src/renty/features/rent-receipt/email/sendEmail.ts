@@ -1,8 +1,6 @@
-import { Resend } from 'resend';
 import type { rentReceipt, tenant } from '@prisma/client';
 import RentReceiptEmail from './RentReceiptEmail';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { resend } from '@/lib/resend';
 
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('fr-FR', {

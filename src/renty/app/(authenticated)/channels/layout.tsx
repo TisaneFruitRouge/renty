@@ -1,7 +1,6 @@
-import { ChannelsSidebar } from "@/features/messages/components/ChannelsSidebar";
+import { ChannelsLayoutClient } from "@/features/messages/components/ChannelsLayoutClient";
 import { getChannelsOfUser } from "@/features/messages/db";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 
 export default async function ChannelsLayout({
     children,
@@ -9,9 +8,7 @@ export default async function ChannelsLayout({
     children: React.ReactNode;
 }>) {
 
-    const session = await auth.api.getSession({
-        headers: await headers()
-      });
+    const session = await getSession();
 
     if (!session?.user?.id) {
         throw new Error("Not authenticated");
@@ -20,11 +17,8 @@ export default async function ChannelsLayout({
     const channels = await getChannelsOfUser(session.user.id)
 
     return (
-        <div className="flex h-screen">
-            <ChannelsSidebar channels={channels} />
-            <main className="flex-1 overflow-y-auto">
-                {children}
-            </main>
-        </div>
+        <ChannelsLayoutClient channels={channels}>
+            {children}
+        </ChannelsLayoutClient>
     )
 }

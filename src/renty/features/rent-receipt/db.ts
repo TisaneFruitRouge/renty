@@ -66,7 +66,7 @@ export async function createSharedReceipt(
     });
 }
 
-export async function addBlobUrlToRceipt(receiptId: string, blobUrl: string) {
+export async function addBlobUrlToReceipt(receiptId: string, blobUrl: string) {
     return await prisma.rentReceipt.update({
         where: { id: receiptId },
         data: { blobUrl }
@@ -146,21 +146,18 @@ export async function getRentReceiptsOfProperty(propertyId: string, limit?: numb
     });
 }
 
-export async function getPendingReceiptsForDate(date: Date) {
-    // Create a date range for the entire day
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
-
+/**
+ * Returns all PENDING receipts created more than `cutoffDate` ago.
+ * The cutoff implements the landlord review window: receipts younger than
+ * the cutoff are held back so the landlord can review before sending.
+ */
+export async function getPendingReceiptsOlderThan(cutoffDate: Date) {
     return await prisma.rentReceipt.findMany({
         where: {
             status: RentReceiptStatus.PENDING,
-            // startDate: {
-            //     gte: startOfDay,
-            //     lte: endOfDay
-            // }
+            createdAt: {
+                lte: cutoffDate
+            }
         },
         include: {
             property: {
@@ -168,7 +165,12 @@ export async function getPendingReceiptsForDate(date: Date) {
                     user: true
                 }
             },
-            tenant: true
+            tenant: true,
+            lease: {
+                include: {
+                    tenants: true
+                }
+            }
         }
     });
 }

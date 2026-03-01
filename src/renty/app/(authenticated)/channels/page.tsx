@@ -1,5 +1,7 @@
 import { MessageCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function ChannelListPage() {
     const t = useTranslations();
@@ -16,6 +18,9 @@ export default function ChannelListPage() {
                 <p className="mt-2 text-sm text-muted-foreground">
                     {t("messages.default-page.description")}
                 </p>
+                <Link href="/properties" className="mt-6">
+                    <Button>{t("messages.default-page.go-to-properties")}</Button>
+                </Link>
             </div>
         </div>
     );

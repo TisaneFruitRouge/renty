@@ -8,7 +8,7 @@ import { CreditCard, Check } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useSubscriptionPlans } from "./plans"
 
-
+const DISMISSED_KEY = "subscription_modal_dismissed"
 
 interface SubscriptionRequiredModalProps {
   hasSubscription: boolean
@@ -18,10 +18,19 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
   const [open, setOpen] = useState(false)
   const t = useTranslations("subscription.required-modal")
   const plans = useSubscriptionPlans()
-  
+
   useEffect(() => {
-    setOpen(!hasSubscription)
+    if (hasSubscription) return
+    const dismissed = sessionStorage.getItem(DISMISSED_KEY)
+    if (!dismissed) {
+      setOpen(true)
+    }
   }, [hasSubscription])
+
+  const handleDismiss = () => {
+    sessionStorage.setItem(DISMISSED_KEY, "1")
+    setOpen(false)
+  }
 
   const handleUpgrade = async (planName: string) => {
     try {
@@ -39,28 +48,27 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
     }
   }
 
-  // Don't render anything if the user has a subscription
   if (!open) return null
 
   return (
-    <Dialog open={open} onOpenChange={() => {}} modal={true}>
-      <DialogContent className="sm:max-w-[600px] [&>button]:hidden">
+    <Dialog open={open} onOpenChange={setOpen} modal={true}>
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
             {t("description")}
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
           {plans.map((plan) => (
-            <div 
-              key={plan.name} 
+            <div
+              key={plan.name}
               className="border rounded-lg p-4 flex flex-col hover:border-primary transition-colors"
             >
               <div className="font-medium text-lg">{plan.title}</div>
               <div className="text-2xl font-bold mt-2 mb-4">{plan.price}</div>
-              
+
               <ul className="space-y-2 flex-grow mb-4">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-2">
@@ -69,8 +77,8 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
                   </li>
                 ))}
               </ul>
-              
-              <Button 
+
+              <Button
                 onClick={() => handleUpgrade(plan.name)}
                 className="w-full gap-2"
               >
@@ -80,9 +88,12 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
             </div>
           ))}
         </div>
-        
-        <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <div className="w-full text-center text-xs text-muted-foreground">
+
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 items-center">
+          <Button variant="ghost" size="sm" onClick={handleDismiss} className="text-muted-foreground">
+            {t("remind-later")}
+          </Button>
+          <div className="flex-1 text-center text-xs text-muted-foreground">
             {t("disclaimer")}
           </div>
         </DialogFooter>

@@ -1,7 +1,10 @@
-import { getPendingReceiptsForDate, updateReceiptStatus } from '@/features/rent-receipt/db';
+import { getPendingReceiptsOlderThan, updateReceiptStatus } from '@/features/rent-receipt/db';
 import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
 import { RentReceiptStatus } from '@prisma/client';
 import type { NextRequest } from 'next/server';
+
+// Landlord review window: receipts younger than this are held back
+const REVIEW_WINDOW_DAYS = 3;
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
@@ -11,8 +14,8 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const today = new Date();
-  const pendingReceipts = await getPendingReceiptsForDate(today);
+  const cutoffDate = new Date(Date.now() - REVIEW_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  const pendingReceipts = await getPendingReceiptsOlderThan(cutoffDate);
 
   for (const receipt of pendingReceipts) {
     try {
@@ -25,12 +28,18 @@ export async function GET(request: NextRequest) {
         }
         const pdfBuffer = Buffer.from(await pdfResponse.arrayBuffer());
 
-        await sendReceiptEmail(
-          receipt,
-          receipt.tenant,
-          receipt.property.user.email,
-          pdfBuffer
-        );
+        const landlordEmail = receipt.property.user.email;
+
+        // For shared leases, email all tenants; for others, email the primary tenant only
+        const isSharedLease =
+          receipt.lease?.leaseType === 'SHARED' &&
+          (receipt.lease?.tenants?.length ?? 0) > 1;
+
+        const recipients = isSharedLease ? receipt.lease!.tenants : [receipt.tenant];
+
+        for (const recipient of recipients) {
+          await sendReceiptEmail(receipt, recipient, landlordEmail, pdfBuffer);
+        }
 
         await updateReceiptStatus(receipt.id, RentReceiptStatus.PAID);
       }

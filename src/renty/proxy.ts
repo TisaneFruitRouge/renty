@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
- 
-export default async function authMiddleware(request: NextRequest) {
+
+export default async function proxy(request: NextRequest) {
 	const sessionCookie = getSessionCookie(request);
 
 	if (!sessionCookie) {
@@ -9,9 +9,8 @@ export default async function authMiddleware(request: NextRequest) {
 	}
 
 	return NextResponse.next();
-
 }
- 
+
 export const config = {
 	matcher: [
 		/*

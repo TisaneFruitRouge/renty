@@ -1,14 +1,16 @@
 "use client"
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useTranslations } from "next-intl"
@@ -32,11 +34,11 @@ export default function DeleteTenantModal({ tenant }: DeleteTenantModalProps) {
     try {
       setLoading(true)
       await deleteTenant(tenant.id)
-      
+
       toast({
         title: t('delete.success'),
       })
-      
+
       router.refresh()
       setOpen(false)
     } catch (error) {
@@ -51,36 +53,33 @@ export default function DeleteTenantModal({ tenant }: DeleteTenantModalProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label={t('delete.title')}>
           <Trash2 className="h-4 w-4" />
         </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('delete.title')}</DialogTitle>
-          <DialogDescription>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t('delete.title')}</AlertDialogTitle>
+          <AlertDialogDescription>
             {t('delete.description', { name: `${tenant.firstName} ${tenant.lastName}` })}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>{t('delete.cancel')}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={(e) => {
+              e.preventDefault()
+              handleDelete()
+            }}
             disabled={loading}
-          >
-            {t('delete.cancel')}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
             {t('delete.confirm')}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }
