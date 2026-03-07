@@ -57,7 +57,7 @@ export function Message({ message, currentUserId }: MessageProps) {
                     message.senderId === currentUserId && "ml-4",
                     message.senderId !== currentUserId && "mr-4"
                 )}>
-                    <div className={cn("px-4 py-2 rounded-2xl shadow-sm",
+                    <div className={cn("px-4 py-2 rounded-md",
                         message.senderId === currentUserId 
                             ? "bg-primary text-primary-foreground rounded-br-none" 
                             : "bg-muted rounded-bl-none"

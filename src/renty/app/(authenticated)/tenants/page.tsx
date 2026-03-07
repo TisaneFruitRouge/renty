@@ -5,6 +5,7 @@ import { getAllTenants } from "@/features/tenant/actions";
 import CreateTenantModal from "@/features/tenant/components/CreateTenantModal";
 import TenantsList from "@/features/tenant/components/TenantsList";
 import { getAllLeases } from "@/features/lease/actions";
+import { PageTitle, PageDescription } from "@/components/ui/typography";
 
   /**
    * The TenantsPage component displays a list of all tenants.
@@ -43,8 +44,8 @@ export default async function TenantsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <p className="text-muted-foreground">{t("subtitle")}</p>
+          <PageTitle>{t("title")}</PageTitle>
+          <PageDescription className="mt-1">{t("subtitle")}</PageDescription>
         </div>
         <CreateTenantModal leases={leases} />
       </div>

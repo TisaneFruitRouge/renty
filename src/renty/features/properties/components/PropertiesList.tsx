@@ -29,8 +29,8 @@ export default function PropertiesList({ properties }: PropertiesListProps) {
     return (
         <div className="relative space-y-4">
             {properties.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-6 mt-12 bg-muted/20 border border-border rounded-xl p-12 text-center">
-                    <div className="bg-background p-4 rounded-full shadow-sm border border-border">
+                <div className="flex flex-col items-center justify-center gap-6 mt-12 bg-muted/20 border border-border rounded-md p-12 text-center">
+                    <div className="bg-background p-4 rounded-md border border-border">
                         <Building2 className="h-16 w-16 text-primary" />
                     </div>
 
@@ -66,7 +66,7 @@ export default function PropertiesList({ properties }: PropertiesListProps) {
                     {filtered.length === 0 ? (
                         <p className="text-sm text-muted-foreground py-4">{propertiesT('no-results')}</p>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filtered.map((property) => (
                                 <Property key={property.id} property={property} />
                             ))}

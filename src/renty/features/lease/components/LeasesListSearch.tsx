@@ -44,7 +44,7 @@ export default function LeasesListSearch({ leases }: LeasesListSearchProps) {
       {filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-4">{t('no-results')}</p>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(lease => (
             <LeaseCard key={lease.id} lease={lease} />
           ))}

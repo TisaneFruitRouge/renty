@@ -17,7 +17,7 @@ export function RentReceiptPreview({ receipt }: RentReceiptPreviewProps) {
     return (    
         <iframe
             src={receipt.blobUrl}
-            className="w-full h-[calc(100vh-12rem)] rounded-lg border shadow-sm"
+            className="w-full h-[calc(100vh-12rem)] rounded-md border"
             title="Receipt preview"
         />
     )

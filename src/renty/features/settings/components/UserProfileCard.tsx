@@ -13,7 +13,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
   const initials = user.name ? user.name.substring(0, 2).toUpperCase() : 'U';
   
   return (
-    <Card className="overflow-hidden shadow-sm border-muted hover:border-muted-foreground/20 transition-colors">
+    <Card className="overflow-hidden">
       <CardContent className="p-6">
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">

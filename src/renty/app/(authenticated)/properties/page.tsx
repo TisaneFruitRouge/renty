@@ -3,6 +3,7 @@ import { getPropertiesForUser } from "@/features/properties/db";
 import { getSession } from "@/lib/session";
 import PropertiesList from "@/features/properties/components/PropertiesList";
 import CreatePropertyModal from "@/features/properties/components/CreatePropertyModal";
+import { PageTitle, PageDescription } from "@/components/ui/typography";
 
 export default async function PropertiesPage() {
     const t = await getTranslations('properties');
@@ -18,8 +19,8 @@ export default async function PropertiesPage() {
         <div className="container mx-auto p-6 space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold">{t('title')}</h1>
-                    <p className="text-muted-foreground mt-1">{t('description')}</p>
+                    <PageTitle>{t('title')}</PageTitle>
+                    <PageDescription className="mt-1">{t('description')}</PageDescription>
                 </div>
                 <CreatePropertyModal />
             </div>

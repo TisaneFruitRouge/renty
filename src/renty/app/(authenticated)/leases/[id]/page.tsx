@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { notFound, redirect } from "next/navigation"
+import { PageTitle, PageDescription } from "@/components/ui/typography"
 import { getTranslations } from "next-intl/server"
 import { getSession } from "@/lib/session"
 import { prisma } from "@/prisma/db"
@@ -100,9 +101,9 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
       <div className="flex items-center gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">
+            <PageTitle>
               {t('lease-title')} - {lease.property.title}
-            </h1>
+            </PageTitle>
             <Badge className={getLeaseStatusColor(lease.status)}>
               {t(`status.${lease.status.toLowerCase()}`)}
             </Badge>
@@ -110,9 +111,9 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
               {t(`type.${lease.leaseType.toLowerCase()}`)}
             </Badge>
           </div>
-          <p className="text-muted-foreground mt-1">
+          <PageDescription className="mt-1">
             {lease.property.address}, {lease.property.city}
-          </p>
+          </PageDescription>
         </div>
         <div className="flex gap-2">
           <EditLeaseModal lease={lease}>

@@ -1,6 +1,5 @@
 'use client'
 
-import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Download, Eye } from "lucide-react"
 import type { property, rentReceipt, tenant } from "@prisma/client"
@@ -44,67 +43,66 @@ export function RentReceiptItem({ receipt, className }: RentReceiptItemProps) {
     }
 
     return (
-        <Card 
+        <div
             className={cn(
-                "p-4 rounded-none first:rounded-t-lg last:rounded-b-lg hover:bg-accent/70 hover:cursor-pointer duration-300",
+                "flex items-center justify-between px-4 py-3 hover:bg-muted/50 cursor-pointer transition-colors",
                 className
             )}
             onClick={handleView}
         >
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
-                        {receipt?.createdAt?.toLocaleDateString('fr-FR')}
-                    </p>
-                    <p className="font-medium">{receipt?.property.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                        {receipt.tenant.firstName} {receipt.tenant.lastName}
-                    </p>
-                </div>
-                <div>
-                    <Badge className={cn(
-                        rentReceiptStatusVariants[receipt.status],
-                        "font-medium shadow-none"
-                    )}>
-                        {t('status.' + receipt.status)}
-                    </Badge>
-                </div>
-                <div className="flex items-center space-x-2">
-                    <p className="text-lg font-semibold">{receipt?.baseRent + receipt?.charges}€</p>
-                    {receipt?.blobUrl && (
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent" aria-label={t('actions.more')}>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={handleView}>
-                                    <Eye className="mr-2 h-4 w-4" />
-                                    {t('actions.view')}
-                                </DropdownMenuItem>
-                                {receipt.blobUrl && (
-                                    <DropdownMenuItem onClick={handleDownload}>
-                                        <Download className="mr-2 h-4 w-4" />
-                                        {t('actions.download')}
-                                    </DropdownMenuItem>
-                                )}
-                                
-                                {availableStatusTransitions[receipt.status].length > 0 && (
-                                    <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
-                                        <div className="w-full">
-                                            <RentReceiptStatusActions
-                                                receiptId={receipt.id}
-                                                currentStatus={receipt.status}
-                                            />
-                                        </div>
-                                    </DropdownMenuItem>
-                                )}                                
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    )}
-                </div>
+            {/* Left: date + property + tenant */}
+            <div className="flex-1 min-w-0 space-y-0.5">
+                <p className="text-xs text-muted-foreground tabular-nums">
+                    {receipt?.createdAt?.toLocaleDateString('fr-FR')}
+                </p>
+                <p className="font-medium text-sm truncate">{receipt?.property.title}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                    {receipt.tenant.firstName} {receipt.tenant.lastName}
+                </p>
             </div>
-        </Card>
+
+            {/* Center: status badge */}
+            <div className="shrink-0 mx-4">
+                <Badge className={cn(rentReceiptStatusVariants[receipt.status], "font-medium")}>
+                    {t('status.' + receipt.status)}
+                </Badge>
+            </div>
+
+            {/* Right: amount + actions */}
+            <div className="flex items-center gap-2 shrink-0">
+                <p className="text-sm font-semibold tabular-nums w-20 text-right">
+                    {(receipt?.baseRent + receipt?.charges).toLocaleString('fr-FR')}€
+                </p>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={t('actions.more')}>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={handleView}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            {t('actions.view')}
+                        </DropdownMenuItem>
+                        {receipt.blobUrl && (
+                            <DropdownMenuItem onClick={handleDownload}>
+                                <Download className="mr-2 h-4 w-4" />
+                                {t('actions.download')}
+                            </DropdownMenuItem>
+                        )}
+                        {availableStatusTransitions[receipt.status].length > 0 && (
+                            <DropdownMenuItem asChild onClick={(e) => e.stopPropagation()}>
+                                <div className="w-full">
+                                    <RentReceiptStatusActions
+                                        receiptId={receipt.id}
+                                        currentStatus={receipt.status}
+                                    />
+                                </div>
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </div>
     )
 }

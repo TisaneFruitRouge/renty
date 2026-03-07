@@ -8,6 +8,7 @@ import { countWaitingReceiptsForUser, getReceiptsOfUser } from "@/features/rent-
 import { countExpiringLeasesForUser } from "@/features/lease/db";
 import MostRecentRentReceipts from "@/features/rent-receipt/components/MostRecentRentReceipts";
 import Link from "next/link";
+import { PageTitle, PageDescription } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { RentReceiptStatus } from "@prisma/client";
 
@@ -43,13 +44,13 @@ export default async function Home() {
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
             {session?.user?.name && (
-              <h1 className="text-2xl font-bold">
+              <PageTitle>
                 {t("welcome", { name: session.user.name })}
-              </h1>
+              </PageTitle>
             )}
-            <p className="text-muted-foreground">
+            <PageDescription className="mt-1">
               {t("welcome-subtext")}
-            </p>
+            </PageDescription>
           </div>
 
           {/* Quick action button for adding property */}
@@ -75,7 +76,7 @@ export default async function Home() {
             {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
               <Link href="/properties" className="group">
-                <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer h-full">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t("total-properties")}</CardTitle>
                     <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -87,7 +88,7 @@ export default async function Home() {
                 </Card>
               </Link>
               <Link href="/tenants" className="group">
-                <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer h-full">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t("total-tenants")}</CardTitle>
                     <Users className="h-4 w-4 text-muted-foreground" />
@@ -101,7 +102,7 @@ export default async function Home() {
                 </Card>
               </Link>
               <Link href={`/rent-receipts?status=${RentReceiptStatus.PENDING}`} className="group">
-                <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer h-full">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t("payments-waiting")}</CardTitle>
                     <TriangleAlert className="h-4 w-4 text-muted-foreground" />
@@ -113,7 +114,7 @@ export default async function Home() {
                 </Card>
               </Link>
               <Link href="/rent-receipts" className="group">
-                <Card className="hover:shadow-md transition-shadow duration-200 cursor-pointer h-full">
+                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t("monthly-revenues")}</CardTitle>
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -125,7 +126,7 @@ export default async function Home() {
                 </Card>
               </Link>
               <Link href="/leases" className="group">
-                <Card className={`hover:shadow-md transition-shadow duration-200 cursor-pointer h-full ${expiringCount > 0 ? 'border-yellow-300 dark:border-yellow-700' : ''}`}>
+                <Card className={`hover:border-primary/50 transition-colors cursor-pointer h-full ${expiringCount > 0 ? 'border-yellow-400 dark:border-yellow-600' : ''}`}>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{t("leases-expiring-soon")}</CardTitle>
                     <Clock className={`h-4 w-4 ${expiringCount > 0 ? 'text-yellow-500' : 'text-muted-foreground'}`} />
@@ -222,7 +223,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
             {steps.map((step, i) => (
               <div
                 key={i}
-                className={`flex items-start gap-4 p-4 rounded-lg shadow-sm border ${step.done ? 'bg-muted/30 border-border opacity-70' : 'bg-background border-border'}`}
+                className={`flex items-start gap-4 p-4 rounded-md border ${step.done ? 'bg-muted/30 border-border opacity-70' : 'bg-background border-border'}`}
               >
                 <div className={`p-2 rounded-full ${step.done ? 'bg-green-100 dark:bg-green-900/30' : 'bg-primary/10'}`}>
                   {step.done
@@ -242,7 +243,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
       </Card>
 
       {/* Quick access cards */}
-      <Card className="hover:shadow-md transition-shadow duration-200">
+      <Card className="hover:border-primary/50 transition-colors">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-primary" />
@@ -259,7 +260,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
         </CardFooter>
       </Card>
 
-      <Card className="hover:shadow-md transition-shadow duration-200">
+      <Card className="hover:border-primary/50 transition-colors">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
@@ -276,7 +277,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
         </CardFooter>
       </Card>
 
-      <Card className="hover:shadow-md transition-shadow duration-200">
+      <Card className="hover:border-primary/50 transition-colors">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ReceiptText className="h-5 w-5 text-primary" />

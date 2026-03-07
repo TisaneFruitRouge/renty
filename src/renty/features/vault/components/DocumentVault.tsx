@@ -71,7 +71,7 @@ export function DocumentVault({ documents, propertyId }: DocumentVaultProps) {
     }
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border">
+        <div className="bg-card rounded-md border border-border">
             <div className="p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-lg font-semibold">{t('document-vault')}</h2>

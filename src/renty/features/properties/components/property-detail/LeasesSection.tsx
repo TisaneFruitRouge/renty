@@ -33,7 +33,7 @@ export default function LeasesSection({ propertyId, leases }: LeasesSectionProps
   }
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border">
+    <div className="bg-card rounded-md border border-border">
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">

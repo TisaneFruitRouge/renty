@@ -1,16 +1,13 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { CalendarIcon, Users, MapPin, Euro, UserPlus } from "lucide-react"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { CalendarIcon, MapPin, Users } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { format } from "date-fns"
 import type { lease, property, tenant, tenantAuth } from "@prisma/client"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
-import ManageTenantsModal from "./ManageTenantsModal"
 import { getLeaseStatusColor, getLeaseTypeColor, formatCurrency, isLeaseExpired, isLeaseExpiringSoon } from "../utils/lease-utils"
 
 type LeaseWithDetails = lease & {
@@ -33,167 +30,84 @@ export default function LeaseCard({ lease }: LeaseCardProps) {
   return (
     <Link href={`/leases/${lease.id}`}>
       <Card className={cn(
-        "hover:shadow-md transition-shadow cursor-pointer",
-        isExpired && "border-red-200 dark:border-red-800",
-        isExpiringSoon && !isExpired && "border-yellow-200 dark:border-yellow-800"
+        "overflow-hidden hover:border-primary/50 transition-colors duration-200 cursor-pointer",
+        isExpired && "border-red-400 dark:border-red-600",
+        isExpiringSoon && !isExpired && "border-yellow-400 dark:border-yellow-600"
       )}>
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <CardTitle className="text-lg font-semibold">
-              <div className="hover:underline flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                {lease.property.title}
-              </div>
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              {lease.property.address}, {lease.property.city}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Badge className={getLeaseStatusColor(lease.status)}>
+        {/* Visual header — mirrors the image area in Property */}
+        <div className={cn(
+          "relative w-full h-32 bg-muted flex flex-col items-center justify-center gap-1",
+          isExpired && "bg-red-50 dark:bg-red-950/20",
+          isExpiringSoon && !isExpired && "bg-yellow-50 dark:bg-yellow-950/20"
+        )}>
+          <p className="text-2xl font-bold tabular-nums">
+            {formatCurrency(lease.rentAmount, lease.currency)}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            /{t(`frequency.${lease.paymentFrequency}`)}
+            {lease.charges && lease.charges > 0 && (
+              <span> + {formatCurrency(lease.charges, lease.currency)} {t('charges')}</span>
+            )}
+          </p>
+          <div className="absolute top-2 right-2 flex gap-1">
+            <Badge className={cn(getLeaseStatusColor(lease.status), "text-xs")}>
               {t(`status.${lease.status.toLowerCase()}`)}
             </Badge>
-            <Badge className={getLeaseTypeColor(lease.leaseType)}>
+            <Badge className={cn(getLeaseTypeColor(lease.leaseType), "text-xs")}>
               {t(`type.${lease.leaseType.toLowerCase()}`)}
             </Badge>
           </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {/* Tenants Section */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="text-sm font-medium">
-                {t('tenants')} ({lease.tenants.length})
-              </span>
-            </div>
-            <ManageTenantsModal lease={lease}>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <UserPlus className="h-4 w-4" />
-              </Button>
-            </ManageTenantsModal>
-          </div>
-
-          {lease.tenants.length > 0 ? (
-            <div className="space-y-2">
-              {lease.tenants.map((tenant) => (
-                <div key={tenant.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
-                  <div>
-                    <p className="text-sm font-medium">
-                      {tenant.firstName} {tenant.lastName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {tenant.email}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {tenant.auth?.isActivated ? (
-                      <Badge variant="secondary" className="text-xs">
-                        {t('activated')}
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-xs">
-                        {t('pending')}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground p-2 bg-muted/50 rounded-md text-center">
-              {t('no-tenants-assigned')}
-            </p>
-          )}
-        </div>
-
-        <Separator />
-
-        {/* Financial Details */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Euro className="h-4 w-4" />
-              <span className="text-sm font-medium">{t('rent')}</span>
-            </div>
-            <p className="text-lg font-semibold">
-              {formatCurrency(lease.rentAmount, lease.currency)}
-              <span className="text-sm text-muted-foreground font-normal">
-                /{t(`frequency.${lease.paymentFrequency}`)}
-              </span>
-            </p>
-            {lease.charges && lease.charges > 0 && (
-              <p className="text-sm text-muted-foreground">
-                + {formatCurrency(lease.charges, lease.currency)} {t('charges')}
-              </p>
-            )}
-          </div>
-
-          {lease.depositAmount && (
-            <div>
-              <span className="text-sm font-medium">{t('deposit')}</span>
-              <p className="text-lg font-semibold">
-                {formatCurrency(lease.depositAmount, lease.currency)}
-              </p>
-            </div>
-          )}
-        </div>
-
-        <Separator />
-
-        {/* Dates and Details */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4" />
-              <span className="text-sm font-medium">{t('period')}</span>
-            </div>
-            {lease.isFurnished && (
+          {lease.isFurnished && (
+            <div className="absolute top-2 left-2">
               <Badge variant="outline" className="text-xs">
                 {t('furnished')}
               </Badge>
-            )}
-          </div>
-
-          <div className="text-sm text-muted-foreground">
-            <p>
-              {t('start')}: {format(new Date(lease.startDate), "dd/MM/yyyy")}
-            </p>
-            {lease.endDate ? (
-              <p className={cn(
-                isExpired && "text-red-600 font-medium",
-                isExpiringSoon && !isExpired && "text-yellow-600 font-medium"
-              )}>
-                {t('end')}: {format(new Date(lease.endDate), "dd/MM/yyyy")}
-                {isExpired && ` (${t('expired')})`}
-                {isExpiringSoon && !isExpired && ` (${t('expires-soon')})`}
-              </p>
-            ) : (
-              <p>{t('end')}: {t('indefinite')}</p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Notes */}
-        {lease.notes && (
-          <>
-            <Separator />
-            <div>
-              <span className="text-sm font-medium">{t('notes')}</span>
-              <p className="text-sm text-muted-foreground mt-1">{lease.notes}</p>
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+        <CardHeader className="pb-2 pt-3">
+          <h3 className="text-base font-semibold line-clamp-1 flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            {lease.property.title}
+          </h3>
+          <p className="text-sm text-muted-foreground line-clamp-1">
+            {lease.property.address}, {lease.property.city}
+          </p>
+        </CardHeader>
+
+        <CardContent className="pb-0">
+          <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <Users className="h-3.5 w-3.5 shrink-0" />
+            <span>
+              {lease.tenants.length > 0
+                ? lease.tenants.map(t => `${t.firstName} ${t.lastName}`).join(', ')
+                : t('no-tenants-assigned')}
+            </span>
+          </div>
+        </CardContent>
+
+        <CardFooter className="pt-3 pb-3">
+          <div className={cn(
+            "flex items-center gap-1.5 text-xs text-muted-foreground",
+            isExpired && "text-red-600 font-medium",
+            isExpiringSoon && !isExpired && "text-yellow-600 font-medium"
+          )}>
+            <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
+            <span>{format(new Date(lease.startDate), "dd/MM/yyyy")}</span>
+            <span>→</span>
+            {lease.endDate ? (
+              <span>
+                {format(new Date(lease.endDate), "dd/MM/yyyy")}
+                {isExpired && ` (${t('expired')})`}
+                {isExpiringSoon && !isExpired && ` (${t('expires-soon')})`}
+              </span>
+            ) : (
+              <span>{t('indefinite')}</span>
+            )}
+          </div>
+        </CardFooter>
+      </Card>
     </Link>
   )
 }
