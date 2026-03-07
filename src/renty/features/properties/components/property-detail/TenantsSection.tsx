@@ -12,7 +12,7 @@ export default function TenantsSection({ propertyId, initialTenant, availableTen
     const t = useTranslations('property')
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border">
+        <div className="bg-card rounded-md border border-border">
             <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">{t("current-tenants")}</h2>
                 <TenantSection propertyId={propertyId} initialTenant={initialTenant} availableTenants={availableTenants} />

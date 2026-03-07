@@ -11,6 +11,18 @@ export default {
   ],
   theme: {
   	extend: {
+  		container: {
+  			center: true,
+  			padding: {
+  				DEFAULT: '1rem',
+  				lg: '1.5rem',
+  				xl: '2rem',
+  				'2xl': '3rem',
+  			},
+  			screens: {
+  				'2xl': '1600px',
+  			},
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

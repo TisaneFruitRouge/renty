@@ -3,6 +3,7 @@ import { getSession } from '@/lib/session'
 import type { user } from '@prisma/client'
 import { Suspense } from 'react'
 import { ClientSettingsPage } from '@/features/settings/components/ClientSettingsPage';
+import { PageTitle, PageDescription } from '@/components/ui/typography';
 import { getActiveSessionsAction } from '@/features/settings/actions';
 import { authPlans } from '@/features/subscription/plans';
 import { redirect } from 'next/navigation';
@@ -71,8 +72,8 @@ export default async function SettingsPage() {
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-muted-foreground mt-1">{t('description')}</p>
+        <PageTitle>{t('title')}</PageTitle>
+        <PageDescription className="mt-1">{t('description')}</PageDescription>
       </div>
       
       {/* Pass the server-fetched data to the client component */}

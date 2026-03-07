@@ -51,15 +51,17 @@ export function PropertyQuickActions({ property, leases }: PropertyQuickActionsP
     }, [isContactModalOpen, property.id, hasActiveTenants]);
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border">
+        <div className="bg-card rounded-md border border-border">
             <div className="p-6">
                 <h2 className="text-lg font-semibold mb-4">{t("quick-actions")}</h2>
                 <div className="space-y-3">
 
-                    <Button variant="outline" className="w-full flex items-center justify-center">
-                        <History className="w-4 h-4 mr-2" />
-                        {t("rent-receipts-history")}
-                    </Button>
+                    <Link href={`/rent-receipts?propertyId=${property.id}`} className="w-full">
+                        <Button variant="outline" className="w-full flex items-center justify-center">
+                            <History className="w-4 h-4 mr-2" />
+                            {t("rent-receipts-history")}
+                        </Button>
+                    </Link>
                     <Dialog open={isContactModalOpen} onOpenChange={setIsContactModalOpen}>
                         <DialogTrigger asChild>
                             <Button variant="outline" className="w-full flex items-center justify-center">

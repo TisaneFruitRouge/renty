@@ -25,8 +25,16 @@ export default function EditLeaseModal({ lease, children }: EditLeaseModalProps)
         setIsOpen(false)
     }
 
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open)
+        if (!open) {
+            // Radix UI leaves pointer-events: none on body when closed programmatically
+            setTimeout(() => { document.body.style.pointerEvents = '' }, 0)
+        }
+    }
+
     return (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>

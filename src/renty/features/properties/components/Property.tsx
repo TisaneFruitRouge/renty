@@ -11,8 +11,8 @@ type PropertyProps = {
 export default function Property({ property }: PropertyProps) {
     return (
         <Link href={`/properties/${property.id}`}>
-            <Card className="overflow-hidden hover:shadow-lg hover:scale-[1.02] hover:border-primary/20 transition-all duration-300 ease-in-out">
-                <div className="relative w-full h-48">
+            <Card className="overflow-hidden hover:border-primary/50 transition-colors duration-200">
+                <div className="relative w-full h-32">
                     {property.images.length > 0 ? (
                         <Image
                             src={property.images[0]}
@@ -22,26 +22,26 @@ export default function Property({ property }: PropertyProps) {
                         />
                     ) : (
                         <div className="w-full h-full bg-muted flex items-center justify-center">
-                            <Home className="h-12 w-12 text-muted-foreground" />
+                            <Home className="h-10 w-10 text-muted-foreground" />
                         </div>
                     )}
                 </div>
-                <CardHeader>
-                    <h3 className="text-lg font-semibold line-clamp-1">{property.title}</h3>
-                    <div className="flex items-center text-muted-foreground">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <p className="text-sm line-clamp-1">{property.address}</p>
-                    </div>
+                <CardHeader className="pb-2 pt-3">
+                    <h3 className="text-base font-semibold line-clamp-1 flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        {property.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-1">{property.address}</p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pb-0">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                         <span>{property.city},</span>
                         <span>{property.state},</span>
                         <span>{property.country}</span>
                     </div>
                 </CardContent>
-                <CardFooter>
-                    <p className="text-sm text-muted-foreground">{property.postalCode}</p>
+                <CardFooter className="pt-2 pb-3">
+                    <p className="text-xs text-muted-foreground">{property.postalCode}</p>
                 </CardFooter>
             </Card>
         </Link>

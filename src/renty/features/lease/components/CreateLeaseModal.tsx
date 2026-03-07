@@ -141,8 +141,15 @@ export default function CreateLeaseModal({ properties, propertyId }: CreateLease
         }
     }
 
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open)
+        if (!open) {
+            setTimeout(() => { document.body.style.pointerEvents = '' }, 0)
+        }
+    }
+
     return (
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
               <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -314,7 +321,7 @@ export default function CreateLeaseModal({ properties, propertyId }: CreateLease
                           />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <FormField
                               control={form.control}
                               name="leaseType"
@@ -360,30 +367,29 @@ export default function CreateLeaseModal({ properties, propertyId }: CreateLease
                                   </FormItem>
                               )}
                           />
-                      </div>
 
-                      <FormField
-                          control={form.control}
-                          name="isFurnished"
-                          render={({ field }) => (
-                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                                  <FormControl>
-                                      <Checkbox
-                                          checked={field.value}
-                                          onCheckedChange={field.onChange}
-                                      />
-                                  </FormControl>
-                                  <div className="space-y-1 leading-none">
-                                      <FormLabel>
-                                          {t('furnished.label')}
-                                      </FormLabel>
-                                      <FormDescription>
-                                          {t('furnished.description')}
-                                      </FormDescription>
-                                  </div>
-                              </FormItem>
-                          )}
-                      />
+                          <FormField
+                              control={form.control}
+                              name="isFurnished"
+                              render={({ field }) => (
+                                  <FormItem>
+                                      <FormLabel>{t('furnished.label')}</FormLabel>
+                                      <FormControl>
+                                          <div className="flex items-center h-10 gap-2">
+                                              <Checkbox
+                                                  id="isFurnished"
+                                                  checked={field.value}
+                                                  onCheckedChange={field.onChange}
+                                              />
+                                              <label htmlFor="isFurnished" className="text-sm text-muted-foreground cursor-pointer">
+                                                  {t('furnished.description')}
+                                              </label>
+                                          </div>
+                                      </FormControl>
+                                  </FormItem>
+                              )}
+                          />
+                      </div>
 
                       <FormField
                           control={form.control}

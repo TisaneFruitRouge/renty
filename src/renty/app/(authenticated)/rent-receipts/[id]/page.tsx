@@ -1,5 +1,6 @@
 import { getReceiptById } from "@/features/rent-receipt/db";
 import { getTranslations } from "next-intl/server";
+import { PageTitle } from "@/components/ui/typography";
 import { RentReceiptPreview } from "@/features/rent-receipt/components/RentReceiptPreview";
 import { RentReceiptStatusActions } from "@/features/rent-receipt/components/RentReceiptStatusActions";
 import { Card } from "@/components/ui/card";
@@ -31,9 +32,9 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
                 </span>
             </nav>
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold">
+                <PageTitle>
                     {receipt.property.title} - {receipt.tenant.firstName} {receipt.tenant.lastName}
-                </h1>
+                </PageTitle>
                 <div className="flex items-center gap-4">
                     <RentReceiptStatusActions
                         receiptId={receipt.id}

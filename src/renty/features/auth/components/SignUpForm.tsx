@@ -71,7 +71,7 @@ export default function SignUpForm() {
 	}
 
 	return (
-		<div className="w-full max-w-md p-6 bg-background border rounded-xl shadow-lg">
+		<div className="w-full max-w-md p-6 bg-background border rounded-md">
 			<div className="space-y-2 text-center">
 				<h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
 				<p className="text-sm text-muted-foreground">{t('subtitle')}</p>

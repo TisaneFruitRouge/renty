@@ -35,7 +35,7 @@ export default function SimpleLeasesSection({ leases, property }: SimpleLeasesSe
   const t = useTranslations()
 
   return (
-    <div className="bg-card rounded-xl shadow-sm border border-border">
+    <div className="bg-card rounded-md border border-border">
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ export default function SimpleLeasesSection({ leases, property }: SimpleLeasesSe
           <div className="space-y-4 mb-6">
             {leases.map((lease) => (
               <Link key={lease.id} href={`/leases/${lease.id}`}>
-                <Card className="border hover:shadow-md transition-shadow cursor-pointer">
+                <Card className="border hover:border-primary/50 transition-colors cursor-pointer">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <CardTitle className="text-base font-medium">

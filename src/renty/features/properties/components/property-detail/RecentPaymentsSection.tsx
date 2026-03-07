@@ -14,7 +14,7 @@ export default function RecentPaymentsSection({ recentPayments, propertyId }: Re
     const t_rentReceiptsStatus = useTranslations('rent-receipts.status');
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border">
+        <div className="bg-card rounded-md border border-border">
             <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-semibold">{t("recent-payments")}</h2>

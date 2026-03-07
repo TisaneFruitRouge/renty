@@ -32,7 +32,7 @@ model session {
   userAgent String?
   userId    String
   createdAt DateTime? @db.Date
-  token     String?
+  token     String    @unique
   updatedAt DateTime? @db.Date
   user      user      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }

@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server"
+import { PageTitle } from "@/components/ui/typography"
 import { getReceiptsOfUser } from "@/features/rent-receipt/db";
 import { getSession } from "@/lib/session";
 import CreateRentReceiptModal from "@/features/rent-receipt/components/CreateRentReceiptModal";
@@ -38,7 +39,7 @@ export default async function RentReceiptsPage({ searchParams }: RentReceiptsPag
     return (
         <div className="container mx-auto p-6 space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">{t('title')}</h1>
+                <PageTitle>{t('title')}</PageTitle>
                 <CreateRentReceiptModal properties={properties} />
             </div>
             

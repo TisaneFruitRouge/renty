@@ -16,7 +16,7 @@ export function SubscriptionTab({ plans }: SubscriptionTabProps) {
   const currentPlan = plans.find(plan => plan.name === 'basic');
   const otherPlan = plans.find(plan => plan.name !== currentPlan?.name);
   return (
-    <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center space-x-2">
           <CreditCard className="h-5 w-5 text-primary" />
