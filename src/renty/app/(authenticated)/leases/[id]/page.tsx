@@ -19,13 +19,17 @@ import {
   MapPin,
   Settings,
   Trash2,
-  UserPlus
+  UserPlus,
+  XCircle,
+  RefreshCw
 } from "lucide-react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
 import EditLeaseModal from "@/features/lease/components/EditLeaseModal"
 import DeleteLeaseDialog from "@/features/lease/components/DeleteLeaseDialog"
+import EndLeaseModal from "@/features/lease/components/EndLeaseModal"
+import RenewLeaseModal from "@/features/lease/components/RenewLeaseModal"
 import ManageTenantsModal from "@/features/lease/components/ManageTenantsModal"
 import LeaseDocumentsSection from "@/features/lease/components/LeaseDocumentsSection"
 import LeaseRentReceiptSettings from "@/features/lease/components/rent-receipt-settings/LeaseRentReceiptSettings"
@@ -122,6 +126,22 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
               {t('edit')}
             </Button>
           </EditLeaseModal>
+          {(lease.status === 'ACTIVE' || lease.status === 'PENDING') && (
+            <EndLeaseModal lease={lease}>
+              <Button variant="outline" size="sm" className="text-orange-600 hover:text-orange-700">
+                <XCircle className="h-4 w-4 mr-2" />
+                {t('end-lease.trigger')}
+              </Button>
+            </EndLeaseModal>
+          )}
+          {(lease.status === 'ACTIVE' || lease.status === 'EXPIRED' || lease.status === 'TERMINATED') && (
+            <RenewLeaseModal lease={lease}>
+              <Button variant="outline" size="sm" className="text-green-600 hover:text-green-700">
+                <RefreshCw className="h-4 w-4 mr-2" />
+                {t('renew-lease.trigger')}
+              </Button>
+            </RenewLeaseModal>
+          )}
           <DeleteLeaseDialog lease={lease}>
             <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
               <Trash2 className="h-4 w-4 mr-2" />

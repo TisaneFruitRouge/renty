@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma/db";
-import type { LeaseType, LeaseStatus } from "@prisma/client";
+import type { LeaseType, LeaseStatus, TerminationReason } from "@prisma/client";
 
 export interface CreateLeaseData {
   propertyId: string;
@@ -17,6 +17,7 @@ export interface CreateLeaseData {
   autoGenerateReceipts?: boolean;
   receiptGenerationDate?: number;
   nextReceiptDate?: Date;
+  renewedFromLeaseId?: string;
 }
 
 export interface UpdateLeaseData {
@@ -54,11 +55,73 @@ export async function createLeaseInDb(data: CreateLeaseData) {
       autoGenerateReceipts: data.autoGenerateReceipts || false,
       receiptGenerationDate: data.receiptGenerationDate,
       nextReceiptDate: data.nextReceiptDate,
+      renewedFromLeaseId: data.renewedFromLeaseId,
     },
     include: {
       property: true,
       tenants: true,
     },
+  });
+}
+
+export async function terminateLeaseInDb(
+  leaseId: string,
+  terminationDate: Date,
+  terminationReason: TerminationReason,
+  notes?: string
+) {
+  return prisma.lease.update({
+    where: { id: leaseId },
+    data: {
+      status: "TERMINATED",
+      endDate: terminationDate,
+      terminationReason,
+      ...(notes !== undefined ? { notes } : {}),
+      autoGenerateReceipts: false,
+    },
+    include: {
+      property: true,
+      tenants: true,
+    },
+  });
+}
+
+export async function renewLeaseInDb(
+  oldLeaseId: string,
+  newLeaseData: CreateLeaseData
+) {
+  return prisma.$transaction(async (tx) => {
+    const newLease = await tx.lease.create({
+      data: {
+        propertyId: newLeaseData.propertyId,
+        startDate: newLeaseData.startDate,
+        endDate: newLeaseData.endDate,
+        rentAmount: newLeaseData.rentAmount,
+        depositAmount: newLeaseData.depositAmount,
+        charges: newLeaseData.charges || 0,
+        leaseType: newLeaseData.leaseType,
+        isFurnished: newLeaseData.isFurnished || false,
+        paymentFrequency: newLeaseData.paymentFrequency || "monthly",
+        currency: newLeaseData.currency || "EUR",
+        status: "ACTIVE",
+        notes: newLeaseData.notes,
+        autoGenerateReceipts: false,
+        renewedFromLeaseId: oldLeaseId,
+      },
+      include: { property: true, tenants: true },
+    });
+
+    await tx.lease.update({
+      where: { id: oldLeaseId },
+      data: { status: "EXPIRED" },
+    });
+
+    await tx.tenant.updateMany({
+      where: { leaseId: oldLeaseId },
+      data: { leaseId: newLease.id },
+    });
+
+    return { newLease };
   });
 }
 

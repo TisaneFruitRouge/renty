@@ -8,6 +8,10 @@
         {
             "path": "/api/rent-receipt/send",
             "schedule": "0 8 * * *"
+        },
+        {
+            "path": "/api/lease/expire",
+            "schedule": "0 7 * * *"
         }
     ]
 }
