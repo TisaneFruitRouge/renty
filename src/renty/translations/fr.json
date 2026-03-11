@@ -396,8 +396,30 @@
       "select-tenants-shared": "Sélectionnez au moins 2 locataires",
       "individual-validation": "Veuillez sélectionner un locataire.",
       "shared-validation": "Veuillez sélectionner au moins 2 locataires.",
-      "submitting": "Création..."
+      "submitting": "Création...",
+      "submit": "Créer le bail",
+      "loading": "Chargement..."
     },
+    "manage-tenants-modal": {
+      "current-tenants": "Locataires actuels",
+      "no-available": "Aucun locataire disponible",
+      "all-assigned": "Tous vos locataires sont déjà assignés à des baux.",
+      "available-hint": "Seuls les locataires sans bail actif sont affichés.",
+      "loading": "Chargement des locataires...",
+      "add": "Ajouter",
+      "select-hint": "Sélectionnez un locataire à ajouter",
+      "tenant-added": "Locataire ajouté",
+      "tenant-added-description": "Le locataire a été ajouté au bail avec succès.",
+      "tenant-removed": "Locataire retiré",
+      "tenant-removed-description": "Le locataire a été retiré du bail.",
+      "error": "Erreur",
+      "load-error": "Impossible de charger les locataires disponibles.",
+      "add-error": "Impossible d'ajouter le locataire.",
+      "remove-error": "Impossible de retirer le locataire."
+    },
+    "section-period": "Période",
+    "section-financial": "Financier",
+    "section-configuration": "Configuration",
     "optional": "Optionnel",
     "creating": "Création...",
     "create-lease": "Créer le bail",
@@ -424,9 +446,9 @@
     "view-documents": "Voir les documents",
     "link-document": "Associer un document",
     "frequency": {
-      "monthly": "mensuel",
-      "quarterly": "trimestriel",
-      "yearly": "annuel"
+      "monthly": "Mensuel",
+      "quarterly": "Trimestriel",
+      "yearly": "Annuel"
     },
     "status": {
       "active": "Actif",
@@ -452,6 +474,8 @@
     "lease-details": "Détails du bail",
     "financial-details": "Détails financiers",
     "per-month": "/mois",
+    "per-year": "/an",
+    "days-remaining": "Jours restants",
     "monthly-total": "Total mensuel",
     "lease-type": "Type de bail",
     "payment-frequency-label": "Fréquence de paiement",

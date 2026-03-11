@@ -19,6 +19,7 @@ import {
 import {
     Form,
     FormControl,
+    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -70,9 +71,21 @@ function defaultStartDate(endDate: Date | null): Date {
     return next
 }
 
+function SectionHeader({ label }: { label: string }) {
+    return (
+        <div className="flex items-center gap-3 pt-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                {label}
+            </span>
+            <div className="flex-1 h-px bg-border" />
+        </div>
+    )
+}
+
 export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProps) {
     const t = useTranslations("lease.renew-lease")
     const leaseT = useTranslations("lease")
+    const createT = useTranslations("lease.create-form")
     const { toast } = useToast()
     const router = useRouter()
     const [isOpen, setIsOpen] = useState(false)
@@ -144,7 +157,10 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                     <DialogDescription>{t("description")}</DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
+                        {/* Période */}
+                        <SectionHeader label={leaseT("section-period")} />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
@@ -166,26 +182,29 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                         <DatePicker
                                             value={field.value}
                                             onChange={field.onChange}
-                                            placeholder={leaseT("create-form.select-end-date")}
+                                            placeholder={createT("select-end-date")}
                                         />
+                                        <FormDescription>{createT("end-date.description")}</FormDescription>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Financier */}
+                        <SectionHeader label={leaseT("section-financial")} />
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <FormField
                                 control={form.control}
                                 name="rentAmount"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{leaseT("create-form.rent-amount")}</FormLabel>
+                                        <FormLabel>{createT("rent-amount")}</FormLabel>
                                         <FormControl>
                                             <Input type="number" step="0.01" min="0" placeholder="1500.00" {...field} />
                                         </FormControl>
                                         {rentDiff !== 0 && (
-                                            <p className={`text-xs ${rentDiff > 0 ? "text-green-600" : "text-red-600"}`}>
+                                            <p className={`text-xs font-medium ${rentDiff > 0 ? "text-emerald-600" : "text-red-500"}`}>
                                                 {rentDiff > 0 ? "+" : ""}{rentDiff.toFixed(2)} {lease.currency}
                                             </p>
                                         )}
@@ -198,7 +217,7 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                 name="depositAmount"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{leaseT("create-form.deposit-amount.label")}</FormLabel>
+                                        <FormLabel>{createT("deposit-amount.label")}</FormLabel>
                                         <FormControl>
                                             <Input type="number" step="0.01" min="0" placeholder="3000.00" {...field} />
                                         </FormControl>
@@ -211,7 +230,7 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                 name="charges"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{leaseT("create-form.charges.label")}</FormLabel>
+                                        <FormLabel>{createT("charges.label")}</FormLabel>
                                         <FormControl>
                                             <Input type="number" step="0.01" min="0" placeholder="150.00" {...field} />
                                         </FormControl>
@@ -219,56 +238,6 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                     </FormItem>
                                 )}
                             />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="leaseType"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{leaseT("create-form.lease-type.label")}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="INDIVIDUAL">{leaseT("type.individual")}</SelectItem>
-                                                <SelectItem value="SHARED">{leaseT("type.shared")}</SelectItem>
-                                                <SelectItem value="COLOCATION">{leaseT("type.colocation")}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="paymentFrequency"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{leaseT("create-form.payment-frequency.label")}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="monthly">{leaseT("frequency.monthly")}</SelectItem>
-                                                <SelectItem value="quarterly">{leaseT("frequency.quarterly")}</SelectItem>
-                                                <SelectItem value="yearly">{leaseT("frequency.yearly")}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name="currency"
@@ -291,39 +260,91 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                     </FormItem>
                                 )}
                             />
+                        </div>
+
+                        {/* Configuration */}
+                        <SectionHeader label={leaseT("section-configuration")} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="isFurnished"
+                                name="leaseType"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 pt-8">
-                                        <FormControl>
-                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                                        </FormControl>
-                                        <FormLabel>{leaseT("furnished")}</FormLabel>
+                                    <FormItem>
+                                        <FormLabel>{createT("lease-type.label")}</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="INDIVIDUAL">{leaseT("type.individual")}</SelectItem>
+                                                <SelectItem value="SHARED">{leaseT("type.shared")}</SelectItem>
+                                                <SelectItem value="COLOCATION">{leaseT("type.colocation")}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="paymentFrequency"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{createT("payment-frequency.label")}</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="monthly">{leaseT("frequency.monthly")}</SelectItem>
+                                                <SelectItem value="quarterly">{leaseT("frequency.quarterly")}</SelectItem>
+                                                <SelectItem value="yearly">{leaseT("frequency.yearly")}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
 
-                        <FormField
-                            control={form.control}
-                            name="notes"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{leaseT("notes")} ({leaseT("optional")})</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder={leaseT("notes-placeholder")}
-                                            className="resize-none"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                            <FormField
+                                control={form.control}
+                                name="isFurnished"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 h-10">
+                                        <FormControl>
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
+                                        <FormLabel className="font-normal cursor-pointer">{leaseT("furnished")}</FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="notes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{leaseT("notes")} <span className="text-muted-foreground font-normal">({leaseT("optional")})</span></FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder={leaseT("notes-placeholder")}
+                                                className="resize-none"
+                                                rows={2}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 pt-2">
                             <Button
                                 type="button"
                                 variant="outline"

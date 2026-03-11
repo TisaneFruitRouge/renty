@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { DatePicker } from "@/components/ui/date-picker"
+import { AlertTriangle } from "lucide-react"
 import { terminateLeaseAction } from "../actions"
 
 const formSchema = z.object({
@@ -95,6 +96,12 @@ export default function EndLeaseModal({ lease, children }: EndLeaseModalProps) {
         }
     }
 
+    const currentRent = lease.rentAmount.toLocaleString("fr-FR", {
+        style: "currency",
+        currency: lease.currency,
+        maximumFractionDigits: 0,
+    })
+
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>{children}</DialogTrigger>
@@ -103,6 +110,21 @@ export default function EndLeaseModal({ lease, children }: EndLeaseModalProps) {
                     <DialogTitle>{t("title")}</DialogTitle>
                     <DialogDescription>{t("description")}</DialogDescription>
                 </DialogHeader>
+
+                {/* Warning context */}
+                <div className="flex gap-3 rounded-md border border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/10 p-3">
+                    <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0 mt-0.5" />
+                    <div className="text-sm text-orange-700 dark:text-orange-300 space-y-0.5">
+                        <p className="font-medium">{currentRent} / mois</p>
+                        {lease.startDate && (
+                            <p className="text-xs">
+                                {new Date(lease.startDate).toLocaleDateString("fr-FR")}
+                                {lease.endDate && ` → ${new Date(lease.endDate).toLocaleDateString("fr-FR")}`}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField
@@ -153,6 +175,7 @@ export default function EndLeaseModal({ lease, children }: EndLeaseModalProps) {
                                         <Textarea
                                             placeholder={t("notes-placeholder")}
                                             className="resize-none"
+                                            rows={2}
                                             {...field}
                                         />
                                     </FormControl>

@@ -29,7 +29,7 @@ import { DatePicker } from "@/components/ui/date-picker"
 import { cn } from "@/lib/utils"
 import { createLease, addTenantToLease, getAvailableTenantsForLease } from "../../actions"
 
-// ─── Step 1 schema (same as CreateLeaseModal) ───────────────────────────────
+// ─── Step 1 schema ───────────────────────────────────────────────────────────
 
 const step1Schema = z.object({
     propertyId: z.string({ required_error: "Veuillez sélectionner une propriété." }),
@@ -66,6 +66,43 @@ interface CreateLeaseWizardProps {
     properties: property[]
     propertyId?: string
     onSuccess?: () => void
+}
+
+// ─── Section header ───────────────────────────────────────────────────────────
+
+function SectionHeader({ label }: { label: string }) {
+    return (
+        <div className="flex items-center gap-3 pt-2">
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+                {label}
+            </span>
+            <div className="flex-1 h-px bg-border" />
+        </div>
+    )
+}
+
+// ─── Step indicator ───────────────────────────────────────────────────────────
+
+function StepIndicator({ step, step1Label, step2Label }: { step: 1 | 2; step1Label: string; step2Label: string }) {
+    return (
+        <div className="flex items-center gap-2">
+            <div className={cn(
+                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold shrink-0",
+                step === 1 ? "bg-primary text-primary-foreground" : "bg-primary/20 text-primary"
+            )}>1</div>
+            <span className={cn("text-sm shrink-0", step === 1 ? "font-semibold text-foreground" : "text-muted-foreground")}>
+                {step1Label}
+            </span>
+            <div className={cn("flex-1 h-px", step === 2 ? "bg-primary/40" : "bg-border")} />
+            <div className={cn(
+                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold shrink-0",
+                step === 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            )}>2</div>
+            <span className={cn("text-sm shrink-0", step === 2 ? "font-semibold text-foreground" : "text-muted-foreground")}>
+                {step2Label}
+            </span>
+        </div>
+    )
 }
 
 // ─── Step 2: Tenant Assignment ────────────────────────────────────────────────
@@ -117,7 +154,7 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5">
             {leaseType === "COLOCATION" && (
                 <div className="rounded-md border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/10 p-3 text-sm text-blue-700 dark:text-blue-300">
                     {t("colocation-info")}
@@ -125,17 +162,17 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
             )}
 
             <div>
-                <p className="text-sm font-medium mb-3">
+                <p className="text-sm font-medium mb-3 text-muted-foreground">
                     {leaseType === "SHARED" ? t("select-tenants-shared") : t("select-tenant-individual")}
                 </p>
 
                 {loading ? (
                     <div className="flex items-center gap-2 text-muted-foreground py-4">
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-sm">Chargement...</span>
+                        <span className="text-sm">{t("loading")}</span>
                     </div>
                 ) : availableTenants.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="text-center py-8 text-muted-foreground border rounded-lg bg-muted/20">
                         <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">{t("no-tenants-available")}</p>
                     </div>
@@ -143,6 +180,7 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
                     <div className="space-y-2">
                         {availableTenants.map((tenant) => {
                             const isSelected = selectedIds.includes(tenant.id)
+                            const initials = `${tenant.firstName[0]}${tenant.lastName[0]}`.toUpperCase()
                             return (
                                 <div
                                     key={tenant.id}
@@ -162,12 +200,18 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
                                         />
                                     ) : (
                                         <div className={cn(
-                                            "h-4 w-4 rounded-full border-2 flex items-center justify-center",
+                                            "h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0",
                                             isSelected ? "border-primary" : "border-muted-foreground"
                                         )}>
                                             {isSelected && <div className="h-2 w-2 rounded-full bg-primary" />}
                                         </div>
                                     )}
+                                    <div className={cn(
+                                        "h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0",
+                                        isSelected ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                                    )}>
+                                        {initials}
+                                    </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-sm">{tenant.firstName} {tenant.lastName}</p>
                                         <p className="text-xs text-muted-foreground truncate">{tenant.email}</p>
@@ -183,7 +227,7 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
                 )}
             </div>
 
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-2">
                 <Button type="button" variant="outline" onClick={onBack} disabled={isSubmitting}>
                     {t("back")}
                 </Button>
@@ -193,7 +237,7 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             {t("submitting")}
                         </>
-                    ) : t("submitting").replace("...", "")}
+                    ) : t("submit")}
                 </Button>
             </div>
         </div>
@@ -205,6 +249,7 @@ function TenantAssignmentStep({ leaseType, onBack, onSubmit, isSubmitting }: Ten
 export default function CreateLeaseWizard({ properties, propertyId, onSuccess }: CreateLeaseWizardProps) {
     const t = useTranslations("lease.create-form")
     const wizardT = useTranslations("lease.wizard")
+    const leaseT = useTranslations("lease")
     const { toast } = useToast()
     const router = useRouter()
     const [step, setStep] = useState<1 | 2>(1)
@@ -278,24 +323,24 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
     }
 
     return (
-        <div className="space-y-6">
-            {/* Step indicator */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className={step === 1 ? "font-medium text-foreground" : ""}>{wizardT("step1-title")}</span>
-                <span>›</span>
-                <span className={step === 2 ? "font-medium text-foreground" : ""}>{wizardT("step2-title")}</span>
-            </div>
+        <div className="space-y-5">
+            <StepIndicator
+                step={step}
+                step1Label={wizardT("step1-title")}
+                step2Label={wizardT("step2-title")}
+            />
 
             {step === 1 ? (
                 <Form {...form}>
-                    <div className="space-y-6">
+                    <div className="space-y-5">
                         {/* Property */}
+                        <SectionHeader label={t("property")} />
                         <FormField
                             control={form.control}
                             name="propertyId"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <FormLabel>{t("property")}</FormLabel>
+                                    <FormLabel className="sr-only">{t("property")}</FormLabel>
                                     <Popover open={propertyOpen} onOpenChange={setPropertyOpen}>
                                         <PopoverTrigger asChild>
                                             <FormControl>
@@ -343,7 +388,8 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
                             )}
                         />
 
-                        {/* Dates */}
+                        {/* Période */}
+                        <SectionHeader label={leaseT("section-period")} />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
@@ -370,7 +416,8 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
                             />
                         </div>
 
-                        {/* Financials */}
+                        {/* Financier */}
+                        <SectionHeader label={leaseT("section-financial")} />
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField
                                 control={form.control}
@@ -415,7 +462,8 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
                             />
                         </div>
 
-                        {/* Type / Frequency / Furnished */}
+                        {/* Configuration */}
+                        <SectionHeader label={leaseT("section-configuration")} />
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField
                                 control={form.control}
@@ -463,6 +511,31 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
                             />
                             <FormField
                                 control={form.control}
+                                name="currency"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{leaseT("currency")}</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="EUR">EUR (€)</SelectItem>
+                                                <SelectItem value="USD">USD ($)</SelectItem>
+                                                <SelectItem value="GBP">GBP (£)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                            <FormField
+                                control={form.control}
                                 name="isFurnished"
                                 render={({ field }) => (
                                     <FormItem>
@@ -482,25 +555,22 @@ export default function CreateLeaseWizard({ properties, propertyId, onSuccess }:
                                     </FormItem>
                                 )}
                             />
+                            <FormField
+                                control={form.control}
+                                name="notes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>{t("notes.label")}</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder={t("notes.placeholder")} className="resize-none" rows={2} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
 
-                        {/* Notes */}
-                        <FormField
-                            control={form.control}
-                            name="notes"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t("notes.label")}</FormLabel>
-                                    <FormControl>
-                                        <Textarea placeholder={t("notes.placeholder")} className="resize-none" {...field} />
-                                    </FormControl>
-                                    <FormDescription>{t("notes.description")}</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="flex justify-end">
+                        <div className="flex justify-end pt-2">
                             <Button type="button" onClick={handleStep1Next}>
                                 {wizardT("next")}
                             </Button>
