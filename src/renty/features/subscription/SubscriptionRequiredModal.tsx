@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
-import { CreditCard, Check } from "lucide-react"
+import { CreditCard, Check, Loader2 } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { useSubscriptionPlans } from "./plans"
 
@@ -16,6 +16,7 @@ interface SubscriptionRequiredModalProps {
 
 export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequiredModalProps) {
   const [open, setOpen] = useState(false)
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
   const t = useTranslations("subscription.required-modal")
   const plans = useSubscriptionPlans()
 
@@ -34,6 +35,7 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
 
   const handleUpgrade = async (planName: string) => {
     try {
+      setLoadingPlan(planName)
       const { error } = await authClient.subscription.upgrade({
         plan: planName,
         successUrl: window.location.href,
@@ -42,9 +44,11 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
 
       if (error) {
         console.error("Subscription upgrade error:", error)
+        setLoadingPlan(null)
       }
     } catch (error) {
       console.error("Failed to initiate subscription:", error)
+      setLoadingPlan(null)
     }
   }
 
@@ -72,7 +76,7 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
               <ul className="space-y-2 flex-grow mb-4">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
+                    <Check className="h-4 w-4 text-success" />
                     <span className="text-sm">{feature}</span>
                   </li>
                 ))}
@@ -81,8 +85,12 @@ export function SubscriptionRequiredModal({ hasSubscription }: SubscriptionRequi
               <Button
                 onClick={() => handleUpgrade(plan.name)}
                 className="w-full gap-2"
+                disabled={loadingPlan !== null}
               >
-                <CreditCard className="h-4 w-4" />
+                {loadingPlan === plan.name
+                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                  : <CreditCard className="h-4 w-4" />
+                }
                 {t("subscribe-button")}
               </Button>
             </div>

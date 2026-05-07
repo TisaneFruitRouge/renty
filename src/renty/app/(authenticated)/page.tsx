@@ -8,9 +8,11 @@ import { countWaitingReceiptsForUser, getReceiptsOfUser } from "@/features/rent-
 import { countExpiringLeasesForUser } from "@/features/lease/db";
 import MostRecentRentReceipts from "@/features/rent-receipt/components/MostRecentRentReceipts";
 import Link from "next/link";
-import { PageTitle, PageDescription } from "@/components/ui/typography";
+import { PageDescription } from "@/components/ui/typography";
+import { TimeGreeting } from "@/components/TimeGreeting";
 import { Button } from "@/components/ui/button";
-import { RentReceiptStatus } from "@prisma/client";
+import { RentReceiptStatus } from "@prisma/client"
+import { cn } from "@/lib/utils";
 
 export default async function Home() {
   const t = await getTranslations('home');
@@ -39,17 +41,21 @@ export default async function Home() {
   const isNewUser = !hasProperties;
 
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 p-4 md:p-8">
       <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap gap-3 items-center justify-between">
           <div className="flex flex-col gap-1">
             {session?.user?.name && (
-              <PageTitle>
-                {t("welcome", { name: session.user.name })}
-              </PageTitle>
+              <TimeGreeting name={session.user.name} />
             )}
             <PageDescription className="mt-1">
-              {t("welcome-subtext")}
+              {allStepsComplete
+                ? waitingCount > 0
+                  ? t("welcome-subtext-pending", { count: waitingCount })
+                  : expiringCount > 0
+                    ? t("welcome-subtext-expiring", { count: expiringCount })
+                    : t("welcome-subtext-all-good")
+                : t("welcome-subtext")}
             </PageDescription>
           </div>
 
@@ -74,66 +80,66 @@ export default async function Home() {
         ) : (
           <>
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-              <Link href="/properties" className="group">
-                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t("total-properties")}</CardTitle>
-                    <Building2 className="h-4 w-4 text-muted-foreground" />
+            <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
+              <Link href="/properties" className="group animate-fade-up" style={{ animationDelay: '0ms' }}>
+                <Card className="hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer h-full">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                    <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("total-properties")}</CardTitle>
+                    <Building2 className="h-4 w-4 text-muted-foreground/60" />
                   </CardHeader>
-                  <CardContent className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">{properties.length}</div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="flex items-end justify-between pt-1">
+                    <div className="text-4xl font-semibold font-display tabular-nums">{properties.length}</div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform duration-200" />
                   </CardContent>
                 </Card>
               </Link>
-              <Link href="/tenants" className="group">
-                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t("total-tenants")}</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
+              <Link href="/tenants" className="group animate-fade-up" style={{ animationDelay: '60ms' }}>
+                <Card className="hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer h-full">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                    <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("total-tenants")}</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground/60" />
                   </CardHeader>
-                  <CardContent className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">
+                  <CardContent className="flex items-end justify-between pt-1">
+                    <div className="text-4xl font-semibold font-display tabular-nums">
                       {properties.filter(p => p.leases.reduce((acc, lease) => acc + lease.tenants.length, 0) > 0).length}
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform duration-200" />
                   </CardContent>
                 </Card>
               </Link>
-              <Link href={`/rent-receipts?status=${RentReceiptStatus.PENDING}`} className="group">
-                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t("payments-waiting")}</CardTitle>
-                    <TriangleAlert className="h-4 w-4 text-muted-foreground" />
+              <Link href={`/rent-receipts?status=${RentReceiptStatus.PENDING}`} className="group animate-fade-up" style={{ animationDelay: '120ms' }}>
+                <Card className="hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer h-full">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                    <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("payments-waiting")}</CardTitle>
+                    <TriangleAlert className="h-4 w-4 text-muted-foreground/60" />
                   </CardHeader>
-                  <CardContent className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">{waitingCount}</div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="flex items-end justify-between pt-1">
+                    <div className="text-4xl font-semibold font-display tabular-nums">{waitingCount}</div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform duration-200" />
                   </CardContent>
                 </Card>
               </Link>
-              <Link href="/rent-receipts" className="group">
-                <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t("monthly-revenues")}</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <Link href="/rent-receipts" className="group animate-fade-up" style={{ animationDelay: '180ms' }}>
+                <Card className="hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer h-full">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                    <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("monthly-revenues")}</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground/60" />
                   </CardHeader>
-                  <CardContent className="flex items-end justify-between">
-                    <div className="text-2xl font-bold">{estimatedMonthlyRevenues}€</div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="flex items-end justify-between pt-1">
+                    <div className="text-3xl font-semibold font-display tabular-nums">{estimatedMonthlyRevenues}€</div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform duration-200" />
                   </CardContent>
                 </Card>
               </Link>
-              <Link href="/leases" className="group">
-                <Card className={`hover:border-primary/50 transition-colors cursor-pointer h-full ${expiringCount > 0 ? 'border-yellow-400 dark:border-yellow-600' : ''}`}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{t("leases-expiring-soon")}</CardTitle>
-                    <Clock className={`h-4 w-4 ${expiringCount > 0 ? 'text-yellow-500' : 'text-muted-foreground'}`} />
+              <Link href="/leases" className="group animate-fade-up" style={{ animationDelay: '240ms' }}>
+                <Card className={cn("hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer h-full", expiringCount > 0 && "border-warning")}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1">
+                    <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t("leases-expiring-soon")}</CardTitle>
+                    <Clock className={cn("h-4 w-4", expiringCount > 0 ? "text-warning" : "text-muted-foreground/60")} />
                   </CardHeader>
-                  <CardContent className="flex items-end justify-between">
-                    <div className={`text-2xl font-bold ${expiringCount > 0 ? 'text-yellow-600 dark:text-yellow-400' : ''}`}>{expiringCount}</div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <CardContent className="flex items-end justify-between pt-1">
+                    <div className={cn("text-4xl font-semibold font-display tabular-nums", expiringCount > 0 && "text-warning-foreground")}>{expiringCount}</div>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform duration-200" />
                   </CardContent>
                 </Card>
               </Link>
@@ -211,28 +217,45 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
     },
   ]
 
+  const doneCount = steps.filter(s => s.done).length
+  const progressPct = Math.round((doneCount / steps.length) * 100)
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <Card className="col-span-full bg-muted/20 border">
         <CardHeader>
-          <CardTitle>{t('getting-started')}</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>{t('getting-started')}</CardTitle>
+            <span className="text-xs font-medium text-muted-foreground tabular-nums">
+              {t('onboarding-progress', { done: doneCount, total: steps.length })}
+            </span>
+          </div>
           <CardDescription>{t('complete-steps')}</CardDescription>
+          <div className="mt-1 h-1 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {steps.map((step, i) => (
               <div
                 key={i}
-                className={`flex items-start gap-4 p-4 rounded-md border ${step.done ? 'bg-muted/30 border-border opacity-70' : 'bg-background border-border'}`}
+                className={cn(
+                  "flex items-start gap-4 p-4 rounded-md border",
+                  step.done ? "bg-muted/30 opacity-70" : "bg-background"
+                )}
               >
-                <div className={`p-2 rounded-full ${step.done ? 'bg-green-100 dark:bg-green-900/30' : 'bg-primary/10'}`}>
+                <div className={cn("p-2 rounded-full", step.done ? "bg-success-muted" : "bg-primary/10")}>
                   {step.done
-                    ? <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    ? <CheckCircle2 className="h-5 w-5 text-success" />
                     : <step.icon className="h-5 w-5 text-primary" />
                   }
                 </div>
                 <div className="flex-1">
-                  <h3 className={`font-medium ${step.done ? 'line-through text-muted-foreground' : ''}`}>{step.title}</h3>
+                  <h3 className={cn("font-medium", step.done && "line-through text-muted-foreground")}>{step.title}</h3>
                   <p className="text-sm text-muted-foreground">{step.description}</p>
                   {!step.done && step.action}
                 </div>
@@ -243,7 +266,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
       </Card>
 
       {/* Quick access cards */}
-      <Card className="hover:border-primary/50 transition-colors">
+      <Card className="hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,border-color] duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-primary" />
@@ -260,7 +283,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
         </CardFooter>
       </Card>
 
-      <Card className="hover:border-primary/50 transition-colors">
+      <Card className="hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,border-color] duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
@@ -277,7 +300,7 @@ async function OnboardingSection({ hasProperties, hasPhotos, hasTenants, hasRece
         </CardFooter>
       </Card>
 
-      <Card className="hover:border-primary/50 transition-colors">
+      <Card className="hover:border-primary/50 hover:-translate-y-0.5 hover:shadow-md transition-[transform,box-shadow,border-color] duration-200">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <ReceiptText className="h-5 w-5 text-primary" />

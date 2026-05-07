@@ -58,9 +58,9 @@ async function LeasesContent() {
   const properties = await getProperties(session.user.id);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-wrap gap-3 justify-between items-start">
         <div>
           <PageTitle>{t("title")}</PageTitle>
           <PageDescription className="mt-1">{t("subtitle")}</PageDescription>
@@ -95,19 +95,19 @@ export default function LeasesPage() {
   return (
     <Suspense
       fallback={
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/4"></div>
-            <div className="h-4 bg-muted rounded w-1/2"></div>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="h-8 bg-muted rounded-md w-1/4"></div>
+            <div className="h-4 bg-muted rounded-md w-1/2"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div
                   key={`skeleton-card-${Date.now()}-${i}`}
-                  className="h-24 bg-muted rounded"
+                  className="h-24 bg-muted rounded-md"
                 ></div>
               ))}
             </div>
-            <div className="h-96 bg-muted rounded"></div>
+            <div className="h-96 bg-muted rounded-md"></div>
           </div>
         </div>
       }

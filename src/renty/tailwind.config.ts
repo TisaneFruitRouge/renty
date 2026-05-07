@@ -11,6 +11,9 @@ export default {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			display: ['var(--font-display)', 'Georgia', 'serif'],
+  		},
   		container: {
   			center: true,
   			padding: {
@@ -26,6 +29,16 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			warning: {
+  				DEFAULT: 'hsl(var(--warning))',
+  				foreground: 'hsl(var(--warning-foreground))',
+  				muted: 'hsl(var(--warning-muted))',
+  			},
+  			success: {
+  				DEFAULT: 'hsl(var(--success))',
+  				foreground: 'hsl(var(--success-foreground))',
+  				muted: 'hsl(var(--success-muted))',
+  			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'

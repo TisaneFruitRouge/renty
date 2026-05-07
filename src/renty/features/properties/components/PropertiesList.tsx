@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo, useDeferredValue } from 'react'
 import type { property } from "@prisma/client"
 import { Building2, ArrowRight, Search } from "lucide-react"
 import Property from "./Property"
@@ -18,19 +18,22 @@ export default function PropertiesList({ properties }: PropertiesListProps) {
     const t = useTranslations('property');
     const propertiesT = useTranslations('properties');
     const [search, setSearch] = useState('')
+    const deferredSearch = useDeferredValue(search)
 
-    const filtered = search.trim()
-        ? properties.filter(p =>
-            p.title.toLowerCase().includes(search.toLowerCase()) ||
-            p.city.toLowerCase().includes(search.toLowerCase())
+    const filtered = useMemo(() => {
+        if (!deferredSearch.trim()) return properties
+        const q = deferredSearch.toLowerCase()
+        return properties.filter(p =>
+            p.title.toLowerCase().includes(q) ||
+            p.city.toLowerCase().includes(q)
         )
-        : properties
+    }, [deferredSearch, properties])
 
     return (
         <div className="relative space-y-4">
             {properties.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-6 mt-12 bg-muted/20 border border-border rounded-md p-12 text-center">
-                    <div className="bg-background p-4 rounded-md border border-border">
+                <div className="flex flex-col items-center justify-center gap-6 mt-8 bg-muted/20 border rounded-md p-6 md:p-12 text-center">
+                    <div className="bg-background p-4 rounded-md border">
                         <Building2 className="h-16 w-16 text-primary" />
                     </div>
 

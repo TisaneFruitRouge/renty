@@ -18,9 +18,12 @@ import {
   getLeaseCountForUser,
   updateLeaseRentReceiptSettings,
   getLeaseWithReceiptSettings,
+  terminateLeaseInDb,
+  renewLeaseInDb,
   type CreateLeaseData,
   type UpdateLeaseData,
 } from "./db";
+import type { TerminationReason } from "@prisma/client";
 import { findPropertyForUser } from "@/features/tenant/db";
 import { addTenantToPropertyChannel } from "@/features/messages/db";
 import { prisma } from "@/prisma/db";
@@ -295,6 +298,61 @@ export const getLeaseRentReceiptSettingsAction = addUserIdToAction(async (userId
       nextReceiptDate: leaseWithSettings?.nextReceiptDate,
     }
   };
+});
+
+export const terminateLeaseAction = addUserIdToAction(async (
+  userId: string,
+  leaseId: string,
+  terminationDate: Date,
+  terminationReason: TerminationReason,
+  notes?: string
+) => {
+  const lease = await findLeaseForUser(leaseId, userId);
+  if (!lease) {
+    throw new Error("Lease not found or access denied");
+  }
+
+  if (lease.status !== "ACTIVE" && lease.status !== "PENDING") {
+    throw new Error("Only active or pending leases can be terminated");
+  }
+
+  const updated = await terminateLeaseInDb(leaseId, terminationDate, terminationReason, notes);
+
+  revalidatePath('/leases');
+  revalidatePath(`/leases/${leaseId}`);
+  revalidatePath(`/properties/${lease.propertyId}`);
+
+  return updated;
+});
+
+export const renewLeaseAction = addUserIdToAction(async (
+  userId: string,
+  oldLeaseId: string,
+  newLeaseData: CreateLeaseData
+) => {
+  const lease = await findLeaseForUser(oldLeaseId, userId);
+  if (!lease) {
+    throw new Error("Lease not found or access denied");
+  }
+
+  const property = await findPropertyForUser(newLeaseData.propertyId, userId);
+  if (!property) {
+    throw new Error("Property not found or access denied");
+  }
+
+  const { newLease } = await renewLeaseInDb(oldLeaseId, newLeaseData);
+
+  // Add transferred tenants to property channel
+  for (const tenant of newLease.tenants) {
+    await addTenantToPropertyChannel(newLease.propertyId, tenant.id);
+  }
+
+  revalidatePath('/leases');
+  revalidatePath(`/leases/${oldLeaseId}`);
+  revalidatePath(`/leases/${newLease.id}`);
+  revalidatePath(`/properties/${newLease.propertyId}`);
+
+  return { newLeaseId: newLease.id };
 });
 
 // Helper function to get lease details for a specific tenant (for mobile app)

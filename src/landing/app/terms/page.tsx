@@ -15,7 +15,7 @@ export default function TermsPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
+          className="rounded-2xl border border-border/70 bg-white p-8 shadow-xl dark:bg-gray-800 md:p-12"
         >
           <h1 className="text-3xl md:text-4xl font-bold mb-8">{t('title')}</h1>
           

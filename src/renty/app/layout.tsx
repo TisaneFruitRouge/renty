@@ -1,9 +1,25 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DM_Sans, Fraunces } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster"
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from "@/components/theme-provider";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: "Renty",
@@ -20,7 +36,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning className={`${dmSans.variable} ${fraunces.variable}`}>
       <body className="antialiased">
         <ThemeProvider
           attribute="class"

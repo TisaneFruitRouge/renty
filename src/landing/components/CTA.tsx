@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { appHref } from '@/lib/links';
 
 export default function CTA() {
   const t = useTranslations('home.cta');
@@ -15,7 +16,7 @@ export default function CTA() {
       <div className="absolute bottom-10 left-10 w-72 h-72 bg-gray-300 dark:bg-gray-700/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border border-border/70 bg-white shadow-xl dark:bg-gray-800">
           <div className="px-6 py-12 md:p-12 md:pb-16 lg:flex lg:items-center lg:justify-between">
             <div className="lg:w-0 lg:flex-1">
               <motion.h2 
@@ -45,14 +46,14 @@ export default function CTA() {
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <Link 
-                  href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
-                  className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+                  href={appHref('/sign-up')}
+                  className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                 >
                   {t('primary_cta')}
                 </Link>
                 <Link 
                   href="/contact" 
-                  className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-primary bg-primary-foreground hover:bg-gray-50 transition-colors"
+                  className="inline-flex items-center justify-center rounded-md border border-primary/20 bg-background px-6 py-3 text-base font-medium text-primary shadow-sm transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                 >
                   {t('secondary_cta')}
                 </Link>
@@ -61,7 +62,7 @@ export default function CTA() {
             
             <div className="mt-8 lg:mt-0 lg:ml-8">
               <motion.div 
-                className="bg-muted/50 p-6 rounded-xl"
+                className="rounded-xl border border-border/60 bg-muted/50 p-6"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}

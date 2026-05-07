@@ -142,7 +142,7 @@ export default function LeaseRentReceiptSettings({
 
         {/* Next Receipt Date */}
         {autoGenerate && lease.nextReceiptDate && (
-          <div className="p-3 bg-muted/50 rounded-lg">
+          <div className="p-3 bg-muted/50 rounded-md">
             <div className="flex items-center gap-2 text-sm">
               <CalendarSync className="h-4 w-4" />
               <span className="font-medium">{t("next-receipt")}:</span>
@@ -155,8 +155,8 @@ export default function LeaseRentReceiptSettings({
 
         {/* Configuration Status */}
         {!autoGenerate && (
-          <div className="p-3 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+          <div className="p-3 bg-warning-muted border border-warning/30 rounded-md">
+            <p className="text-sm text-warning-foreground">
               {t("not-configured")}
             </p>
           </div>

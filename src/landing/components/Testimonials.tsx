@@ -15,19 +15,19 @@ export default function Testimonials() {
       quote: t('testimonial1_text'),
       author: t('testimonial1_name'),
       title: t('testimonial1_role'),
-      avatar: "/testimonial-1.jpg"
+      avatar: "/renty.jpeg"
     },
     {
       quote: t('testimonial2_text'),
       author: t('testimonial2_name'),
       title: t('testimonial2_role'),
-      avatar: "/testimonial-2.jpg"
+      avatar: "/renty.jpeg"
     },
     {
       quote: t('testimonial3_text'),
       author: t('testimonial3_name'),
       title: t('testimonial3_role'),
-      avatar: "/testimonial-3.jpg"
+      avatar: "/renty.jpeg"
     }
   ];
 
@@ -54,11 +54,13 @@ export default function Testimonials() {
           <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-72 h-72 bg-gray-300 dark:bg-gray-600/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
           
           {/* Testimonial slider */}
-          <div className="relative z-10 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 max-w-4xl mx-auto">
+          <div className="relative z-10 mx-auto max-w-4xl rounded-2xl border border-border/70 bg-white p-8 shadow-xl dark:bg-gray-800 md:p-12">
             <div className="flex justify-between mb-8">
               <button 
+                type="button"
+                aria-label="Témoignage précédent"
                 onClick={prevTestimonial}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 dark:bg-gray-700 dark:text-gray-300"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -69,10 +71,13 @@ export default function Testimonials() {
                 {testimonials.map((_, index) => (
                   <button 
                     key={index}
+                    type="button"
+                    aria-label={`Afficher le témoignage ${index + 1}`}
+                    aria-current={index === currentIndex}
                     onClick={() => setCurrentIndex(index)}
                     className={`w-2.5 h-2.5 rounded-full ${
                       index === currentIndex 
-                        ? 'bg-black dark:bg-gray-300' 
+                        ? 'bg-primary'
                         : 'bg-gray-300 dark:bg-gray-600'
                     }`}
                   />
@@ -80,8 +85,10 @@ export default function Testimonials() {
               </div>
               
               <button 
+                type="button"
+                aria-label="Témoignage suivant"
                 onClick={nextTestimonial}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-primary/10 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 dark:bg-gray-700 dark:text-gray-300"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />

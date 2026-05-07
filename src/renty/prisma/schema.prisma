@@ -135,6 +135,10 @@ model lease {
   currency               String      @default("EUR")
   status                 LeaseStatus @default(ACTIVE)
   notes                  String?
+  terminationReason      TerminationReason?
+  renewedFromLeaseId     String?
+  renewedFromLease       lease?      @relation("LeaseRenewal", fields: [renewedFromLeaseId], references: [id])
+  renewals               lease[]     @relation("LeaseRenewal")
   autoGenerateReceipts   Boolean     @default(false)
   receiptGenerationDate  Int?
   nextReceiptDate        DateTime?
@@ -268,6 +272,15 @@ enum LeaseStatus {
   EXPIRED
   TERMINATED
   PENDING
+}
+
+enum TerminationReason {
+  MUTUAL_AGREEMENT
+  TENANT_REQUEST
+  LANDLORD_REQUEST
+  NON_PAYMENT
+  BREACH_OF_CONTRACT
+  OTHER
 }
 
 enum DocumentCategory {

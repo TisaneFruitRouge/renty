@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -17,32 +17,24 @@ import { toast } from "@/hooks/use-toast"
 import { DatePicker } from "@/components/ui/date-picker"
 
 const formSchema = z.object({
-  startDate: z.date({
-    required_error: "Please select a start date.",
-  }),
+  startDate: z.date({ required_error: "Veuillez sélectionner une date de début." }),
   endDate: z.date().optional(),
-  rentAmount: z.string().min(1, "Rent amount is required").refine(val => {
+  rentAmount: z.string().min(1, "Le loyer est requis.").refine(val => {
     const num = parseFloat(val);
     return !Number.isNaN(num) && num > 0;
-  }, {
-    message: "Rent amount must be greater than 0.",
-  }),
+  }, { message: "Le loyer doit être supérieur à 0." }),
   depositAmount: z.string().optional().refine(val => {
     if (!val || val === "") return true;
     const num = parseFloat(val);
     return !Number.isNaN(num) && num >= 0;
-  }, {
-    message: "Deposit amount must be a valid number.",
-  }),
+  }, { message: "Le dépôt doit être un nombre valide." }),
   charges: z.string().optional().refine(val => {
     if (!val || val === "") return true;
     const num = parseFloat(val);
     return !Number.isNaN(num) && num >= 0;
-  }, {
-    message: "Charges must be a valid number.",
-  }),
+  }, { message: "Les charges doivent être un nombre valide." }),
   leaseType: z.enum(["INDIVIDUAL", "SHARED", "COLOCATION"] as const, {
-    required_error: "Please select a lease type.",
+    required_error: "Veuillez sélectionner un type de bail.",
   }),
   isFurnished: z.boolean().default(false),
   paymentFrequency: z.enum(["monthly", "quarterly", "yearly"] as const).default("monthly"),
@@ -57,9 +49,21 @@ interface EditLeaseFormProps {
   onSuccess?: () => void
 }
 
+function SectionHeader({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-2">
+      <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground whitespace-nowrap">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-border" />
+    </div>
+  )
+}
+
 export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) {
   const t = useTranslations('lease.edit-form')
   const leaseT = useTranslations('lease')
+  const createT = useTranslations('lease.create-form')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<EditLeaseFormData>({
@@ -113,95 +117,77 @@ export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) 
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
+        {/* Période */}
+        <SectionHeader label={leaseT('section-period')} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{leaseT('create-form.start-date')}</FormLabel>
-                <DatePicker
-                  value={field.value}
-                  onChange={field.onChange}
-                />
+                <FormLabel>{createT('start-date')}</FormLabel>
+                <DatePicker value={field.value} onChange={field.onChange} />
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="endDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{leaseT('create-form.end-date.label')}</FormLabel>
+                <FormLabel>{createT('end-date.label')}</FormLabel>
                 <DatePicker
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder={leaseT('create-form.select-end-date')}
+                  placeholder={createT('select-end-date')}
                 />
+                <FormDescription>{createT('end-date.description')}</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
+        {/* Financier */}
+        <SectionHeader label={leaseT('section-financial')} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="rentAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{leaseT('create-form.rent-amount')}</FormLabel>
+                <FormLabel>{createT('rent-amount')}</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="1500.00"
-                    {...field}
-                  />
+                  <Input type="number" step="0.01" min="0" placeholder="1500.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="depositAmount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{leaseT('create-form.deposit-amount.label')}</FormLabel>
+                <FormLabel>{createT('deposit-amount.label')}</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="3000.00"
-                    {...field}
-                  />
+                  <Input type="number" step="0.01" min="0" placeholder="3000.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="charges"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{leaseT('create-form.charges.label')}</FormLabel>
+                <FormLabel>{createT('charges.label')}</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="150.00"
-                    {...field}
-                  />
+                  <Input type="number" step="0.01" min="0" placeholder="150.00" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -209,17 +195,19 @@ export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) 
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Configuration */}
+        <SectionHeader label={leaseT('section-configuration')} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="leaseType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{leaseT('create-form.lease-type.label')}</FormLabel>
+                <FormLabel>{createT('lease-type.label')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={leaseT('create-form.select-lease-type')} />
+                      <SelectValue placeholder={createT('select-lease-type')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -232,17 +220,16 @@ export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) 
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="paymentFrequency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{leaseT('create-form.payment-frequency.label')}</FormLabel>
+                <FormLabel>{createT('payment-frequency.label')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={leaseT('create-form.select-payment-frequency')} />
+                      <SelectValue placeholder={createT('select-payment-frequency')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -255,9 +242,6 @@ export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) 
               </FormItem>
             )}
           />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="currency"
@@ -280,47 +264,42 @@ export default function EditLeaseForm({ lease, onSuccess }: EditLeaseFormProps) 
               </FormItem>
             )}
           />
+        </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
           <FormField
             control={form.control}
             name="isFurnished"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+              <FormItem className="flex flex-row items-center space-x-3 space-y-0 h-10">
                 <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <FormLabel className="font-normal cursor-pointer">{leaseT('furnished')}</FormLabel>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="notes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{leaseT('notes')} <span className="text-muted-foreground font-normal">({leaseT('optional')})</span></FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder={leaseT('notes-placeholder')}
+                    className="resize-none"
+                    rows={2}
+                    {...field}
                   />
                 </FormControl>
-                <div className="space-y-1 leading-none">
-                  <FormLabel>
-                    {leaseT('furnished')}
-                  </FormLabel>
-                </div>
+                <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="notes"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{leaseT('notes')} ({leaseT('optional')})</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder={leaseT('notes-placeholder')}
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end pt-2">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? t('updating') : t('submit')}
           </Button>

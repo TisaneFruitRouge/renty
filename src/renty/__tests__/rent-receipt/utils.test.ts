@@ -31,6 +31,8 @@ function makeLease(overrides: Partial<LeaseWithTenants> = {}): LeaseWithTenants 
     autoGenerateReceipts: true,
     receiptGenerationDate: null,
     nextReceiptDate: new Date('2024-01-01'),
+    terminationReason: null,
+    renewedFromLeaseId: null,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
     tenants: [{ id: 't1', firstName: 'Alice', lastName: 'Martin' } as never],
