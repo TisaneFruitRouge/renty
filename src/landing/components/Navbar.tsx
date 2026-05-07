@@ -13,11 +13,11 @@ export default function Navbar() {
   
   // Navigation links
   const navLinks = [
-    { name: 'Fonctionnalités', href: '#features' },
-    { name: 'Pour les propriétaires', href: '#landlord-features' },
-    { name: 'Pour les locataires', href: '#tenant-features' },
-    { name: 'Tarifs', href: '#pricing' },
-    { name: 'Contact', href: '/contact' }
+    { name: t('pains'), href: '#pains' },
+    { name: t('features'), href: '#features' },
+    { name: t('configuration'), href: '#founder-config' },
+    { name: t('pricing'), href: '#pricing' },
+    { name: t('contact'), href: '/contact' }
   ];
 
   // Handle scroll effect
@@ -144,7 +144,7 @@ export default function Navbar() {
               
               <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Link
-                  href="/login"
+                  href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}
                   className="block text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

@@ -23,7 +23,16 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between">
         {/* Text content */}
         <div className="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
-          <motion.h1 
+          <motion.div
+            className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {t('badge')}
+          </motion.div>
+
+          <motion.h1
             className="text-4xl md:text-6xl font-bold mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -31,8 +40,8 @@ export default function Hero() {
           >
             {t('title')}
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             className="text-xl text-muted-foreground mb-8 max-w-lg"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -40,19 +49,35 @@ export default function Hero() {
           >
             {t('subtitle')}
           </motion.p>
-          
+
           <motion.div
+            className="flex flex-col sm:flex-row gap-3 sm:items-center justify-center md:justify-start"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <Link 
+            <Link
               href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
               className="inline-flex h-12 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-6 font-medium text-primary-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
             >
               {t('cta')}
             </Link>
+            <Link
+              href="#features"
+              className="inline-flex h-12 items-center justify-center rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground px-6 font-medium transition-colors"
+            >
+              {t('secondary_cta')}
+            </Link>
           </motion.div>
+
+          <motion.p
+            className="text-sm text-muted-foreground mt-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            {t('trust_line')}
+          </motion.p>
         </div>
         
         {/* Image/Illustration */}

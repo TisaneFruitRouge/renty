@@ -55,14 +55,14 @@ body {
     --success-foreground: 142 80% 18%;
     --success-muted: 142 71% 95%;
     --radius: 0.75rem;
-    --sidebar-background: 222 47% 9%;
-    --sidebar-foreground: 215 18% 56%;
-    --sidebar-primary: 215 80% 65%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 10% 46%;
+    --sidebar-primary: 215 96% 38%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 218 38% 17%;
-    --sidebar-accent-foreground: 215 20% 90%;
-    --sidebar-border: 218 35% 14%;
-    --sidebar-ring: 215 80% 65%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 20% 12%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 215 96% 38%;
   }
   .dark {
     --background: 240 10% 3.9%;
