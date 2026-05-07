@@ -32,6 +32,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { DatePicker } from "@/components/ui/date-picker"
 import { renewLeaseAction } from "../actions"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
     startDate: z.date({ required_error: "Veuillez sélectionner une date de début." }),
@@ -204,7 +205,7 @@ export default function RenewLeaseModal({ lease, children }: RenewLeaseModalProp
                                             <Input type="number" step="0.01" min="0" placeholder="1500.00" {...field} />
                                         </FormControl>
                                         {rentDiff !== 0 && (
-                                            <p className={`text-xs font-medium ${rentDiff > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                                            <p className={cn("text-xs font-medium", rentDiff > 0 ? "text-success" : "text-destructive")}>
                                                 {rentDiff > 0 ? "+" : ""}{rentDiff.toFixed(2)} {lease.currency}
                                             </p>
                                         )}

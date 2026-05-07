@@ -58,7 +58,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   const recentPayments = await getRentReceiptsOfProperty(property.id, 2);
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Back button and header */}
       <div className="mb-8">
         <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
@@ -88,9 +88,9 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content - 2 columns */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           <PhotosSection property={property} />
           <SimpleLeasesSection
             leases={leases.map((lease) => ({
@@ -141,13 +141,13 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
                   <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
                     {t("category-lease")}
                   </span>
-                  <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
+                  <span className="inline-flex items-center rounded-full bg-warning-muted px-2 py-1 text-xs font-medium text-warning-foreground ring-1 ring-inset ring-warning/20">
                     {t("category-inventory")}
                   </span>
-                  <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">
+                  <span className="inline-flex items-center rounded-full bg-success-muted px-2 py-1 text-xs font-medium text-success-foreground ring-1 ring-inset ring-success/20">
                     {t("category-insurance")}
                   </span>
-                  <span className="inline-flex items-center rounded-full bg-violet-50 px-2 py-1 text-xs font-medium text-violet-700 ring-1 ring-inset ring-violet-700/10">
+                  <span className="inline-flex items-center rounded-full bg-muted px-2 py-1 text-xs font-medium text-muted-foreground ring-1 ring-inset ring-border">
                     {t("category-legal")}
                   </span>
                 </div>

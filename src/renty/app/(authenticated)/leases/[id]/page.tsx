@@ -28,6 +28,7 @@ import {
   ChevronRight,
 } from "lucide-react"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 import { format, differenceInDays } from "date-fns"
 import { fr } from "date-fns/locale"
 import EditLeaseModal from "@/features/lease/components/EditLeaseModal"
@@ -76,7 +77,7 @@ function TenantAvatar({ firstName, lastName }: { firstName: string; lastName: st
   return (
     <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
       <span className="text-xs font-bold text-primary uppercase">
-        {firstName[0]}{lastName[0]}
+        {firstName?.[0] ?? '?'}{lastName?.[0] ?? ''}
       </span>
     </div>
   )
@@ -126,7 +127,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">{t("lease-title")}</h1>
+            <h1 className="text-2xl font-semibold tracking-tight font-display">{t("lease-title")}</h1>
             <Badge className={getLeaseStatusColor(lease.status)}>
               {t(`status.${lease.status.toLowerCase()}`)}
             </Badge>
@@ -151,7 +152,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
           </EditLeaseModal>
           {(lease.status === "ACTIVE" || lease.status === "PENDING") && (
             <EndLeaseModal lease={lease}>
-              <Button variant="outline" size="sm" className="text-orange-600 border-orange-200 hover:bg-orange-50 hover:text-orange-700 dark:border-orange-800 dark:hover:bg-orange-900/20">
+              <Button variant="outline" size="sm" className="text-warning-foreground border-warning/30 hover:bg-warning-muted hover:text-warning-foreground">
                 <XCircle className="h-4 w-4 mr-1.5" />
                 {t("end-lease.trigger")}
               </Button>
@@ -159,14 +160,14 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
           )}
           {(lease.status === "ACTIVE" || lease.status === "EXPIRED" || lease.status === "TERMINATED") && (
             <RenewLeaseModal lease={lease}>
-              <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50 hover:text-green-700 dark:border-green-800 dark:hover:bg-green-900/20">
+              <Button variant="outline" size="sm" className="text-success border-success/30 hover:bg-success-muted hover:text-success-foreground">
                 <RefreshCw className="h-4 w-4 mr-1.5" />
                 {t("renew-lease.trigger")}
               </Button>
             </RenewLeaseModal>
           )}
           <DeleteLeaseDialog lease={lease}>
-            <Button variant="outline" size="sm" className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:hover:bg-red-900/20">
+            <Button variant="outline" size="sm" className="text-destructive border-destructive/20 hover:bg-destructive/10 hover:text-destructive">
               <Trash2 className="h-4 w-4 mr-1.5" />
               {t("delete.title")}
             </Button>
@@ -176,7 +177,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
 
       {/* Alert banners */}
       {isExpired && (
-        <div className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 dark:border-red-800 dark:bg-red-900/10 dark:text-red-400">
+        <div className="flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-destructive">
           <AlertTriangle className="h-4 w-4 flex-shrink-0" />
           <div className="flex flex-wrap items-baseline gap-1.5 text-sm">
             <span className="font-semibold">{t("expired-lease")}</span>
@@ -187,7 +188,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
         </div>
       )}
       {isExpiringSoon && !isExpired && (
-        <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-amber-700 dark:border-amber-800 dark:bg-amber-900/10 dark:text-amber-400">
+        <div className="flex items-center gap-3 rounded-lg border border-warning/30 bg-warning-muted px-4 py-3 text-warning-foreground">
           <Clock className="h-4 w-4 flex-shrink-0" />
           <div className="flex flex-wrap items-baseline gap-1.5 text-sm">
             <span className="font-semibold">{t("expiring-soon")}</span>
@@ -329,7 +330,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1.5">{t("lease-type")}</p>
-                  <Badge className={`${getLeaseTypeColor(lease.leaseType)} font-normal text-xs`}>
+                  <Badge className={cn(getLeaseTypeColor(lease.leaseType), "font-normal text-xs")}>
                     {t(`type.${lease.leaseType.toLowerCase()}`)}
                   </Badge>
                 </div>
@@ -435,7 +436,7 @@ async function LeaseDetailContent({ params }: LeaseDetailPageProps) {
                               {tenant.firstName} {tenant.lastName}
                             </p>
                             {tenant.auth?.isActivated ? (
-                              <Badge className="text-xs bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 flex-shrink-0">
+                              <Badge className="text-xs bg-success-muted text-success-foreground hover:bg-success-muted flex-shrink-0">
                                 {t("activated")}
                               </Badge>
                             ) : (

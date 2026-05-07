@@ -30,15 +30,15 @@ export default function LeaseCard({ lease }: LeaseCardProps) {
   return (
     <Link href={`/leases/${lease.id}`}>
       <Card className={cn(
-        "overflow-hidden hover:border-primary/50 transition-colors duration-200 cursor-pointer",
-        isExpired && "border-red-400 dark:border-red-600",
-        isExpiringSoon && !isExpired && "border-yellow-400 dark:border-yellow-600"
+        "overflow-hidden hover:border-primary/50 hover:shadow-md hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 cursor-pointer",
+        isExpired && "border-destructive",
+        isExpiringSoon && !isExpired && "border-warning"
       )}>
         {/* Visual header — mirrors the image area in Property */}
         <div className={cn(
           "relative w-full h-32 bg-muted flex flex-col items-center justify-center gap-1",
-          isExpired && "bg-red-50 dark:bg-red-950/20",
-          isExpiringSoon && !isExpired && "bg-yellow-50 dark:bg-yellow-950/20"
+          isExpired && "bg-destructive/10",
+          isExpiringSoon && !isExpired && "bg-warning-muted"
         )}>
           <p className="text-2xl font-bold tabular-nums">
             {formatCurrency(lease.rentAmount, lease.currency)}
@@ -90,8 +90,8 @@ export default function LeaseCard({ lease }: LeaseCardProps) {
         <CardFooter className="pt-3 pb-3">
           <div className={cn(
             "flex items-center gap-1.5 text-xs text-muted-foreground",
-            isExpired && "text-red-600 font-medium",
-            isExpiringSoon && !isExpired && "text-yellow-600 font-medium"
+            isExpired && "text-destructive font-medium",
+            isExpiringSoon && !isExpired && "text-warning-foreground font-medium"
           )}>
             <CalendarIcon className="h-3.5 w-3.5 shrink-0" />
             <span>{format(new Date(lease.startDate), "dd/MM/yyyy")}</span>

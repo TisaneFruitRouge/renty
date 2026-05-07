@@ -4,7 +4,7 @@ import type { HTMLAttributes } from "react"
 export function PageTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h1
-      className={cn("text-2xl font-bold tracking-tight", className)}
+      className={cn("text-3xl font-semibold tracking-tight font-display", className)}
       {...props}
     />
   )
@@ -22,7 +22,7 @@ export function PageDescription({ className, ...props }: HTMLAttributes<HTMLPara
 export function SectionTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h2
-      className={cn("text-base font-semibold", className)}
+      className={cn("text-xs font-semibold uppercase tracking-widest text-muted-foreground", className)}
       {...props}
     />
   )

@@ -69,13 +69,13 @@ export default function LeaseDocumentsSection({ lease, documents }: LeaseDocumen
         const type = fileType.toLowerCase()
         
         if (['pdf'].includes(type)) {
-            return <FileText className="h-4 w-4 text-red-500" />
+            return <FileText className="h-4 w-4 text-destructive" />
         } else if (['doc', 'docx'].includes(type)) {
-            return <FileText className="h-4 w-4 text-blue-500" />
+            return <FileText className="h-4 w-4 text-primary" />
         } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(type)) {
-            return <FileText className="h-4 w-4 text-green-500" />
+            return <FileText className="h-4 w-4 text-success" />
         } else {
-            return <FileText className="h-4 w-4 text-gray-500" />
+            return <FileText className="h-4 w-4 text-muted-foreground" />
         }
     }
 
@@ -154,7 +154,7 @@ export default function LeaseDocumentsSection({ lease, documents }: LeaseDocumen
                                     <Button
                                         size="sm"
                                         variant="ghost"
-                                        className="text-blue-600 hover:text-blue-800"
+                                        className="text-primary hover:text-primary"
                                         asChild
                                     >
                                         <a 
@@ -168,7 +168,7 @@ export default function LeaseDocumentsSection({ lease, documents }: LeaseDocumen
                                     <Button
                                         size="sm"
                                         variant="ghost"
-                                        className="text-green-600 hover:text-green-800"
+                                        className="text-success hover:text-success-foreground"
                                         asChild
                                     >
                                         <a 

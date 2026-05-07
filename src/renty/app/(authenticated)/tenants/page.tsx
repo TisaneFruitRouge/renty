@@ -40,9 +40,9 @@ export default async function TenantsPage() {
   }));
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap gap-3 justify-between items-center">
         <div>
           <PageTitle>{t("title")}</PageTitle>
           <PageDescription className="mt-1">{t("subtitle")}</PageDescription>

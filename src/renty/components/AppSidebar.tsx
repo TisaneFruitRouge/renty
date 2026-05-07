@@ -8,6 +8,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -21,7 +22,7 @@ import Link from "next/link"
 export function AppSidebar() {
   const t = useTranslations('sidebar');
   const pathname = usePathname();
-  
+
   const {
     state,
   } = useSidebar()
@@ -65,33 +66,43 @@ export function AppSidebar() {
   ]
 
   return (
-    <Sidebar 
+    <Sidebar
       collapsible="icon"
     >
+      <SidebarHeader>
+        <div className="flex items-center gap-3 px-2 h-14">
+          <div className="h-7 w-7 rounded-md bg-sidebar-primary flex items-center justify-center shrink-0">
+            <span className="text-sm font-semibold text-sidebar-primary-foreground font-display leading-none select-none">R</span>
+          </div>
+          <span className="font-semibold text-base text-sidebar-accent-foreground tracking-tight font-display group-data-[collapsible=icon]:hidden">
+            Renty
+          </span>
+        </div>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => {
-                const isActive = pathname === item.url || 
+                const isActive = pathname === item.url ||
                   (item.url !== "/" && pathname.startsWith(item.url));
-                
+
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild className="hover:bg-accent hover:text-accent-foreground">
-                      <Link 
+                    <SidebarMenuButton asChild className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground">
+                      <Link
                         href={item.url}
                         className={cn(
                           "relative",
-                          isActive && "bg-accent text-accent-foreground"
+                          isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
                         )}
                       >
                         <item.icon className={cn(
-                          isActive && "text-accent-foreground hover:text-accent-foreground"
+                          isActive && "text-sidebar-primary"
                         )} />
                         <span>{item.title}</span>
                         {isActive && (
-                          <span className="absolute inset-y-0 left-0 w-1 bg-primary rounded-r-sm" />
+                          <span className="absolute inset-y-0 left-0 w-0.5 bg-sidebar-primary rounded-r-sm" />
                         )}
                       </Link>
                     </SidebarMenuButton>

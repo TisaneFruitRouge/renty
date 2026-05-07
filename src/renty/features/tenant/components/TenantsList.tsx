@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useDeferredValue } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -29,6 +29,7 @@ import DeleteTenantModal from "@/features/tenant/components/DeleteTenantModal"
 import CreateTenantModal from "@/features/tenant/components/CreateTenantModal"
 import { Pagination } from "@/components/ui/pagination"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 const PAGE_SIZE = 15
 
@@ -58,20 +59,21 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
   const t = useTranslations('tenants')
   const router = useRouter()
   const [search, setSearch] = useState('')
+  const deferredSearch = useDeferredValue(search)
   const [sorting, setSorting] = useState<SortingState>([])
   const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return tenants
-    const q = search.toLowerCase()
+    if (!deferredSearch.trim()) return tenants
+    const q = deferredSearch.toLowerCase()
     return tenants.filter(tenant =>
       `${tenant.firstName} ${tenant.lastName}`.toLowerCase().includes(q) ||
       tenant.email.toLowerCase().includes(q) ||
       (tenant.property?.title ?? '').toLowerCase().includes(q)
     )
-  }, [search, tenants])
+  }, [deferredSearch, tenants])
 
-  useEffect(() => { setPage(1) }, [search])
+  useEffect(() => { setPage(1) }, [deferredSearch])
 
   const columns = useMemo<ColumnDef<TenantRow>[]>(() => [
     {
@@ -113,6 +115,7 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
     },
     {
       id: 'property',
+      meta: { className: 'hidden md:table-cell' },
       accessorFn: row => row.property?.title ?? '',
       header: ({ column }) => <SortableHeader column={column} label={t('table-property')} />,
       cell: ({ row }) => (
@@ -131,6 +134,7 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
     },
     {
       id: 'notes',
+      meta: { className: 'hidden lg:table-cell' },
       header: t('table-notes'),
       cell: ({ row }) => (
         <p className="text-sm text-muted-foreground max-w-xs truncate">
@@ -151,24 +155,29 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
   ], [t, leases])
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated = useMemo(
-    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [filtered, page]
-  )
 
   const table = useReactTable({
-    data: paginated,
+    data: filtered,
     columns,
     state: { sorting },
-    onSortingChange: setSorting,
+    onSortingChange: (updater) => {
+      setSorting(updater)
+      setPage(1)
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
+  const paginatedRows = useMemo(
+    () => table.getSortedRowModel().rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [table.getSortedRowModel().rows, page]
+  )
+
   if (tenants.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 mt-12 bg-muted/20 border border-border rounded-md p-12 text-center">
-        <div className="bg-background p-4 rounded-md border border-border">
+      <div className="flex flex-col items-center justify-center gap-6 mt-12 bg-muted/20 border rounded-md p-12 text-center">
+        <div className="bg-background p-4 rounded-md border">
           <Users className="h-16 w-16 text-primary" />
         </div>
 
@@ -206,17 +215,17 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
         />
       </div>
 
-      {table.getRowModel().rows.length === 0 ? (
+      {filtered.length === 0 ? (
         <p className="text-sm text-muted-foreground py-4">{t('no-results')}</p>
       ) : (
         <>
-          <div className="border border-border rounded-md overflow-hidden">
+          <div className="border rounded-md overflow-x-auto">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id} className="bg-muted/40 hover:bg-muted/40">
                     {headerGroup.headers.map(header => (
-                      <TableHead key={header.id} className="text-xs uppercase tracking-wide">
+                      <TableHead key={header.id} className={cn("text-xs uppercase tracking-wide", (header.column.columnDef.meta as { className?: string })?.className)}>
                         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                       </TableHead>
                     ))}
@@ -224,14 +233,23 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows.map(row => (
+                {paginatedRows.map(row => (
                   <TableRow
                     key={row.id}
                     className="cursor-pointer"
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`${row.original.firstName} ${row.original.lastName}`}
                     onClick={() => router.push(`/tenants/${row.original.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        router.push(`/tenants/${row.original.id}`)
+                      }
+                    }}
                   >
                     {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className={(cell.column.columnDef.meta as { className?: string })?.className}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -255,7 +273,8 @@ export default function TenantsList({ leases, tenants }: TenantsListProps) {
               totalPages={totalPages}
               onPageChange={(p) => {
                 setPage(p)
-                window.scrollTo({ top: 0, behavior: 'smooth' })
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
               }}
             />
           </div>

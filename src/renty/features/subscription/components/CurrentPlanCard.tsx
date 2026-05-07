@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useToast } from "@/hooks/use-toast";
 import { Plan } from "../plans";
@@ -63,7 +63,7 @@ export function CurrentPlanCard({ currentPlan, otherPlan }: CurrentPlanCardProps
         >
           {isChangingPlan ? (
             <>
-              <Check className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {t('subscription.changing-plan')}
             </>
           ) : (
@@ -76,7 +76,7 @@ export function CurrentPlanCard({ currentPlan, otherPlan }: CurrentPlanCardProps
       <div className="mt-4 space-y-2">
         {currentPlan.features.map((feature, index) => (
           <div key={index} className="flex items-center">
-            <Check className="h-4 w-4 text-green-500 mr-2" />
+            <Check className="h-4 w-4 text-success mr-2" />
             <span className="text-sm">{feature}</span>
           </div>
         ))}

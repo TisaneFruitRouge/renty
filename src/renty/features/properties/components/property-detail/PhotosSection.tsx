@@ -15,7 +15,7 @@ export default function PhotosSection({ property }: PhotosSectionProps) {
     const images = property.images as string[]
 
     return (
-        <div className="bg-card rounded-md border border-border overflow-hidden">
+        <div className="bg-card rounded-md border overflow-hidden">
             <div className="px-4 py-4">
                 <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base font-semibold">{t("photos")}</h2>
@@ -38,6 +38,7 @@ export default function PhotosSection({ property }: PhotosSectionProps) {
                             src={images[0]}
                             alt={property.title}
                             fill
+                            priority
                             className="object-cover"
                         />
                     </div>
@@ -45,7 +46,7 @@ export default function PhotosSection({ property }: PhotosSectionProps) {
                     <div className="grid grid-cols-2 gap-2 h-56">
                         {images.slice(0, 2).map((image, i) => (
                             <div key={i} className="relative rounded-md overflow-hidden">
-                                <Image src={image} alt={`${property.title} ${i + 1}`} fill className="object-cover" />
+                                <Image src={image} alt={`${property.title} ${i + 1}`} fill priority={i === 0} loading={i === 0 ? undefined : "lazy"} className="object-cover" />
                             </div>
                         ))}
                     </div>
@@ -54,13 +55,13 @@ export default function PhotosSection({ property }: PhotosSectionProps) {
                     <div className="grid grid-cols-3 gap-2 h-56">
                         {/* Primary hero: spans 2 rows */}
                         <div className="col-span-2 relative rounded-md overflow-hidden">
-                            <Image src={images[0]} alt={property.title} fill className="object-cover" />
+                            <Image src={images[0]} alt={property.title} fill priority className="object-cover" />
                         </div>
                         {/* Right column: up to 2 thumbnails */}
                         <div className="grid grid-rows-2 gap-2">
                             {images.slice(1, 3).map((image, i) => (
                                 <div key={i} className="relative rounded-md overflow-hidden">
-                                    <Image src={image} alt={`${property.title} ${i + 2}`} fill className="object-cover" />
+                                    <Image src={image} alt={`${property.title} ${i + 2}`} fill loading="lazy" className="object-cover" />
                                     {/* "Show all" overlay on last visible thumbnail if more photos exist */}
                                     {i === 1 && images.length > 3 && (
                                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-md">

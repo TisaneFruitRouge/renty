@@ -24,7 +24,13 @@
   },
   "home": {
     "welcome": "Bonjour, {name}",
+    "welcome-afternoon": "Bon après-midi, {name}",
+    "welcome-evening": "Bonsoir, {name}",
     "welcome-subtext": "Voici ce qui se passe avec vos propriétés",
+    "welcome-subtext-pending": "Vous avez {count} paiement(s) en attente de confirmation",
+    "welcome-subtext-expiring": "{count} bail(baux) expire(nt) dans les 30 prochains jours",
+    "welcome-subtext-all-good": "Tout va bien — vos biens sont bien gérés.",
+    "onboarding-progress": "{done} sur {total} étapes complétées",
     "properties": "Vos propriétés",
     "no-properties-found": "Aucune propriété trouvée",
     "total-properties": "Total des propriétés",
