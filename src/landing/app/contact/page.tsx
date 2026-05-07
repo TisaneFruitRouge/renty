@@ -16,12 +16,12 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12"
+          className="rounded-2xl border border-border/70 bg-white p-8 shadow-xl dark:bg-gray-800 md:p-12"
         >
           <div className="flex justify-center mb-8">
             <div className="h-16 w-16 relative">
               <Image
-                src="/logo.png"
+                src="/renty.svg"
                 alt="Renty Logo"
                 fill
                 className="object-contain"
@@ -38,7 +38,7 @@ export default function ContactPage() {
           </p>
           
           <div className="flex flex-col items-center justify-center space-y-6">
-            <div className="flex items-center justify-center w-full max-w-md p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="flex w-full max-w-md items-center justify-center rounded-lg border border-border/70 bg-gray-50 p-4 dark:bg-gray-700">
               <svg 
                 className="w-6 h-6 text-gray-500 dark:text-gray-400 mr-3" 
                 fill="none" 

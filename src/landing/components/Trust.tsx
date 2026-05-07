@@ -20,8 +20,8 @@ export default function Trust() {
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {items.map((item) => (
-            <div key={item.key} className="flex items-start gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border bg-white dark:bg-gray-800 text-primary">
+            <div key={item.key} className="flex items-start gap-4 rounded-xl border border-border/70 bg-white p-5 shadow-sm dark:bg-gray-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
                 <item.icon />
               </div>
               <div>

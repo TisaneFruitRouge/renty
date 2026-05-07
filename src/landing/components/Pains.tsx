@@ -30,9 +30,9 @@ export default function Pains() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4"
+              className="flex items-start gap-3 rounded-lg border border-border/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-gray-800"
             >
-              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 dark:bg-gray-700 text-muted-foreground">
+              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
                 <p.icon />
               </div>
               <p className="text-sm leading-relaxed">{t(p.key)}</p>

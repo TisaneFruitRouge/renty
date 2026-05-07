@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import { appHref } from '@/lib/links';
 
 export default function Navbar() {
   const t = useTranslations('home.navbar');
@@ -39,7 +40,7 @@ export default function Navbar() {
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled 
-            ? 'backdrop-blur-md shadow-md py-3' 
+            ? 'border-b border-border/60 bg-white/90 py-3 shadow-sm backdrop-blur-md dark:bg-gray-950/90'
             : 'bg-transparent py-5'
         }`}
       >
@@ -66,7 +67,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm font-medium transition-colors"
+                  className="text-sm font-medium text-foreground/80 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                 >
                   {link.name}
                 </Link>
@@ -76,15 +77,15 @@ export default function Navbar() {
             {/* CTA buttons */}
             <div className="hidden md:flex items-center space-x-4">
               <Link
-                href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}
-                className="text-sm font-medium"
+                href={appHref('/sign-in')}
+                className="text-sm font-medium text-foreground/80 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
               >
                 {t('login')}
               </Link>
               
               <Link
-                href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
-                className="inline-flex h-10 items-center justify-center rounded-md text-primary-foreground bg-primary hover:bg-primary/90 p-4"
+                href={appHref('/sign-up')}
+                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
               >
                 {t('signup')}
               </Link>
@@ -92,7 +93,10 @@ export default function Navbar() {
             
             {/* Mobile menu button */}
             <button
-              className="md:hidden flex items-center"
+              type="button"
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
+              className="flex h-10 w-10 items-center justify-center rounded-md md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <span className="sr-only">Open main menu</span>
@@ -126,7 +130,8 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-x-0 top-16 z-40 bg-white dark:bg-gray-900 shadow-lg md:hidden"
+            id="mobile-navigation"
+            className="fixed inset-x-0 top-16 z-40 border-b border-border/70 bg-white shadow-lg dark:bg-gray-900 md:hidden"
           >
             <div className="px-4 py-6 space-y-6">
               <div className="space-y-4">
@@ -144,7 +149,7 @@ export default function Navbar() {
               
               <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-in`}
+                  href={appHref('/sign-in')}
                   className="block text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -152,8 +157,8 @@ export default function Navbar() {
                 </Link>
                 
                 <Link
-                  href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}
-                  className="block w-full py-3 px-4 rounded-md text-center font-medium text-white bg-black hover:bg-gray-800 transition-colors"
+                  href={appHref('/sign-up')}
+                  className="block w-full rounded-md bg-primary px-4 py-3 text-center font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t('signup')}

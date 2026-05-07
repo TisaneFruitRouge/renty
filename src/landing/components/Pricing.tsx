@@ -6,11 +6,17 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { appHref } from '@/lib/links';
 
 export default function Pricing() {
   const t = useTranslations('home.pricing');
   const commonT = useTranslations('home');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(price);
   
   // Define the type for pricing plans
   type PricingPlan = {
@@ -60,8 +66,11 @@ export default function Pricing() {
             </span>
             
             <button 
+              type="button"
+              aria-pressed={billingCycle === 'yearly'}
+              aria-label={t('yearly')}
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 ${
                 billingCycle === 'yearly' ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'
               }`}
             >
@@ -87,8 +96,8 @@ export default function Pricing() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className={cn(
-                "relative rounded-2xl bg-white dark:bg-gray-800 shadow-lg overflow-hidden",
-                plan.popular && "ring-2 ring-primary dark:ring-gray-300"
+                "relative overflow-hidden rounded-2xl border border-border/70 bg-white shadow-sm transition-shadow hover:shadow-lg dark:bg-gray-800",
+                plan.popular && "border-primary/40 ring-2 ring-primary/20"
               )}
             >
               {plan.popular && (
@@ -106,8 +115,8 @@ export default function Pricing() {
                     <>
                       <span className="text-4xl font-bold">
                         {billingCycle === 'monthly' 
-                          ? `${plan.monthlyPrice.toFixed(2)}€` 
-                          : `${plan.yearlyPrice?.toFixed(2)}€`}
+                          ? formatPrice(plan.monthlyPrice)
+                          : formatPrice(plan.yearlyPrice ?? plan.monthlyPrice)}
                       </span>
                       <span className="text-muted-foreground ml-2">
                         {billingCycle === 'monthly' ? t('period.monthly') : t('period.yearly')}
@@ -139,7 +148,7 @@ export default function Pricing() {
                   )}
                   variant={plan.popular ? "default" : "outline"}
                 >
-                  <Link href={`${process.env.NEXT_PUBLIC_APP_URL}/sign-up`}>
+                  <Link href={appHref('/sign-up')}>
                     {plan.cta}
                   </Link>
                 </Button>
@@ -152,15 +161,15 @@ export default function Pricing() {
         <div className="mt-24">
           <h3 className="text-2xl font-bold mb-8 text-center">{t('faq_title')}</h3>
           <div className="max-w-3xl mx-auto space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="rounded-xl border border-border/70 bg-white p-6 shadow-sm dark:bg-gray-800">
               <h4 className="text-lg font-semibold mb-2">{t('faq1_question')}</h4>
               <p className="text-gray-600 dark:text-gray-400">{t('faq1_answer')}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="rounded-xl border border-border/70 bg-white p-6 shadow-sm dark:bg-gray-800">
               <h4 className="text-lg font-semibold mb-2">{t('faq2_question')}</h4>
               <p className="text-gray-600 dark:text-gray-400">{t('faq2_answer')}</p>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div className="rounded-xl border border-border/70 bg-white p-6 shadow-sm dark:bg-gray-800">
               <h4 className="text-lg font-semibold mb-2">{t('faq3_question')}</h4>
               <p className="text-gray-600 dark:text-gray-400">{t('faq3_answer')}</p>
             </div>

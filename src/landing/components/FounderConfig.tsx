@@ -60,7 +60,7 @@ export default function FounderConfig() {
               </ul>
               <Link
                 href={ONBOARDING_MAILTO}
-                className="inline-flex h-12 items-center justify-center rounded-md bg-primary hover:bg-primary/90 px-6 font-medium text-primary-foreground transition-colors"
+                className="inline-flex h-12 items-center justify-center rounded-md bg-primary px-6 font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
               >
                 {t("cta")}
               </Link>
@@ -71,7 +71,7 @@ export default function FounderConfig() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="rounded-xl border bg-white dark:bg-gray-800 p-6 shadow-sm"
+              className="rounded-xl border border-border/70 bg-white p-6 shadow-sm dark:bg-gray-800"
             >
               <div className="space-y-4">
                 {steps.map((s, i) => (

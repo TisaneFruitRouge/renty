@@ -1,8 +1,6 @@
 "use client";
 
 import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 // Feature card component with hover effect
@@ -17,41 +15,24 @@ const FeatureCard = ({
   icon: React.ReactNode;
   index: number;
 }) => {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  
   return (
-    <div
-      className="relative group block p-6 h-full"
-      onMouseEnter={() => setHoveredIndex(index)}
-      onMouseLeave={() => setHoveredIndex(null)}
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.35, delay: index * 0.06 }}
+      className="group h-full"
     >
-      <motion.div
-        className={cn(
-          "absolute inset-0 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 opacity-0 group-hover:opacity-100 transition-opacity",
-          hoveredIndex === index ? "opacity-100" : "opacity-0"
-        )}
-        layoutId="hoverBackground"
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: hoveredIndex === index ? 1 : 0,
-          transition: { duration: 0.15 },
-        }}
-        exit={{
-          opacity: 0,
-          transition: { duration: 0.15, delay: 0.2 },
-        }}
-      />
-      
-      <div className="rounded-2xl h-full w-full p-6 relative z-20 border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+      <div className="relative h-full w-full rounded-2xl border border-border/70 bg-white p-6 shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:border-primary/25 group-hover:shadow-lg dark:bg-gray-800">
         <div className="flex flex-col h-full">
-          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl w-14 h-14 flex items-center justify-center mb-6 text-black dark:text-gray-300">
+          <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 p-4 text-primary">
             {icon}
           </div>
           <h3 className="text-xl font-bold mb-2">{title}</h3>
           <p className="text-gray-500 dark:text-gray-400 flex-grow">{description}</p>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
