@@ -1,5 +1,8 @@
 import { createAuthClient } from "better-auth/react"
+import { convexClient } from "@convex-dev/better-auth/client/plugins"
 import { stripeClient } from "@better-auth/stripe/client"
+
+const useConvexAuth = process.env.NEXT_PUBLIC_AUTH_BACKEND !== "legacy";
 
 // Create auth client with configuration to include all user fields
 export const authClient = createAuthClient({
@@ -15,6 +18,7 @@ export const authClient = createAuthClient({
         ]
     },
     plugins: [
+        ...(useConvexAuth ? [convexClient()] : []),
         stripeClient({
             subscription: true
         })

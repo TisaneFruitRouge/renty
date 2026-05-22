@@ -1,5 +1,5 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -14,7 +14,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
     const documentId = id;
 
     // Get the document
-    const document = await prisma.document.findUnique({
+    const document = await db.document.findUnique({
       where: {
         id: documentId,
       },
@@ -40,7 +40,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
     }
 
     // Verify that the tenant is associated with the property
-    const tenant = await prisma.tenant.findFirst({
+    const tenant = await db.tenant.findFirst({
       where: {
         id: tenantId,
         lease: {

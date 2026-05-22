@@ -1,14 +1,15 @@
 'use server'
 
 import type { z } from "zod"
-import { prisma } from "@/prisma/db"
 import createReceipt, { addBlobUrlToReceipt, deleteReceipt, createSharedReceipt } from "./db"
+import { getReceiptById } from "./db"
 import { generatePDF } from "./pdf/generatePDF"
 import { deleteReceiptFromBlob, saveReceiptToBlob } from "./blob"
 import { sendReceiptEmail } from "./email/sendEmail"
 import type { createReceiptSchema } from "./schemas"
 import { RentReceiptStatus, type rentReceipt } from "@prisma/client";
 import { updateReceiptStatus } from "./db";
+import { getPropertyReceiptContext } from "@/features/properties/db";
 
 type createRentReceiptInput = z.infer<typeof createReceiptSchema>
 
@@ -20,22 +21,7 @@ export async function createRentReceiptAction(sendMail = true, {
     endDate
 }: createRentReceiptInput) {
 
-    const property = await prisma.property.findUnique({
-        where: {
-            id: propertyId
-        },
-        include: {
-            leases: {
-                where: {
-                    status: 'ACTIVE'
-                },
-                include: {
-                    tenants: true
-                }
-            },
-            user: true
-        }
-    })
+    const property = await getPropertyReceiptContext(propertyId)
 
     if (!property) {
       throw new Error(`Property with id: ${propertyId} was not found`);
@@ -140,22 +126,7 @@ export async function updateRentReceiptStatusAction(id: string, newStatus: RentR
 }
 
 export async function sendRentReceiptAction(id: string) {
-  const receipt = await prisma.rentReceipt.findUnique({
-    where: { id },
-    include: {
-      property: {
-        include: {
-          user: true
-        }
-      },
-      tenant: true,
-      lease: {
-        include: {
-          tenants: true
-        }
-      }
-    }
-  });
+  const receipt = await getReceiptById(id);
 
   if (!receipt || !receipt.blobUrl) {
     throw new Error('Receipt not found or no PDF generated');

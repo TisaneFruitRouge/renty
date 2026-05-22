@@ -1,5 +1,5 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 import { Prisma, RentReceiptStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -45,7 +45,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId) => {
     }
 
     // Get rent receipts with filters and sorting
-    const rentReceipts = await prisma.rentReceipt.findMany({
+    const rentReceipts = await db.rentReceipt.findMany({
       where,
       orderBy: {
         updatedAt: sortOrder,

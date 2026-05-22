@@ -1,6 +1,6 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 import { z } from "zod";
 
 // Schema validation for the request body
@@ -19,7 +19,7 @@ export const PUT = withAuth(async (req: NextRequest, tenantId: string) => {
     
     // Check if email is being changed and if it's already in use by another tenant
     if (validatedData.email) {
-      const existingTenant = await prisma.tenant.findFirst({
+      const existingTenant = await db.tenant.findFirst({
         where: {
           email: validatedData.email,
           id: { not: tenantId }
@@ -35,7 +35,7 @@ export const PUT = withAuth(async (req: NextRequest, tenantId: string) => {
     }
     
     // Update the tenant profile
-    const updatedTenant = await prisma.tenant.update({
+    const updatedTenant = await db.tenant.update({
       where: { id: tenantId },
       data: {
         firstName: validatedData.firstName,
@@ -58,7 +58,7 @@ export const PUT = withAuth(async (req: NextRequest, tenantId: string) => {
     
     // Also update the phone number in the tenantAuth record if it exists
     if (validatedData.phoneNumber) {
-      await prisma.tenantAuth.update({
+      await db.tenantAuth.update({
         where: { tenantId },
         data: { phoneNumber: validatedData.phoneNumber }
       }).catch(error => {

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
-import { signUp } from "../actions"
+import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -44,8 +44,10 @@ export default function SignUpForm() {
 		try {
 			const { email, password, name } = values;
 
-			// sign up the user
-			await signUp(email, password, name);
+			const { error } = await authClient.signUp.email({ email, password, name });
+			if (error) {
+				throw new Error(error.message);
+			}
 
 			await fetch('/api/email/after-sign-up', {
 				method: 'POST',

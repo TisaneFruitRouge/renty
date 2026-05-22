@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { prisma } from "@/prisma/db";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { FileText } from "lucide-react";
@@ -13,37 +12,16 @@ import {
   PageDescription,
   SectionTitle,
 } from "@/components/ui/typography";
+import { getLeasesForUser } from "@/features/lease/db";
+import { getPropertiesForUser } from "@/features/properties/db";
 
 async function getProperties(userId: string) {
-  return prisma.property.findMany({
-    where: {
-      userId,
-    },
-    orderBy: {
-      title: "asc",
-    },
-  });
+  const properties = await getPropertiesForUser(userId);
+  return [...properties].sort((a, b) => a.title.localeCompare(b.title));
 }
 
 async function getLeases(userId: string) {
-  return prisma.lease.findMany({
-    where: {
-      property: {
-        userId,
-      },
-    },
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  return getLeasesForUser(userId);
 }
 
 async function LeasesContent() {

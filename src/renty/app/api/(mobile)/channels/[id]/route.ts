@@ -1,11 +1,11 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 
 export const GET = withAuth(async (req: NextRequest) => {
     const id = req.nextUrl.pathname.split('/').pop();
     
-    const channel = await prisma.channel.findUnique({
+    const channel = await db.channel.findUnique({
         where: { id },
         include: {
             property: true,
@@ -29,11 +29,11 @@ export const GET = withAuth(async (req: NextRequest) => {
 
         // Fetch all users and tenants in bulk
         const [users, tenants] = await Promise.all([
-            prisma.user.findMany({
+            db.user.findMany({
                 where: { id: { in: Array.from(landlordIds) } },
                 select: { id: true, name: true, email: true }
             }),
-            prisma.tenant.findMany({
+            db.tenant.findMany({
                 where: { id: { in: Array.from(tenantIds) } },
                 select: { id: true, firstName: true, lastName: true, email: true }
             })

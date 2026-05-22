@@ -1,9 +1,9 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 
 export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
-    const channels = await prisma.channel.findMany({
+    const channels = await db.channel.findMany({
         where: { 
             participants: {
                 some: {

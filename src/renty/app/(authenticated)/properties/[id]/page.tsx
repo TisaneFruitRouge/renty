@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight, MapPin } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { prisma } from "@/prisma/db";
 import { getRentReceiptsOfProperty } from "@/features/rent-receipt/db";
 import PhotosSection from "@/features/properties/components/property-detail/PhotosSection";
 import SimpleLeasesSection from "@/features/properties/components/property-detail/SimpleLeasesSection";
@@ -14,6 +13,7 @@ import { getSession } from "@/lib/session";
 import EditPropertyModal from "@/features/properties/components/property-detail/EditPropertyModal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getActiveLeasesByPropertyId } from "@/features/lease/db";
 
 interface PropertyPageProps {
   params: Promise<{ id: string }>;
@@ -42,19 +42,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
     notFound();
   }
 
-  const leases = await prisma.lease.findMany({
-    where: {
-      propertyId: id,
-      status: "ACTIVE",
-    },
-    include: {
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const leases = await getActiveLeasesByPropertyId(id);
   const recentPayments = await getRentReceiptsOfProperty(property.id, 2);
 
   return (

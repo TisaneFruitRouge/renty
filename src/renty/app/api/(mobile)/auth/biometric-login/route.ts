@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/prisma/db';
+import { db } from "@/lib/convex-prisma";
 import { generateTokens } from '@/lib/mobile-auth';
 
 export async function POST(request: Request) {
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
     
     // Find the tenantAuth with biometric authentication enabled
-    const tenantAuth = await prisma.tenantAuth.findFirst({
+    const tenantAuth = await db.tenantAuth.findFirst({
       where: { 
         phoneNumber,
         biometricEnabled: true,

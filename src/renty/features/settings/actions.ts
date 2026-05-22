@@ -4,8 +4,7 @@ import { updateUser, getUserSessions, deleteSession } from "./db"
 import { updateUserSchema, type UpdateUserInput } from "./schemas"
 import { addUserIdToAction } from "@/lib/helpers"
 import { UAParser } from "ua-parser-js"
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getSession } from "@/lib/session"
 import { revalidatePath } from "next/cache"
 
 export interface SessionInfo {
@@ -44,9 +43,7 @@ export const updateUserAction = addUserIdToAction(async (userId: string, input: 
 export const getActiveSessionsAction = addUserIdToAction(async (userId: string) => {
     try {
         // Get the current session to mark it
-        const currentSession = await auth.api.getSession({
-            headers: await headers()
-        });
+        const currentSession = await getSession();
         
         if (!currentSession) {
             throw new Error("No active session found");
@@ -63,7 +60,7 @@ export const getActiveSessionsAction = addUserIdToAction(async (userId: string) 
             const device = parser.getDevice();
             
             // Determine if this is the current session
-            const isCurrentSession = session.id === currentSession.session.id;
+            const isCurrentSession = !!currentSession.session?.id && session.id === currentSession.session.id;
             
             return {
                 id: session.id,
@@ -98,9 +95,7 @@ export const getActiveSessionsAction = addUserIdToAction(async (userId: string) 
 export const removeSessionAction = addUserIdToAction(async (userId: string, sessionId: string) => {
     try {
         // Check if this is the current session
-        const currentSession = await auth.api.getSession({
-            headers: await headers()
-        });
+        const currentSession = await getSession();
         
         if (!currentSession) {
             throw new Error("No active session found");
@@ -108,7 +103,7 @@ export const removeSessionAction = addUserIdToAction(async (userId: string, sess
         
         // Prevent removing the current session through this method
         // (current session should be handled through logout)
-        if (sessionId === currentSession.session.id) {
+        if (currentSession.session?.id && sessionId === currentSession.session.id) {
             throw new Error("Cannot remove the current session this way. Please use logout instead.");
         }
         

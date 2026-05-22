@@ -2,7 +2,6 @@ import { Suspense } from "react"
 import { notFound, redirect } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { getSession } from "@/lib/session"
-import { prisma } from "@/prisma/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -48,25 +47,21 @@ import {
   getTotalMonthlyRent,
   getAnnualRevenue,
 } from "@/features/lease/utils/lease-utils"
+import { findLeaseForUser } from "@/features/lease/db"
 
 async function getLeaseWithDetails(leaseId: string, userId: string) {
-  return prisma.lease.findFirst({
-    where: {
-      id: leaseId,
-      property: { userId },
+  const lease = await findLeaseForUser(leaseId, userId)
+  if (!lease?.property) return lease
+  return {
+    ...lease,
+    property: {
+      ...lease.property,
+      documents: [...(lease.property.documents ?? [])].sort(
+        (a, b) => b.uploadedAt.getTime() - a.uploadedAt.getTime(),
+      ),
     },
-    include: {
-      property: {
-        include: {
-          documents: { orderBy: { uploadedAt: "desc" } },
-        },
-      },
-      tenants: {
-        include: { auth: true },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  })
+    tenants: [...lease.tenants].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+  }
 }
 
 interface LeaseDetailPageProps {

@@ -1,22 +1,22 @@
-import { prisma } from "@/prisma/db"
+import { api } from "@/convex/_generated/api";
+import { getConvexClient } from "@/lib/convex";
+import { reviveDates } from "@/lib/convex-map";
 import type { user, session } from "@prisma/client"
 import type { UpdateUserOutput } from "./schemas"
 
 export async function updateUser(input: UpdateUserOutput): Promise<user> {
-    return prisma.user.update({
-        where: { id: input.id },
-        data: {
-            name: input.name,
-            email: input.email,
-            image: "",
-            address: input.address,
-            city: input.city,
-            state: input.state,
-            country: input.country,
-            postalCode: input.postalCode,
-            updatedAt: new Date(),
-        },
-    })
+    const updated = await getConvexClient().mutation(api.settings.updateUser, {
+        id: input.id,
+        name: input.name,
+        email: input.email,
+        image: "",
+        address: input.address || null,
+        city: input.city || null,
+        state: input.state || null,
+        country: input.country || null,
+        postalCode: input.postalCode || null,
+    });
+    return reviveDates(updated) as unknown as user;
 }
 
 /**
@@ -25,14 +25,8 @@ export async function updateUser(input: UpdateUserOutput): Promise<user> {
  * @returns Array of session objects
  */
 export async function getUserSessions(userId: string): Promise<session[]> {
-    return prisma.session.findMany({
-        where: {
-            userId: userId
-        },
-        orderBy: {
-            updatedAt: 'desc'
-        }
-    });
+    const sessions = await getConvexClient().query(api.settings.listSessions, { userId });
+    return reviveDates(sessions) as unknown as session[];
 }
 
 /**
@@ -42,10 +36,9 @@ export async function getUserSessions(userId: string): Promise<session[]> {
  * @returns The deleted session
  */
 export async function deleteSession(sessionId: string, userId: string): Promise<session> {
-    return prisma.session.delete({
-        where: {
-            id: sessionId,
-            userId: userId // Ensure the session belongs to the user
-        }
+    const deleted = await getConvexClient().mutation(api.settings.deleteSession, {
+        sessionId,
+        userId,
     });
+    return reviveDates(deleted) as unknown as session;
 }

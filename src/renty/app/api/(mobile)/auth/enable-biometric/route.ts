@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/prisma/db';
+import { db } from "@/lib/convex-prisma";
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     }
     
     // Find the tenantAuth record
-    const tenantAuth = await prisma.tenantAuth.findUnique({
+    const tenantAuth = await db.tenantAuth.findUnique({
       where: { tenantId }
     });
     
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     }
     
     // Update tenantAuth record to enable biometric authentication
-    await prisma.tenantAuth.update({
+    await db.tenantAuth.update({
       where: { id: tenantAuth.id },
       data: { 
         biometricEnabled: true,

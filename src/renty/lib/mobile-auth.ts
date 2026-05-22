@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-prisma";
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ export async function generateTokens(tenantId: string) {
     const accessToken = jwt.sign({ tenantId }, JWT_SECRET, { expiresIn: '1h' });
     const refreshToken = jwt.sign({ tenantId }, JWT_SECRET, { expiresIn: '7d' });
     
-    await prisma.tenantAuth.update({
+    await db.tenantAuth.update({
       where: { tenantId },
       data: {
         refreshToken,

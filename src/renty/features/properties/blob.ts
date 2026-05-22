@@ -1,26 +1,25 @@
-import { put, del } from '@vercel/blob';
+import { deleteConvexFileByUrl, uploadToConvexStorage } from '@/lib/convex-storage';
 
 export async function uploadImageToBlob(file: File): Promise<string> {
     try {
-        const blobName = `properties/pictures/${new Date().toISOString().replace(/:/g, "-")}-${file.name}`;
-        
-        const { url } = await put(blobName, file, {
-            access: 'public',
+        return await uploadToConvexStorage({
+            data: file,
+            bucket: 'propertyImage',
+            name: file.name,
             contentType: file.type,
+            size: file.size,
         });
-
-        return url;
     } catch (error) {
-        console.error('Error uploading image to blob storage:', error);
+        console.error('Error uploading image to Convex storage:', error);
         throw error;
     }
 }
 
 export async function deleteImageFromBlob(url: string): Promise<void> {
     try {
-        await del(url);
+        await deleteConvexFileByUrl(url);
     } catch (error) {
-        console.error('Error deleting image from blob storage:', error);
+        console.error('Error deleting image from storage:', error);
         throw error;
     }
 }
