@@ -1,5 +1,5 @@
 
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 

@@ -6,7 +6,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useTranslations } from "next-intl"
-import type { lease, property, tenant } from "@prisma/client"
+import type { lease, property, tenant } from "@/lib/types"
 import { useToast } from "@/hooks/use-toast"
 import {
     Dialog,

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import type { lease, tenant, tenantAuth } from "@prisma/client"
+import type { lease, tenant, tenantAuth } from "@/lib/types"
 import { useToast } from "@/hooks/use-toast"
 import {
     Dialog,

@@ -34,7 +34,7 @@ import { createRentReceiptAction } from "../actions";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { DatePicker } from "@/components/ui/date-picker";
-import type { property } from "@prisma/client";
+import type { property } from "@/lib/types";
 import { useRouter } from "next/navigation";
 
 interface CreateRentReceiptModalProps {

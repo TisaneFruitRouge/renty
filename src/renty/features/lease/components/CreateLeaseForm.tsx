@@ -18,7 +18,7 @@ import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import { format } from "date-fns"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { toast } from "@/hooks/use-toast"
 import { DatePicker } from "@/components/ui/date-picker"
 

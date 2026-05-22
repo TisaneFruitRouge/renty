@@ -12,7 +12,7 @@ import { useTranslations } from "next-intl"
 import { Loader2 } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
-import type { lease, property, tenant } from "@prisma/client"
+import type { lease, property, tenant } from "@/lib/types"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 

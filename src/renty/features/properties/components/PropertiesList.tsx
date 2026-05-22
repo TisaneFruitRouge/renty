@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useDeferredValue } from 'react'
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { Building2, ArrowRight, Search } from "lucide-react"
 import Property from "./Property"
 import { useTranslations } from "next-intl"

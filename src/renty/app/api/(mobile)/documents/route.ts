@@ -1,6 +1,6 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { db } from "@/lib/convex-prisma";
-import type { DocumentCategory } from "@prisma/client";
+import { db } from "@/lib/convex-compat";
+import type { DocumentCategory } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { useTranslations } from "next-intl"
 import { useForm } from "react-hook-form"
 import { updatePropertySchema } from "../../schemas"

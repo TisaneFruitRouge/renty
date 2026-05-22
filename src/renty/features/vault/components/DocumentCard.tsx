@@ -13,7 +13,7 @@ import {
     MoreVertical,
     Pencil
 } from "lucide-react"
-import { type document as DocumentType } from "@prisma/client"
+import { type document as DocumentType } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,

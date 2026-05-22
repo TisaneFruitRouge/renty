@@ -13,7 +13,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import CreateTenantForm from "./CreateTenantForm"
 import { Plus } from "lucide-react"
-import type { lease, property } from "@prisma/client"
+import type { lease, property } from "@/lib/types"
 
 interface CreateTenantModalProps {
   leases: (lease & { property: property })[]

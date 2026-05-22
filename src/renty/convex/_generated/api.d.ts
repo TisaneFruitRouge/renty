@@ -16,7 +16,6 @@ import type * as data from "../data.js";
 import type * as documents from "../documents.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
-import type * as importAuth from "../importAuth.js";
 import type * as leases from "../leases.js";
 import type * as properties from "../properties.js";
 import type * as rentReceipts from "../rentReceipts.js";
@@ -39,7 +38,6 @@ declare const fullApi: ApiFromModules<{
   documents: typeof documents;
   files: typeof files;
   http: typeof http;
-  importAuth: typeof importAuth;
   leases: typeof leases;
   properties: typeof properties;
   rentReceipts: typeof rentReceipts;

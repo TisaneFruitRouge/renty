@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import TenantSection from "@/features/tenant/components/TenantSection"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 
 interface TenantsSectionProps {
     propertyId: string;

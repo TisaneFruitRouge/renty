@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import type { Prisma, property, lease, tenant, user } from "@prisma/client";
+import type { QueryTypes, property, lease, tenant, user } from "@/lib/types";
 import { enforceResourceLimit } from "../subscription/limits";
 
 export type PropertyWithLeases = property & {
@@ -41,7 +41,7 @@ export async function getPropertyReceiptContext(id: string) {
 
 export async function updateProperty(
   id: string,
-  data: Omit<Prisma.propertyUpdateInput, "id" | "createdAt" | "updatedAt">,
+  data: Omit<QueryTypes.propertyUpdateInput, "id" | "createdAt" | "updatedAt">,
 ): Promise<property> {
   const updated = await getConvexClient().mutation(api.properties.update, {
     id,

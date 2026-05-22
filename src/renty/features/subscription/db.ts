@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import type { subscription } from "@prisma/client";
+import type { subscription } from "@/lib/types";
 
 /**
  * Check if a user has an active subscription

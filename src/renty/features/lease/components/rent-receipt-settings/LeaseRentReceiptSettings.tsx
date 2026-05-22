@@ -14,7 +14,7 @@ import {
   updateLeaseRentReceiptSettingsAction,
   deleteLeaseRentReceiptSettingsAction,
 } from "../../actions";
-import type { lease } from "@prisma/client";
+import type { lease } from "@/lib/types";
 
 interface LeaseRentReceiptSettingsProps {
   lease: lease;

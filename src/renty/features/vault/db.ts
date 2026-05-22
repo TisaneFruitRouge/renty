@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import type { DocumentCategory, document } from "@prisma/client";
+import type { DocumentCategory, document } from "@/lib/types";
 
 export async function getDocumentsForProperty(propertyId: string) {
   const documents = await getConvexClient().query(api.documents.listForProperty, { propertyId });

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Search } from 'lucide-react'
 import LeaseCard from './LeaseCard'
-import type { lease, property, tenant, tenantAuth } from '@prisma/client'
+import type { lease, property, tenant, tenantAuth } from '@/lib/types'
 
 type LeaseWithDetails = lease & {
   property: property

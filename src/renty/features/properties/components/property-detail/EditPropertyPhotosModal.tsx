@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { Star, StarOff, Trash2, Upload, Images, ImagePlus } from "lucide-react"
-import { type property } from "@prisma/client"
+import { type property } from "@/lib/types"
 import { useState } from "react"
 import Image from "next/image"
 import {

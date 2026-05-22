@@ -1,6 +1,6 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 import { z } from "zod";
 
 // Schema validation for the request body

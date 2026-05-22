@@ -1,5 +1,5 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 import { compare, hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 

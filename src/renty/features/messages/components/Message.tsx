@@ -5,7 +5,7 @@ import { cn, getInitials } from "@/lib/utils";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import type { MessageWithSender } from "../db";
-import { ParticipantType, tenant, user } from "@prisma/client";
+import { ParticipantType, tenant, user } from "@/lib/types";
 
 type MessageProps = {
     message: MessageWithSender;

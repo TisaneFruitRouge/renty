@@ -2,7 +2,7 @@
 
 import { Card, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 import { User, Mail, Phone } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"

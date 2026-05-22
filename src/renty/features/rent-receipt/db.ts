@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import type { RentReceiptStatus, rentReceipt, property, tenant, lease, user } from "@prisma/client";
+import type { RentReceiptStatus, rentReceipt, property, tenant, lease, user } from "@/lib/types";
 
 type ReceiptWithRelations = rentReceipt & {
   property: property & { user: user };

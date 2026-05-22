@@ -1,7 +1,7 @@
 'use client'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RentReceiptStatus, type property } from "@prisma/client"
+import { RentReceiptStatus, type property } from "@/lib/types"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useTransition } from "react"
 import { useTranslations } from "next-intl"

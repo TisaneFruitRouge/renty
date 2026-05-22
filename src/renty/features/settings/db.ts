@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import type { user, session } from "@prisma/client"
+import type { user, session } from "@/lib/types"
 import type { UpdateUserOutput } from "./schemas"
 
 export async function updateUser(input: UpdateUserOutput): Promise<user> {

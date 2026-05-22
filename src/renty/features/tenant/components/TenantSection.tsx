@@ -3,7 +3,7 @@
 import TenantCard from "./TenantCard"
 import SelectTenantModal from "./SelectTenantModal"
 import RemoveTenantModal from "./RemoveTenantModal"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 
 interface TenantSectionProps {
   propertyId: string

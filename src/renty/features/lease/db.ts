@@ -11,7 +11,7 @@ import type {
   tenantAuth,
   user,
   document,
-} from "@prisma/client";
+} from "@/lib/types";
 
 type TenantWithAuth = tenant & { auth: tenantAuth | null };
 type PropertyWithUser = property & { user: user };

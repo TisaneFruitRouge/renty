@@ -1,7 +1,7 @@
 import { api } from "@/convex/_generated/api";
 import { getConvexClient } from "@/lib/convex";
 import { reviveDates } from "@/lib/convex-map";
-import { Message, ParticipantType, tenant, user } from "@prisma/client";
+import { Message, ParticipantType, tenant, user } from "@/lib/types";
 
 export async function createPropertyChannel(propertyId: string, landlordId: string) {
   const channel = await getConvexClient().mutation(api.channels.createPropertyChannel, {

@@ -17,9 +17,9 @@ const DATE_FIELDS = new Set([
 ]);
 
 /**
- * Convex stores timestamps as epoch-millisecond numbers. The app layer (and the
- * Prisma types it still uses for shapes) expects `Date` objects on known date
- * fields. This revives those fields recursively across nested joins.
+ * Convex stores timestamps as epoch-millisecond numbers. The app layer expects
+ * `Date` objects on known date fields. This revives those fields recursively
+ * across nested joins.
  */
 export function reviveDates<T>(value: T): T {
   if (Array.isArray(value)) {

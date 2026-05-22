@@ -16,7 +16,7 @@ import { updateUserAction } from "../actions"
 import { Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { user } from "@prisma/client"
+import type { user } from "@/lib/types"
 import { updateUserSchema, type UpdateUserInput } from "../schemas"
 
 type UserInfoFormProps = {

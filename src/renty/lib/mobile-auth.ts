@@ -1,4 +1,4 @@
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,5 +1,5 @@
 import { generateTokens } from "@/lib/mobile-auth";
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";

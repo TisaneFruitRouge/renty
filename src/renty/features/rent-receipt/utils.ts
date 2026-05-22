@@ -1,5 +1,5 @@
-import type { lease, tenant } from "@prisma/client";
-import type { JsonValue } from "@prisma/client/runtime/library";
+import type { lease, tenant } from "@/lib/types";
+import type { JsonValue } from "@/lib/types";
 import { addMonths } from "date-fns";
 
 // Define a lease type that includes the tenants relation

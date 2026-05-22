@@ -3,7 +3,7 @@
  * Used across multiple components to avoid code duplication
  */
 
-import type { LeaseStatus, LeaseType } from "@prisma/client"
+import type { LeaseStatus, LeaseType } from "@/lib/types"
 
 /**
  * Get Tailwind CSS classes for lease status badge styling

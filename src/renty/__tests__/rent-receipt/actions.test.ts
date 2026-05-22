@@ -51,7 +51,7 @@ import * as receiptDb from '@/features/rent-receipt/db';
 import * as blobStorage from '@/features/rent-receipt/blob';
 import * as emailSender from '@/features/rent-receipt/email/sendEmail';
 import * as pdfGen from '@/features/rent-receipt/pdf/generatePDF';
-import { RentReceiptStatus } from '@prisma/client';
+import { RentReceiptStatus } from '@/lib/types';
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -1,6 +1,6 @@
 import { getPendingReceiptsOlderThan, updateReceiptStatus } from '@/features/rent-receipt/db';
 import { sendReceiptEmail } from '@/features/rent-receipt/email/sendEmail';
-import { RentReceiptStatus } from '@prisma/client';
+import { RentReceiptStatus } from '@/lib/types';
 import type { NextRequest } from 'next/server';
 
 // Landlord review window: receipts younger than this are held back

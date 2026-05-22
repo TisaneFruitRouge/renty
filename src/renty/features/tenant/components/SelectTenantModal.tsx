@@ -13,7 +13,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Plus } from "lucide-react"
 import { SelectTenantForm } from "./SelectTenantForm"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 
 interface SelectTenantModalProps {
   propertyId: string

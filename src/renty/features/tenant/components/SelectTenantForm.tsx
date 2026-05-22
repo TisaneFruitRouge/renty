@@ -24,7 +24,7 @@ import { useState } from "react"
 import { assignTenantToLeaseAction } from "../actions"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 
 const formSchema = z.object({
   tenantId: z.string({

@@ -12,7 +12,7 @@ import {
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Edit } from "lucide-react"
-import type { lease, property, tenant } from "@prisma/client"
+import type { lease, property, tenant } from "@/lib/types"
 import EditTenantForm from "./EditTenantForm"
 
 interface EditTenantModalProps {

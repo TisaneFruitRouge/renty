@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import type { user } from "@prisma/client";
+import type { user } from "@/lib/types";
 import type { Plan } from "@/features/subscription/plans";
 import type { SessionInfo } from "@/features/settings/actions";
 import {

@@ -80,7 +80,7 @@ export async function checkSubscriptionStatusAction() {
       return { status: "none", plan: null }
     }
 
-    // Use the singleton Prisma client
+    // Use the Better Auth Convex adapter
     
     try {
       // Get the active subscription using the service

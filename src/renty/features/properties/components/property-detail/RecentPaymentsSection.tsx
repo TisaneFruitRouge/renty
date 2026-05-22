@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import { Receipt } from "lucide-react"
-import type { property, rentReceipt, tenant } from "@prisma/client"
+import type { property, rentReceipt, tenant } from "@/lib/types"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

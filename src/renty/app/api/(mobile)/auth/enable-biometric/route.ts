@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from "@/lib/convex-prisma";
+import { db } from "@/lib/convex-compat";
 
 export async function POST(request: Request) {
   try {

@@ -1,6 +1,6 @@
 'use client'
 
-import { property, rentReceipt, tenant } from "@prisma/client"
+import { property, rentReceipt, tenant } from "@/lib/types"
 import { RentReceiptItem } from "./RentReceiptItem"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"

@@ -1,7 +1,7 @@
 import { renderToBuffer } from '@react-pdf/renderer';
 import { RentReceiptTemplate } from './RentReceiptTemplate';
 import { getTranslations } from 'next-intl/server';
-import type { rentReceipt, property, tenant, user } from '@prisma/client';
+import type { rentReceipt, property, tenant, user } from '@/lib/types';
 
 interface GeneratePDFParams {
   receipt: rentReceipt;

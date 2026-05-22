@@ -25,7 +25,7 @@ import {
   type CreateLeaseData,
   type UpdateLeaseData,
 } from "./db";
-import type { TerminationReason } from "@prisma/client";
+import type { TerminationReason } from "@/lib/types";
 import { findPropertyForUser, getTenantById, removeTenantFromPropertyChannelByLeaseId } from "@/features/tenant/db";
 import { addTenantToPropertyChannel } from "@/features/messages/db";
 

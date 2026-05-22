@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl"
 import { Users } from "lucide-react"
-import type { tenant } from "@prisma/client"
+import type { tenant } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 
 interface TenantCardProps {

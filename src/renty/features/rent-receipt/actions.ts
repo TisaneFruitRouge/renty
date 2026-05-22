@@ -7,7 +7,7 @@ import { generatePDF } from "./pdf/generatePDF"
 import { deleteReceiptFromBlob, saveReceiptToBlob } from "./blob"
 import { sendReceiptEmail } from "./email/sendEmail"
 import type { createReceiptSchema } from "./schemas"
-import { RentReceiptStatus, type rentReceipt } from "@prisma/client";
+import { RentReceiptStatus, type rentReceipt } from "@/lib/types";
 import { updateReceiptStatus } from "./db";
 import { getPropertyReceiptContext } from "@/features/properties/db";
 

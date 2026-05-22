@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { MoreHorizontal, Send } from "lucide-react"
-import { RentReceiptStatus } from "@prisma/client"
+import { RentReceiptStatus } from "@/lib/types"
 import { useTranslations } from "next-intl"
 import { cn } from "@/lib/utils"
 import { rentReceiptStatusVariants } from "../constants"

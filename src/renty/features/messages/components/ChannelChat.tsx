@@ -7,7 +7,7 @@ import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { ChatSkeleton } from "./ChatSkeleton";
 import * as Ably from "ably";
-import { ParticipantType, user } from "@prisma/client";
+import { ParticipantType, user } from "@/lib/types";
 import { MessageWithSender } from "../db";
  
 

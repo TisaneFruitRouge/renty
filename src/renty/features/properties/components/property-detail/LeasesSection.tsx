@@ -10,7 +10,7 @@ import { Plus, Users, Euro, Calendar, Home } from "lucide-react"
 
 import CreateLeaseForm from "@/features/lease/components/CreateLeaseForm"
 import LeaseCard from "@/features/lease/components/LeaseCard"
-import type { lease, property, tenant, tenantAuth } from "@prisma/client"
+import type { lease, property, tenant, tenantAuth } from "@/lib/types"
 
 type LeaseWithDetails = lease & {
   property: property

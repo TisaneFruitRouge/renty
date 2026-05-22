@@ -10,7 +10,7 @@ import {
   type SortingState,
   type Column,
 } from '@tanstack/react-table'
-import type { property, tenant, lease } from "@prisma/client"
+import type { property, tenant, lease } from "@/lib/types"
 import { Building2, Mail, Phone, Users, ArrowRight, Search, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { useTranslations } from "next-intl"
 import {

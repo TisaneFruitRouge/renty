@@ -1,4 +1,4 @@
-import type { property, rentReceipt, tenant, user } from '@prisma/client';
+import type { property, rentReceipt, tenant, user } from '@/lib/types';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 interface Translations {

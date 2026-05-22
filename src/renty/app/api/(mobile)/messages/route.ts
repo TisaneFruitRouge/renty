@@ -1,7 +1,7 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/convex-prisma";
-import { ParticipantType } from "@prisma/client";
+import { db } from "@/lib/convex-compat";
+import { ParticipantType } from "@/lib/types";
 
 export const POST = withAuth(async (req: NextRequest, tenantId) => {
     const {

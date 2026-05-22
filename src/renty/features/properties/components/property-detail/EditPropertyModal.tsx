@@ -12,7 +12,7 @@ import {
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Pencil } from "lucide-react"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { EditPropertyForm } from "./EditPropertyForm"
 
 interface EditPropertyModalProps {
