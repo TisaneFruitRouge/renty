@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import Image from "next/image"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { ImagePlus } from "lucide-react"
 import EditPropertyPhotosModal from "./EditPropertyPhotosModal"
 

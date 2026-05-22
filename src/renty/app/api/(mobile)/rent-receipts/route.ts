@@ -1,6 +1,6 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
-import { Prisma, RentReceiptStatus } from "@prisma/client";
+import { db } from "@/lib/convex-compat";
+import { QueryTypes, RentReceiptStatus } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = withAuth(async (req: NextRequest, tenantId) => {
@@ -16,7 +16,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId) => {
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 3;
 
     // Build where clause
-    const where: Prisma.rentReceiptWhereInput = {
+    const where: QueryTypes.rentReceiptWhereInput = {
       tenantId,
     };
 
@@ -45,7 +45,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId) => {
     }
 
     // Get rent receipts with filters and sorting
-    const rentReceipts = await prisma.rentReceipt.findMany({
+    const rentReceipts = await db.rentReceipt.findMany({
       where,
       orderBy: {
         updatedAt: sortOrder,

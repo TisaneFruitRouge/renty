@@ -1,221 +1,124 @@
-import { prisma } from "@/prisma/db";
+import { api } from "@/convex/_generated/api";
+import { getConvexClient } from "@/lib/convex";
+import { reviveDates } from "@/lib/convex-map";
+import type { tenant, tenantAuth, lease, property } from "@/lib/types";
 import type { CreateTenantFormData } from "./components/CreateTenantForm";
 import type { EditTenantFormData } from "./components/EditTenantForm";
 
 export async function createTenantInDb(data: CreateTenantFormData & { userId: string }) {
-  const tenant = await prisma.tenant.create({
-    data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      notes: data.notes,
-      leaseId: data.leaseId || null,
-      userId: data.userId
-    },
+  const created = await getConvexClient().mutation(api.tenants.create, {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phoneNumber: data.phoneNumber,
+    notes: data.notes ?? null,
+    leaseId: data.leaseId || null,
+    userId: data.userId,
   });
-  return tenant;
+  return reviveDates(created) as unknown as tenant;
 }
 
-export async function createTenantAuthInDb(tenantId: string, phoneNumber: string, hashedTempCode: string) {
-  return prisma.tenantAuth.create({
-    data: {
-      tenantId,
-      phoneNumber,
-      tempCode: hashedTempCode,
-      tempCodeExpiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-      passcode: ''
-    }
+export async function createTenantAuthInDb(
+  tenantId: string,
+  phoneNumber: string,
+  hashedTempCode: string,
+) {
+  const created = await getConvexClient().mutation(api.tenants.createAuth, {
+    tenantId,
+    phoneNumber,
+    tempCode: hashedTempCode,
+    tempCodeExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
   });
+  return reviveDates(created) as unknown as tenantAuth;
 }
 
 export async function getTenantById(tenantId: string) {
-  return prisma.tenant.findUnique({
-    where: { id: tenantId }
-  });
+  const tenant = await getConvexClient().query(api.tenants.getById, { id: tenantId });
+  return reviveDates(tenant) as unknown as tenant | null;
 }
 
 export async function getTenantWithLease(tenantId: string) {
-  const tenant = await prisma.tenant.findUnique({
-    where: { id: tenantId }
-  });
-  
-  if (!tenant || !tenant.leaseId) {
-    return { tenant, lease: null, property: null };
-  }
-  
-  const lease = await prisma.lease.findUnique({
-    where: { id: tenant.leaseId },
-    include: {
-      property: true
-    }
-  });
-  
-  return {
-    tenant,
-    lease: lease || null,
-    property: lease?.property || null
+  const result = await getConvexClient().query(api.tenants.getWithLease, { id: tenantId });
+  return reviveDates(result) as unknown as {
+    tenant: tenant | null;
+    lease: (lease & { property: property | null }) | null;
+    property: property | null;
   };
 }
 
 export async function getTenantsByLeaseId(leaseId: string) {
-  return prisma.tenant.findMany({
-    where: {
-      leaseId: leaseId
-    }
-  });
+  const tenants = await getConvexClient().query(api.tenants.listByLease, { leaseId });
+  return reviveDates(tenants) as unknown as tenant[];
 }
 
 export async function getTenantsByPropertyId(propertyId: string) {
-  // Find all tenants through their leases for a given property
-  const leases = await prisma.lease.findMany({
-    where: { propertyId },
-    include: {
-      tenants: true
-    }
-  });
-  
-  return leases.flatMap(lease => lease.tenants);
+  const tenants = await getConvexClient().query(api.tenants.listByProperty, { propertyId });
+  return reviveDates(tenants) as unknown as tenant[];
 }
 
 export async function getAllTenantsForUser(userId: string) {
-  return prisma.tenant.findMany({
-    where: {
-      userId
-    },
-    include: {
-      lease: {
-        include: {
-          property: true
-        }
-      }
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+  const tenants = await getConvexClient().query(api.tenants.listForUser, { userId });
+  return reviveDates(tenants) as unknown as (tenant & {
+    lease: (lease & { property: property | null }) | null;
+  })[];
 }
 
 export async function getAvailableTenantsForUser(userId: string) {
-  return prisma.tenant.findMany({
-    where: {
-      leaseId: null,
-      userId
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
+  const tenants = await getConvexClient().query(api.tenants.listAvailableForUser, { userId });
+  return reviveDates(tenants) as unknown as tenant[];
 }
 
 export async function updateTenantInDb(tenantId: string, userId: string, data: EditTenantFormData) {
-  return prisma.tenant.update({
-    where: {
-      id: tenantId,
-      userId
-    },
-    data: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      notes: data.notes,
-      leaseId: data.leaseId || null,
-    },
+  const updated = await getConvexClient().mutation(api.tenants.update, {
+    id: tenantId,
+    userId,
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phoneNumber: data.phoneNumber,
+    notes: data.notes ?? null,
+    leaseId: data.leaseId || null,
   });
+  return reviveDates(updated) as unknown as tenant;
 }
 
 export async function assignTenantToLease(tenantId: string, leaseId: string | null) {
-  return prisma.tenant.update({
-    where: { id: tenantId },
-    data: { leaseId }
+  const updated = await getConvexClient().mutation(api.tenants.update, {
+    id: tenantId,
+    leaseId,
   });
+  return reviveDates(updated) as unknown as tenant;
 }
 
 export async function removeTenantFromLease(tenantId: string) {
-  return prisma.tenant.update({
-    where: { id: tenantId },
-    data: { leaseId: null }
-  });
+  return assignTenantToLease(tenantId, null);
 }
 
 export async function deleteTenantFromDb(tenantId: string, userId: string) {
-  return prisma.tenant.delete({
-    where: {
-      id: tenantId,
-      userId
-    },
-  });
+  const deleted = await getConvexClient().mutation(api.tenants.remove, { id: tenantId, userId });
+  return reviveDates(deleted) as unknown as tenant;
 }
 
 export async function findPropertyForUser(propertyId: string, userId: string) {
-  return prisma.property.findFirst({
-    where: {
-      id: propertyId,
-      userId
-    }
+  const property = await getConvexClient().query(api.properties.getForUser, {
+    id: propertyId,
+    userId,
   });
+  return reviveDates(property) as unknown as property | null;
 }
 
-// Channel management helpers
 export async function addTenantToPropertyChannelByLeaseId(leaseId: string, tenantId: string) {
-  const lease = await prisma.lease.findUnique({
-    where: { id: leaseId },
-    select: { propertyId: true }
-  });
-  
-  if (!lease) return;
-  
-  const channel = await prisma.channel.findFirst({
-    where: { propertyId: lease.propertyId }
-  });
-  
-  if (!channel) return;
-  
-  // Check if participant already exists
-  const existingParticipant = await prisma.channelParticipant.findFirst({
-    where: {
-      channelId: channel.id,
-      participantId: tenantId,
-      participantType: 'TENANT'
-    }
-  });
-  
-  if (!existingParticipant) {
-    await prisma.channelParticipant.create({
-      data: {
-        channelId: channel.id,
-        participantId: tenantId,
-        participantType: 'TENANT'
-      }
-    });
-  }
+  await getConvexClient().mutation(api.tenants.addToPropertyChannelByLease, { leaseId, tenantId });
 }
 
 export async function removeTenantFromPropertyChannelByLeaseId(leaseId: string, tenantId: string) {
-  const lease = await prisma.lease.findUnique({
-    where: { id: leaseId },
-    select: { propertyId: true }
-  });
-  
-  if (!lease) return;
-  
-  const channel = await prisma.channel.findFirst({
-    where: { propertyId: lease.propertyId }
-  });
-  
-  if (!channel) return;
-  
-  await prisma.channelParticipant.deleteMany({
-    where: {
-      channelId: channel.id,
-      participantId: tenantId,
-      participantType: 'TENANT'
-    }
+  await getConvexClient().mutation(api.tenants.removeFromPropertyChannelByLease, {
+    leaseId,
+    tenantId,
   });
 }
 
-// Legacy function names for backward compatibility (if needed elsewhere)
+// Legacy function aliases kept for existing call sites
 export const editTenantInDb = updateTenantInDb;
 export const assignTenantToLeaseInDb = assignTenantToLease;
 export const removeTenantFromLeaseInDb = removeTenantFromLease;

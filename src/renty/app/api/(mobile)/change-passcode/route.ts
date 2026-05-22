@@ -1,5 +1,5 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-compat";
 import { compare, hash } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,7 +7,7 @@ export const POST = withAuth(async (req: NextRequest, tenantId: string) => {
     const { currentPasscode, newPasscode } = await req.json();
   
     try {
-      const tenantAuth = await prisma.tenantAuth.findUnique({
+      const tenantAuth = await db.tenantAuth.findUnique({
         where: { tenantId }
       });
   
@@ -21,7 +21,7 @@ export const POST = withAuth(async (req: NextRequest, tenantId: string) => {
       }
   
       const hashedNewPasscode = await hash(newPasscode, 10);
-      await prisma.tenantAuth.update({
+      await db.tenantAuth.update({
         where: { tenantId },
         data: {
           passcode: hashedNewPasscode,

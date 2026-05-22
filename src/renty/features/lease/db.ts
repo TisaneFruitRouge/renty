@@ -1,5 +1,27 @@
-import { prisma } from "@/prisma/db";
-import type { LeaseType, LeaseStatus, TerminationReason } from "@prisma/client";
+import { api } from "@/convex/_generated/api";
+import { getConvexClient } from "@/lib/convex";
+import { reviveDates } from "@/lib/convex-map";
+import type {
+  LeaseType,
+  LeaseStatus,
+  TerminationReason,
+  lease,
+  property,
+  tenant,
+  tenantAuth,
+  user,
+  document,
+} from "@/lib/types";
+
+type TenantWithAuth = tenant & { auth: tenantAuth | null };
+type PropertyWithUser = property & { user: user };
+type LeasePlain = lease & { property: property | null; tenants: tenant[] };
+type LeaseWithAuth = lease & { property: property; tenants: TenantWithAuth[] };
+type LeaseWithAuthAndDocuments = lease & {
+  property: property & { documents: document[] };
+  tenants: TenantWithAuth[];
+};
+type LeaseWithUser = lease & { property: PropertyWithUser | null; tenants: TenantWithAuth[] };
 
 export interface CreateLeaseData {
   propertyId: string;
@@ -37,389 +59,188 @@ export interface UpdateLeaseData {
   nextReceiptDate?: Date;
 }
 
+const ms = (date?: Date | null) => (date ? date.getTime() : undefined);
+
+function leaseInput(data: CreateLeaseData) {
+  return {
+    propertyId: data.propertyId,
+    startDate: data.startDate.getTime(),
+    endDate: ms(data.endDate),
+    rentAmount: data.rentAmount,
+    depositAmount: data.depositAmount,
+    charges: data.charges,
+    leaseType: data.leaseType,
+    isFurnished: data.isFurnished,
+    paymentFrequency: data.paymentFrequency,
+    currency: data.currency,
+    status: data.status,
+    notes: data.notes,
+    autoGenerateReceipts: data.autoGenerateReceipts,
+    receiptGenerationDate: data.receiptGenerationDate,
+    nextReceiptDate: ms(data.nextReceiptDate),
+    renewedFromLeaseId: data.renewedFromLeaseId,
+  };
+}
+
 export async function createLeaseInDb(data: CreateLeaseData) {
-  return prisma.lease.create({
-    data: {
-      propertyId: data.propertyId,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      rentAmount: data.rentAmount,
-      depositAmount: data.depositAmount,
-      charges: data.charges || 0,
-      leaseType: data.leaseType,
-      isFurnished: data.isFurnished || false,
-      paymentFrequency: data.paymentFrequency || "monthly",
-      currency: data.currency || "EUR",
-      status: data.status || "ACTIVE",
-      notes: data.notes,
-      autoGenerateReceipts: data.autoGenerateReceipts || false,
-      receiptGenerationDate: data.receiptGenerationDate,
-      nextReceiptDate: data.nextReceiptDate,
-      renewedFromLeaseId: data.renewedFromLeaseId,
-    },
-    include: {
-      property: true,
-      tenants: true,
-    },
-  });
+  const created = await getConvexClient().mutation(api.leases.create, leaseInput(data));
+  return reviveDates(created) as unknown as LeasePlain;
 }
 
 export async function terminateLeaseInDb(
   leaseId: string,
   terminationDate: Date,
   terminationReason: TerminationReason,
-  notes?: string
+  notes?: string,
 ) {
-  return prisma.lease.update({
-    where: { id: leaseId },
-    data: {
-      status: "TERMINATED",
-      endDate: terminationDate,
-      terminationReason,
-      ...(notes !== undefined ? { notes } : {}),
-      autoGenerateReceipts: false,
-    },
-    include: {
-      property: true,
-      tenants: true,
-    },
+  const updated = await getConvexClient().mutation(api.leases.terminate, {
+    id: leaseId,
+    endDate: terminationDate.getTime(),
+    terminationReason,
+    notes,
   });
+  return reviveDates(updated) as unknown as LeasePlain;
 }
 
-export async function renewLeaseInDb(
-  oldLeaseId: string,
-  newLeaseData: CreateLeaseData
-) {
-  return prisma.$transaction(async (tx) => {
-    const newLease = await tx.lease.create({
-      data: {
-        propertyId: newLeaseData.propertyId,
-        startDate: newLeaseData.startDate,
-        endDate: newLeaseData.endDate,
-        rentAmount: newLeaseData.rentAmount,
-        depositAmount: newLeaseData.depositAmount,
-        charges: newLeaseData.charges || 0,
-        leaseType: newLeaseData.leaseType,
-        isFurnished: newLeaseData.isFurnished || false,
-        paymentFrequency: newLeaseData.paymentFrequency || "monthly",
-        currency: newLeaseData.currency || "EUR",
-        status: "ACTIVE",
-        notes: newLeaseData.notes,
-        autoGenerateReceipts: false,
-        renewedFromLeaseId: oldLeaseId,
-      },
-      include: { property: true, tenants: true },
-    });
-
-    await tx.lease.update({
-      where: { id: oldLeaseId },
-      data: { status: "EXPIRED" },
-    });
-
-    await tx.tenant.updateMany({
-      where: { leaseId: oldLeaseId },
-      data: { leaseId: newLease.id },
-    });
-
-    return { newLease };
+export async function renewLeaseInDb(oldLeaseId: string, newLeaseData: CreateLeaseData) {
+  const result = await getConvexClient().mutation(api.leases.renew, {
+    oldLeaseId,
+    newLease: leaseInput(newLeaseData),
   });
+  return reviveDates(result) as unknown as { newLease: LeasePlain };
 }
 
 export async function getLeaseById(leaseId: string) {
-  return prisma.lease.findUnique({
-    where: { id: leaseId },
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const lease = await getConvexClient().query(api.leases.getById, { id: leaseId });
+  return reviveDates(lease) as unknown as LeaseWithAuth | null;
 }
 
 export async function getLeasesByPropertyId(propertyId: string) {
-  return prisma.lease.findMany({
-    where: { propertyId },
-    include: {
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const leases = await getConvexClient().query(api.leases.listByProperty, { propertyId });
+  return reviveDates(leases) as unknown as (lease & { tenants: TenantWithAuth[] })[];
 }
 
 export async function getActiveLeasesByPropertyId(propertyId: string) {
-  return prisma.lease.findMany({
-    where: {
-      propertyId,
-      status: "ACTIVE",
-    },
-    include: {
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-    orderBy: { startDate: "desc" },
-  });
+  const leases = await getConvexClient().query(api.leases.listActiveByProperty, { propertyId });
+  return reviveDates(leases) as unknown as (lease & { tenants: TenantWithAuth[] })[];
 }
 
 export async function getLeasesForUser(userId: string) {
-  return prisma.lease.findMany({
-    where: {
-      property: {
-        userId,
-      },
-    },
-    include: {
-      property: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const leases = await getConvexClient().query(api.leases.listForUser, { userId });
+  return reviveDates(leases) as unknown as LeaseWithAuth[];
 }
 
 export async function getActiveLeasesForUser(userId: string) {
-  return prisma.lease.findMany({
-    where: {
-      property: {
-        userId,
-      },
-      status: "ACTIVE",
-    },
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-    orderBy: { startDate: "desc" },
-  });
+  const leases = await getConvexClient().query(api.leases.listActiveForUser, { userId });
+  return reviveDates(leases) as unknown as LeaseWithAuth[];
 }
 
 export async function updateLeaseInDb(leaseId: string, data: UpdateLeaseData) {
-  return prisma.lease.update({
-    where: { id: leaseId },
-    data,
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
+  const updated = await getConvexClient().mutation(api.leases.update, {
+    id: leaseId,
+    startDate: ms(data.startDate),
+    endDate: ms(data.endDate),
+    rentAmount: data.rentAmount,
+    depositAmount: data.depositAmount,
+    charges: data.charges,
+    leaseType: data.leaseType,
+    isFurnished: data.isFurnished,
+    paymentFrequency: data.paymentFrequency,
+    currency: data.currency,
+    status: data.status,
+    notes: data.notes,
+    autoGenerateReceipts: data.autoGenerateReceipts,
+    receiptGenerationDate: data.receiptGenerationDate,
+    nextReceiptDate: ms(data.nextReceiptDate),
   });
+  return reviveDates(updated) as unknown as LeaseWithAuth;
 }
 
 export async function deleteLeaseFromDb(leaseId: string) {
-  return prisma.lease.delete({
-    where: { id: leaseId },
-  });
+  const removed = await getConvexClient().mutation(api.leases.remove, { id: leaseId });
+  return reviveDates(removed) as unknown as lease;
 }
 
 export async function addTenantToLeaseInDb(leaseId: string, tenantId: string) {
-  return prisma.tenant.update({
-    where: { id: tenantId },
-    data: { leaseId },
-  });
+  const updated = await getConvexClient().mutation(api.tenants.update, { id: tenantId, leaseId });
+  return reviveDates(updated) as unknown as tenant;
 }
 
 export async function removeTenantFromLeaseInDb(tenantId: string) {
-  return prisma.tenant.update({
-    where: { id: tenantId },
-    data: { leaseId: null },
-  });
+  const updated = await getConvexClient().mutation(api.tenants.update, { id: tenantId, leaseId: null });
+  return reviveDates(updated) as unknown as tenant;
 }
 
 export async function getLeaseWithTenants(leaseId: string) {
-  return prisma.lease.findUnique({
-    where: { id: leaseId },
-    include: {
-      property: {
-        include: {
-          user: true,
-        },
-      },
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const lease = await getConvexClient().query(api.leases.getWithTenants, { id: leaseId });
+  return reviveDates(lease) as unknown as LeaseWithUser | null;
 }
 
 export async function getExpiredLeases() {
-  return prisma.lease.findMany({
-    where: {
-      endDate: {
-        lt: new Date(),
-      },
-      status: "ACTIVE",
-    },
-    include: {
-      property: true,
-      tenants: true,
-    },
-  });
+  const leases = await getConvexClient().query(api.leases.getExpired, {});
+  return reviveDates(leases) as unknown as LeasePlain[];
 }
 
 export async function getLeasesByStatus(status: LeaseStatus) {
-  return prisma.lease.findMany({
-    where: { status },
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const leases = await getConvexClient().query(api.leases.listByStatus, { status });
+  return reviveDates(leases) as unknown as LeaseWithAuth[];
 }
 
 export async function updateLeaseStatus(leaseId: string, status: LeaseStatus) {
-  return prisma.lease.update({
-    where: { id: leaseId },
-    data: { status },
-  });
+  const updated = await getConvexClient().mutation(api.leases.updateStatus, { id: leaseId, status });
+  return reviveDates(updated) as unknown as lease;
 }
 
 export async function getTenantsAvailableForLease(userId: string) {
-  return prisma.tenant.findMany({
-    where: {
-      userId,
-      leaseId: null,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const tenants = await getConvexClient().query(api.tenants.listAvailableForUser, { userId });
+  return reviveDates(tenants) as unknown as tenant[];
 }
 
 export async function findLeaseForUser(leaseId: string, userId: string) {
-  return prisma.lease.findFirst({
-    where: {
-      id: leaseId,
-      property: {
-        userId,
-      },
-    },
-    include: {
-      property: true,
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const lease = await getConvexClient().query(api.leases.findForUser, { id: leaseId, userId });
+  return reviveDates(lease) as unknown as LeaseWithAuthAndDocuments | null;
 }
 
 export async function getLeaseCountForUser(userId: string): Promise<number> {
-  return prisma.lease.count({
-    where: {
-      property: {
-        userId,
-      },
-    },
-  });
+  return await getConvexClient().query(api.leases.countForUser, { userId });
 }
 
 export async function updateLeaseRentReceiptSettings(
   leaseId: string,
   autoGenerateReceipts: boolean,
   receiptGenerationDate?: number,
-  nextReceiptDate?: Date
+  nextReceiptDate?: Date,
 ) {
-  return prisma.lease.update({
-    where: { id: leaseId },
-    data: {
-      autoGenerateReceipts,
-      receiptGenerationDate,
-      nextReceiptDate,
-    },
-    include: {
-      property: true,
-      tenants: true,
-    },
+  const updated = await getConvexClient().mutation(api.leases.updateRentReceiptSettings, {
+    id: leaseId,
+    autoGenerateReceipts,
+    receiptGenerationDate,
+    nextReceiptDate: ms(nextReceiptDate),
   });
+  return reviveDates(updated) as unknown as LeasePlain;
 }
 
 export async function getLeasesRequiringReceiptGeneration() {
-  const today = new Date();
-  return prisma.lease.findMany({
-    where: {
-      autoGenerateReceipts: true,
-      status: 'ACTIVE',
-      nextReceiptDate: {
-        lte: today,
-      },
-      tenants: {
-        some: {},
-      },
-    },
-    include: {
-      property: {
-        include: {
-          user: true,
-        },
-      },
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const leases = await getConvexClient().query(api.leases.requiringReceiptGeneration, {});
+  return reviveDates(leases) as unknown as (lease & {
+    property: PropertyWithUser;
+    tenants: TenantWithAuth[];
+  })[];
 }
 
 export async function updateNextReceiptDate(leaseId: string, nextDate: Date) {
-  return prisma.lease.update({
-    where: { id: leaseId },
-    data: {
-      nextReceiptDate: nextDate,
-    },
+  const updated = await getConvexClient().mutation(api.leases.updateNextReceiptDate, {
+    id: leaseId,
+    nextReceiptDate: nextDate.getTime(),
   });
+  return reviveDates(updated) as unknown as lease;
 }
 
 export async function countExpiringLeasesForUser(userId: string, days = 30): Promise<number> {
-  const now = new Date()
-  const future = new Date(now)
-  future.setDate(future.getDate() + days)
-  return prisma.lease.count({
-    where: {
-      property: { userId },
-      status: 'ACTIVE',
-      endDate: {
-        gte: now,
-        lte: future,
-      },
-    },
-  })
+  return await getConvexClient().query(api.leases.countExpiringForUser, { userId, days });
 }
 
 export async function getLeaseWithReceiptSettings(leaseId: string) {
-  return prisma.lease.findUnique({
-    where: { id: leaseId },
-    include: {
-      property: {
-        include: {
-          user: true,
-        },
-      },
-      tenants: {
-        include: {
-          auth: true,
-        },
-      },
-    },
-  });
+  const lease = await getConvexClient().query(api.leases.getWithReceiptSettings, { id: leaseId });
+  return reviveDates(lease) as unknown as LeaseWithUser | null;
 }

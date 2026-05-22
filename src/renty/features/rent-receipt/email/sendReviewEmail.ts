@@ -1,4 +1,4 @@
-import type { property, rentReceipt, user } from '@prisma/client';
+import type { property, rentReceipt, user } from '@/lib/types';
 import { resend } from '@/lib/resend';
 import RentReceiptReviewEmail from './RentReceiptReviewEmail';
 

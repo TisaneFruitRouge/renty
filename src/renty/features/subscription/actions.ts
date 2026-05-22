@@ -1,14 +1,13 @@
 "use server"
 
-import { auth } from "@/lib/auth"
-import { headers } from "next/headers"
 import { getActiveSubscription } from "./db"
 import { stripe } from "@/lib/stripe"
+import { getSession } from "@/lib/session"
 
 export async function getPaymentMethodAction() {
   try {
     // Get the current session
-    const session = await auth.api.getSession({ headers: await headers() })
+    const session = await getSession()
 
     if (!session || !session.user.stripeCustomerId) {
       return { success: false, error: "No customer ID found" }
@@ -47,7 +46,7 @@ export async function getPaymentMethodAction() {
 export async function createCustomerPortalSessionAction() {
   try {
     // Get the current session
-    const session = await auth.api.getSession({ headers: await headers() })
+    const session = await getSession()
 
     if (!session || !session.user.stripeCustomerId) {
       return { success: false, error: "No customer ID found" }
@@ -70,7 +69,7 @@ export async function createCustomerPortalSessionAction() {
 export async function checkSubscriptionStatusAction() {
   try {
     // Get the current session
-    const session = await auth.api.getSession({ headers: await headers() })
+    const session = await getSession()
 
     if (!session) {
       return { status: "none", plan: null }
@@ -81,7 +80,7 @@ export async function checkSubscriptionStatusAction() {
       return { status: "none", plan: null }
     }
 
-    // Use the singleton Prisma client
+    // Use the Better Auth Convex adapter
     
     try {
       // Get the active subscription using the service

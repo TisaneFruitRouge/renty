@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import { Home, MapPin } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"

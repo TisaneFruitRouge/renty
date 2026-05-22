@@ -1,5 +1,5 @@
 import { generateTokens } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
+import { db } from "@/lib/convex-compat";
 import { compare } from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const validatedData = loginSchema.parse(body);
     
     try {
-      const tenantAuth = await prisma.tenantAuth.findUnique({
+      const tenantAuth = await db.tenantAuth.findUnique({
         where: { phoneNumber: validatedData.phoneNumber },
         include: { 
           tenant: {

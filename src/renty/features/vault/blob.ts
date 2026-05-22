@@ -1,12 +1,13 @@
-import { put, del } from '@vercel/blob';
+import { deleteConvexFileByUrl, uploadToConvexStorage } from '@/lib/convex-storage';
 
 export async function uploadDocumentToBlob(file: File): Promise<{ url: string; size: number }> {
     try {
-        const blobName = `properties/documents/${new Date().toISOString().replace(/:/g, "-")}-${file.name}`;
-        
-        const { url } = await put(blobName, file, {
-            access: 'public',
+        const url = await uploadToConvexStorage({
+            data: file,
+            bucket: 'document',
+            name: file.name,
             contentType: file.type,
+            size: file.size,
         });
 
         return {
@@ -14,16 +15,16 @@ export async function uploadDocumentToBlob(file: File): Promise<{ url: string; s
             size: file.size
         };
     } catch (error) {
-        console.error('Error uploading document to blob storage:', error);
+        console.error('Error uploading document to Convex storage:', error);
         throw error;
     }
 }
 
 export async function deleteDocumentFromBlob(url: string): Promise<void> {
     try {
-        await del(url);
+        await deleteConvexFileByUrl(url);
     } catch (error) {
-        console.error('Error deleting document from blob storage:', error);
+        console.error('Error deleting document from storage:', error);
         throw error;
     }
 }

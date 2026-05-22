@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl"
 import Link from "next/link"
 import CreateLeaseModal from "@/features/lease/components/CreateLeaseModal"
 import { getLeaseStatusColor, getLeaseTypeColor, formatCurrency } from "@/features/lease/utils/lease-utils"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 
 interface SimpleLease {
   id: string

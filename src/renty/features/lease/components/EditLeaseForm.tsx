@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { updateLease } from "../actions"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
-import type { lease } from "@prisma/client"
+import type { lease } from "@/lib/types"
 import { toast } from "@/hooks/use-toast"
 import { DatePicker } from "@/components/ui/date-picker"
 

@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { getSession } from '@/lib/session'
-import type { user } from '@prisma/client'
+import type { user } from '@/lib/types'
 import { Suspense } from 'react'
 import { ClientSettingsPage } from '@/features/settings/components/ClientSettingsPage';
 import { PageTitle, PageDescription } from '@/components/ui/typography';

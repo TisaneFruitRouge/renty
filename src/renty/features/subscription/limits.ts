@@ -1,7 +1,6 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { authPlans } from "./plans";
 import { getActiveSubscription } from "./db";
+import { getSession } from "@/lib/session";
 
 // Define the resource types that can be limited
 export type LimitableResource = 'properties' | 'tenants' | 'receipts';
@@ -16,9 +15,7 @@ export class SubscriptionLimitError extends Error {
 
 // Get the current user's plan limits
 export async function getUserPlanLimits() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  const session = await getSession();
   
   if (!session?.user?.id) {
     throw new Error("Not authenticated");

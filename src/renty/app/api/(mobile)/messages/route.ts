@@ -1,7 +1,7 @@
 import { withAuth } from "@/lib/mobile-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/prisma/db";
-import { ParticipantType } from "@prisma/client";
+import { db } from "@/lib/convex-compat";
+import { ParticipantType } from "@/lib/types";
 
 export const POST = withAuth(async (req: NextRequest, tenantId) => {
     const {
@@ -10,7 +10,7 @@ export const POST = withAuth(async (req: NextRequest, tenantId) => {
         channelId
     } = await req.json();
 
-    const message = await prisma.message.create({
+    const message = await db.message.create({
         data: {
             content,
             senderId: tenantId,
@@ -21,7 +21,7 @@ export const POST = withAuth(async (req: NextRequest, tenantId) => {
     });
 
     // Get the sender information
-    const sender = await prisma.tenant.findUnique({
+    const sender = await db.tenant.findUnique({
         where: { id: tenantId }
     });
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import type { lease } from "@prisma/client"
+import type { lease } from "@/lib/types"
 import { useToast } from "@/hooks/use-toast"
 import { 
     AlertDialog,

@@ -20,13 +20,14 @@ import {
   getLeaseWithReceiptSettings,
   terminateLeaseInDb,
   renewLeaseInDb,
+  getLeaseById,
+  getLeaseWithTenants,
   type CreateLeaseData,
   type UpdateLeaseData,
 } from "./db";
-import type { TerminationReason } from "@prisma/client";
-import { findPropertyForUser } from "@/features/tenant/db";
+import type { TerminationReason } from "@/lib/types";
+import { findPropertyForUser, getTenantById, removeTenantFromPropertyChannelByLeaseId } from "@/features/tenant/db";
 import { addTenantToPropertyChannel } from "@/features/messages/db";
-import { prisma } from "@/prisma/db";
 
 
 export const createLease = addUserIdToAction(async (userId: string, data: CreateLeaseData) => {
@@ -85,13 +86,8 @@ export const addTenantToLease = addUserIdToAction(async (userId: string, leaseId
   }
 
   // Verify the tenant belongs to the user
-  const tenant = await prisma.tenant.findFirst({
-    where: {
-      id: tenantId,
-      userId,
-    },
-  });
-  if (!tenant) {
+  const tenant = await getTenantById(tenantId);
+  if (!tenant || tenant.userId !== userId) {
     throw new Error("Tenant not found or access denied");
   }
 
@@ -111,41 +107,21 @@ export const addTenantToLease = addUserIdToAction(async (userId: string, leaseId
 
 export const removeTenantFromLease = addUserIdToAction(async (userId: string, tenantId: string) => {
   // Get the tenant with lease info
-  const tenant = await prisma.tenant.findFirst({
-    where: {
-      id: tenantId,
-      userId,
-    },
-  });
+  const tenant = await getTenantById(tenantId);
 
-  if (!tenant || !tenant.leaseId) {
+  if (!tenant || tenant.userId !== userId || !tenant.leaseId) {
     throw new Error("Tenant not found or not associated with any lease");
   }
 
   // Get the lease to find the property
-  const lease = await prisma.lease.findUnique({
-    where: { id: tenant.leaseId },
-    include: { property: true }
-  });
+  const lease = await getLeaseById(tenant.leaseId);
 
   if (!lease) {
     throw new Error("Associated lease not found");
   }
 
   // Remove tenant from property channel
-  const channel = await prisma.channel.findFirst({
-    where: { propertyId: lease.propertyId },
-  });
-
-  if (channel) {
-    await prisma.channelParticipant.deleteMany({
-      where: {
-        channelId: channel.id,
-        participantId: tenantId,
-        participantType: 'TENANT',
-      },
-    });
-  }
+  await removeTenantFromPropertyChannelByLeaseId(lease.id, tenantId);
 
   // Remove tenant from lease
   await removeTenantFromLeaseInDb(tenantId);
@@ -357,23 +333,11 @@ export const renewLeaseAction = addUserIdToAction(async (
 
 // Helper function to get lease details for a specific tenant (for mobile app)
 export async function getLeaseForTenant(tenantId: string) {
-  const tenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-  });
+  const tenant = await getTenantById(tenantId);
 
   if (!tenant || !tenant.leaseId) {
     return null;
   }
 
-  return prisma.lease.findUnique({
-    where: { id: tenant.leaseId },
-    include: {
-      property: {
-        include: {
-          user: true,
-        },
-      },
-      tenants: true,
-    },
-  });
+  return getLeaseWithTenants(tenant.leaseId);
 }

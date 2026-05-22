@@ -1,4 +1,4 @@
-import type { property, rentReceipt, tenant, user } from '@prisma/client'
+import type { property, rentReceipt, tenant, user } from '@/lib/types'
 
 interface RentReceiptPreviewProps {
     receipt: rentReceipt & {

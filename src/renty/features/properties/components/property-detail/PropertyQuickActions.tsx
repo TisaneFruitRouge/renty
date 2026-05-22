@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import type { property, tenant, lease, tenantAuth } from "@prisma/client";
+import type { property, tenant, lease, tenantAuth } from "@/lib/types";
 
 import { useState, useEffect } from "react";
 import { getChannelByPropertyIdAction } from "@/features/messages/actions";

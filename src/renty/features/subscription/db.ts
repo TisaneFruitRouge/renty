@@ -1,4 +1,7 @@
-import { prisma } from "@/prisma/db";
+import { api } from "@/convex/_generated/api";
+import { getConvexClient } from "@/lib/convex";
+import { reviveDates } from "@/lib/convex-map";
+import type { subscription } from "@/lib/types";
 
 /**
  * Check if a user has an active subscription
@@ -7,16 +10,10 @@ import { prisma } from "@/prisma/db";
  */
 export async function getActiveSubscription(stripeCustomerId: string | null | undefined) {
   if (!stripeCustomerId) return null;
-  
-  return prisma.subscription.findFirst({
-    where: {
-      stripeCustomerId,
-      status: 'active'
-    },
-    orderBy: {
-      periodEnd: 'desc'
-    }
+  const active = await getConvexClient().query(api.subscriptions.activeForCustomer, {
+    stripeCustomerId,
   });
+  return reviveDates(active) as unknown as subscription | null;
 }
 
 /**
@@ -26,13 +23,8 @@ export async function getActiveSubscription(stripeCustomerId: string | null | un
  */
 export async function getUserSubscriptions(stripeCustomerId: string | null | undefined) {
   if (!stripeCustomerId) return [];
-  
-  return prisma.subscription.findMany({
-    where: {
-      stripeCustomerId
-    },
-    orderBy: {
-      periodEnd: 'desc'
-    }
+  const subscriptions = await getConvexClient().query(api.subscriptions.listForCustomer, {
+    stripeCustomerId,
   });
+  return reviveDates(subscriptions) as unknown as subscription[];
 }

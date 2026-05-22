@@ -1,6 +1,33 @@
-node_modules
-# Keep environment variables out of version control
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+coverage/
+.turbo/
+
+# Environment files
 .env
+.env.*
 !.env.example
 
-postgres-data
+# Local services/data
+postgres-data/
+.vercel/
+.convex/
+
+# Logs and generated metadata
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tsbuildinfo
+next-env.d.ts
+
+# OS/editor
+.DS_Store
+*.pem

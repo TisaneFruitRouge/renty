@@ -6,21 +6,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // vi.mock factories are hoisted to the top of the file by Vitest, so any
 // variable referenced inside them must also be hoisted via vi.hoisted().
-const mockPrismaFindUnique = vi.hoisted(() => vi.fn());
-
-vi.mock('@/prisma/db', () => ({
-  prisma: {
-    property: { findUnique: mockPrismaFindUnique },
-    rentReceipt: { findUnique: mockPrismaFindUnique },
-  },
-}));
+const mockGetPropertyReceiptContext = vi.hoisted(() => vi.fn());
 
 vi.mock('@/features/rent-receipt/db', () => ({
   default: vi.fn(),                    // createReceipt
   createSharedReceipt: vi.fn(),
   addBlobUrlToReceipt: vi.fn(),
   deleteReceipt: vi.fn(),
+  getReceiptById: vi.fn(),
   updateReceiptStatus: vi.fn(),
+}));
+
+vi.mock('@/features/properties/db', () => ({
+  getPropertyReceiptContext: mockGetPropertyReceiptContext,
 }));
 
 vi.mock('@/features/rent-receipt/blob', () => ({
@@ -53,7 +51,7 @@ import * as receiptDb from '@/features/rent-receipt/db';
 import * as blobStorage from '@/features/rent-receipt/blob';
 import * as emailSender from '@/features/rent-receipt/email/sendEmail';
 import * as pdfGen from '@/features/rent-receipt/pdf/generatePDF';
-import { RentReceiptStatus } from '@prisma/client';
+import { RentReceiptStatus } from '@/lib/types';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -108,7 +106,7 @@ describe('createRentReceiptAction', () => {
   beforeEach(() => {
     vi.resetAllMocks();
 
-    mockPrismaFindUnique.mockResolvedValue(makeProperty());
+    mockGetPropertyReceiptContext.mockResolvedValue(makeProperty());
     vi.mocked(receiptDb.default).mockResolvedValue(FAKE_RECEIPT as never);
     vi.mocked(receiptDb.createSharedReceipt).mockResolvedValue(FAKE_RECEIPT as never);
     vi.mocked(receiptDb.addBlobUrlToReceipt).mockResolvedValue(undefined as never);
@@ -120,17 +118,17 @@ describe('createRentReceiptAction', () => {
   });
 
   it('throws when property is not found', async () => {
-    mockPrismaFindUnique.mockResolvedValue(null);
+    mockGetPropertyReceiptContext.mockResolvedValue(null);
     await expect(createRentReceiptAction(true, INPUT)).rejects.toThrow('was not found');
   });
 
   it('throws when there are no active leases', async () => {
-    mockPrismaFindUnique.mockResolvedValue({ ...makeProperty(), leases: [] });
+    mockGetPropertyReceiptContext.mockResolvedValue({ ...makeProperty(), leases: [] });
     await expect(createRentReceiptAction(true, INPUT)).rejects.toThrow('No active leases');
   });
 
   it('throws when there are no tenants in the lease', async () => {
-    mockPrismaFindUnique.mockResolvedValue(makeProperty('INDIVIDUAL', []));
+    mockGetPropertyReceiptContext.mockResolvedValue(makeProperty('INDIVIDUAL', []));
     await expect(createRentReceiptAction(true, INPUT)).rejects.toThrow('No tenants');
   });
 
@@ -155,7 +153,7 @@ describe('createRentReceiptAction', () => {
 
   it('uses createSharedReceipt and sends to all tenants for a SHARED lease', async () => {
     const tenants = [makeTenant('t1'), makeTenant('t2')];
-    mockPrismaFindUnique.mockResolvedValue(makeProperty('SHARED', tenants));
+    mockGetPropertyReceiptContext.mockResolvedValue(makeProperty('SHARED', tenants));
 
     await createRentReceiptAction(true, INPUT);
 
@@ -171,7 +169,7 @@ describe('createRentReceiptAction', () => {
   });
 
   it('uses createReceipt for a SHARED lease with only one tenant', async () => {
-    mockPrismaFindUnique.mockResolvedValue(makeProperty('SHARED', [makeTenant('t1')]));
+    mockGetPropertyReceiptContext.mockResolvedValue(makeProperty('SHARED', [makeTenant('t1')]));
 
     await createRentReceiptAction(true, INPUT);
 
@@ -204,23 +202,23 @@ describe('sendRentReceiptAction', () => {
   });
 
   it('throws when receipt is not found', async () => {
-    mockPrismaFindUnique.mockResolvedValue(null);
+    vi.mocked(receiptDb.getReceiptById).mockResolvedValue(null as never);
     await expect(sendRentReceiptAction('bad-id')).rejects.toThrow('Receipt not found');
   });
 
   it('throws when receipt has no blobUrl', async () => {
-    mockPrismaFindUnique.mockResolvedValue({
+    vi.mocked(receiptDb.getReceiptById).mockResolvedValue({
       id: 'r1',
       blobUrl: null,
       tenant: makeTenant('t1'),
       property: { user: { email: 'l@l.com' } },
       lease: null,
-    });
+    } as never);
     await expect(sendRentReceiptAction('r1')).rejects.toThrow('Receipt not found or no PDF');
   });
 
   it('fetches PDF, sends email, and sets status to PAID', async () => {
-    mockPrismaFindUnique.mockResolvedValue({
+    vi.mocked(receiptDb.getReceiptById).mockResolvedValue({
       id: 'r1',
       blobUrl: FAKE_URL,
       startDate: new Date('2024-01-01'),
@@ -229,7 +227,7 @@ describe('sendRentReceiptAction', () => {
       tenant: makeTenant('t1'),
       property: { user: { email: 'landlord@test.com' } },
       lease: null,
-    });
+    } as never);
 
     await sendRentReceiptAction('r1');
 
@@ -240,7 +238,7 @@ describe('sendRentReceiptAction', () => {
   it('sends to all tenants for a SHARED lease', async () => {
     const t1 = makeTenant('t1');
     const t2 = makeTenant('t2');
-    mockPrismaFindUnique.mockResolvedValue({
+    vi.mocked(receiptDb.getReceiptById).mockResolvedValue({
       id: 'r1',
       blobUrl: FAKE_URL,
       startDate: new Date('2024-01-01'),
@@ -249,7 +247,7 @@ describe('sendRentReceiptAction', () => {
       tenant: t1,
       property: { user: { email: 'landlord@test.com' } },
       lease: { leaseType: 'SHARED', tenants: [t1, t2] },
-    });
+    } as never);
 
     await sendRentReceiptAction('r1');
 

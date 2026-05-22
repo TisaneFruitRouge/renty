@@ -1,6 +1,6 @@
 "use server"
 
-import type { ParticipantType } from "@prisma/client";
+import type { ParticipantType } from "@/lib/types";
 import { saveMessage, getChannelByPropertyId } from "./db";
 import { addUserIdToAction } from "@/lib/helpers";
 import { getPropertyForUser } from "../properties/db";

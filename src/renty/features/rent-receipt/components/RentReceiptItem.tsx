@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { MoreHorizontal, Download, Eye } from "lucide-react"
-import type { property, rentReceipt, tenant } from "@prisma/client"
+import type { property, rentReceipt, tenant } from "@/lib/types"
 import { useRouter } from "next/navigation"
 import { useTranslations } from 'next-intl'
 import {

@@ -1,5 +1,5 @@
 
-import { prisma } from '@/prisma/db';
+import { db } from "@/lib/convex-compat";
 import { hash } from 'bcryptjs';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const { phoneNumber } = await req.json();
 
   try {
-    const tenant = await prisma.tenantAuth.findUnique({
+    const tenant = await db.tenantAuth.findUnique({
       where: { phoneNumber }
     });
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const tempCode = Math.random().toString().slice(2, 8);
     const hashedTempCode = await hash(tempCode, 10);
 
-    await prisma.tenantAuth.update({
+    await db.tenantAuth.update({
       where: { phoneNumber },
       data: {
         tempCode: hashedTempCode,

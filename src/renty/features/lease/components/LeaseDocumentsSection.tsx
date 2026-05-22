@@ -2,7 +2,7 @@
 
 
 import { useTranslations } from "next-intl"
-import type { lease, property, document as DocumentType } from "@prisma/client"
+import type { lease, property, document as DocumentType } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

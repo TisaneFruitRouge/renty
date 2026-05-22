@@ -1,5 +1,4 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 
 // This is a higher-order function that adds the user ID to an action function
 // It works with both server components and client components
@@ -10,9 +9,7 @@ export function addUserIdToAction<T extends unknown[], R>(
   // but without the userId parameter
   return async function(...args: T): Promise<R> {
     // Get the user session
-    const session = await auth.api.getSession({
-      headers: await headers()
-    });
+    const session = await getSession();
 
     // Check if the user is authenticated
     if (!session?.user?.id) {

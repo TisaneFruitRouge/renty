@@ -1,4 +1,4 @@
-import { property, rentReceipt, tenant } from "@prisma/client";
+import { property, rentReceipt, tenant } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

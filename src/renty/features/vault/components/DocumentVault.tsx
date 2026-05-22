@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { type document as DocumentType } from "@prisma/client"
+import { type document as DocumentType } from "@/lib/types"
 import { Search, Filter } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

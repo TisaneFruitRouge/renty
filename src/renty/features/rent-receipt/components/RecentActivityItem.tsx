@@ -1,6 +1,6 @@
 'use client'
 
-import { property, rentReceipt, tenant } from "@prisma/client";
+import { property, rentReceipt, tenant } from "@/lib/types";
 import { ReceiptText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTranslations } from "next-intl";

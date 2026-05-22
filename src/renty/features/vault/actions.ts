@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { DocumentCategory } from "@prisma/client";
+import { DocumentCategory } from "@/lib/types";
 import { getPropertyForUser } from "../properties/db";
 import { createDocument, deleteDocument, updateDocument } from "./db";
 import { deleteDocumentFromBlob, uploadDocumentToBlob } from "./blob";

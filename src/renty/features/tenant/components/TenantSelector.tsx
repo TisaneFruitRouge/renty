@@ -31,7 +31,7 @@ import { z } from "zod"
 import { useTranslations } from "next-intl"
 import { getAvailableTenants } from "@/features/tenant/actions"
 import { useEffect, useState } from "react"
-import { tenant } from "@prisma/client"
+import { tenant } from "@/lib/types"
 
 const formSchema = z.object({
   tenantId: z.string(),

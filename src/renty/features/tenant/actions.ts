@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { addUserIdToAction } from "@/lib/helpers";
 import { generateRandomCode } from "@/features/auth/lib";
 import { hash } from "bcryptjs";
-import { prisma } from "@/prisma/db";
 import type { CreateTenantFormData } from "./components/CreateTenantForm";
 import type { EditTenantFormData } from "./components/EditTenantForm";
 import {
@@ -22,6 +21,11 @@ import {
   removeTenantFromPropertyChannelByLeaseId,
   getTenantsByPropertyId
 } from './db';
+import {
+  findLeaseForUser,
+  getActiveLeasesForUser as getActiveLeasesForUserFromDb,
+  getLeaseById,
+} from "@/features/lease/db";
 
 export const createTenant = addUserIdToAction(async (userId: string, data: CreateTenantFormData) => {
   const tenant = await createTenantInDb({ ...data, userId });
@@ -40,10 +44,7 @@ export const createTenant = addUserIdToAction(async (userId: string, data: Creat
 
   revalidatePath('/tenants');
   if (data.leaseId) {
-    const lease = await prisma.lease.findUnique({
-      where: { id: data.leaseId },
-      select: { propertyId: true }
-    });
+    const lease = await getLeaseById(data.leaseId);
     if (lease) {
       revalidatePath(`/properties/${lease.propertyId}`);
     }
@@ -94,20 +95,14 @@ export const editTenant = addUserIdToAction(async (userId: string, tenantId: str
   
   // Revalidate both old and new properties if applicable
   if (oldLeaseId) {
-    const oldLease = await prisma.lease.findUnique({
-      where: { id: oldLeaseId },
-      select: { propertyId: true }
-    });
+    const oldLease = await getLeaseById(oldLeaseId);
     if (oldLease) {
       revalidatePath(`/properties/${oldLease.propertyId}`);
     }
   }
   
   if (newLeaseId) {
-    const newLease = await prisma.lease.findUnique({
-      where: { id: newLeaseId },
-      select: { propertyId: true }
-    });
+    const newLease = await getLeaseById(newLeaseId);
     if (newLease) {
       revalidatePath(`/properties/${newLease.propertyId}`);
     }
@@ -141,15 +136,7 @@ export const deleteTenant = addUserIdToAction(async (userId: string, tenantId: s
 
 export const assignTenantToLeaseAction = addUserIdToAction(async (userId: string, leaseId: string, tenantId: string) => {
   // Verify lease belongs to user
-  const lease = await prisma.lease.findFirst({
-    where: {
-      id: leaseId,
-      property: {
-        userId
-      }
-    },
-    include: { property: true }
-  });
+  const lease = await findLeaseForUser(leaseId, userId);
   
   if (!lease) {
     throw new Error("Lease not found or access denied");
@@ -219,25 +206,5 @@ export const getTenantDetails = addUserIdToAction(async (userId: string, tenantI
 
 // Get all active leases for tenant forms
 export const getActiveLeasesForUser = addUserIdToAction(async (userId: string) => {
-  return prisma.lease.findMany({
-    where: {
-      property: {
-        userId
-      },
-      status: 'ACTIVE'
-    },
-    include: {
-      property: {
-        select: {
-          id: true,
-          title: true,
-          address: true,
-          city: true
-        }
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  });
+  return getActiveLeasesForUserFromDb(userId);
 });

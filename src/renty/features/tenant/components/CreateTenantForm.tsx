@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useState } from "react"
-import type { lease, property } from "@prisma/client"
+import type { lease, property } from "@/lib/types"
 import { toast } from "@/hooks/use-toast"
 
 const formSchema = z.object({

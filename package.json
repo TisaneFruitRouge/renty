@@ -1,0 +1,30 @@
+{
+  "name": "renty-monorepo",
+  "private": true,
+  "packageManager": "yarn@1.22.22",
+  "workspaces": {
+    "packages": [
+      "src/*"
+    ],
+    "nohoist": [
+      "**/zod",
+      "**/zod/**",
+      "**/@hookform/resolvers",
+      "**/@hookform/resolvers/**"
+    ]
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "dev:renty": "turbo run dev --filter=renty",
+    "dev:landing": "turbo run dev --filter=landing",
+    "dev:mobile": "turbo run start --filter=renty-app",
+    "convex:dev": "yarn workspace renty convex:dev",
+    "convex:deploy": "yarn workspace renty convex:deploy"
+  },
+  "devDependencies": {
+    "turbo": "^2.6.3"
+  }
+}

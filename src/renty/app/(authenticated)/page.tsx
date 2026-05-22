@@ -11,7 +11,7 @@ import Link from "next/link";
 import { PageDescription } from "@/components/ui/typography";
 import { TimeGreeting } from "@/components/TimeGreeting";
 import { Button } from "@/components/ui/button";
-import { RentReceiptStatus } from "@prisma/client"
+import { RentReceiptStatus } from "@/lib/types"
 import { cn } from "@/lib/utils";
 
 export default async function Home() {

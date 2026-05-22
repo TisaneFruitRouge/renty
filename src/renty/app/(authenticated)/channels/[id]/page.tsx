@@ -2,7 +2,7 @@ import { getSession } from "@/lib/session";
 import { getChannelMessages, getChannelParticipants } from "@/features/messages/db";
 import { ChannelHeader } from "@/features/messages/components/ChannelHeader";
 import { ChannelChat } from "@/features/messages/components/ChannelChat";
-import type { user } from "@prisma/client";
+import type { user } from "@/lib/types";
 
 type ChannelProps = {
     params: Promise<{

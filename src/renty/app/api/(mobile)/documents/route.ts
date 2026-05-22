@@ -1,6 +1,6 @@
 import { withAuth } from "@/lib/mobile-auth";
-import { prisma } from "@/prisma/db";
-import type { DocumentCategory } from "@prisma/client";
+import { db } from "@/lib/convex-compat";
+import type { DocumentCategory } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -29,7 +29,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
     }
 
     // Verify that the tenant is associated with the property
-    const tenant = await prisma.tenant.findFirst({
+    const tenant = await db.tenant.findFirst({
       where: {
         id: tenantId,
         lease: {
@@ -53,7 +53,7 @@ export const GET = withAuth(async (req: NextRequest, tenantId: string) => {
     };
 
     // Get documents with filters
-    const documents = await prisma.document.findMany({
+    const documents = await db.document.findMany({
       where,
       orderBy: {
         uploadedAt: 'desc'

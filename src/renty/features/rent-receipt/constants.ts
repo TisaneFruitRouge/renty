@@ -1,4 +1,4 @@
-import { RentReceiptStatus } from "@prisma/client"
+import { RentReceiptStatus } from "@/lib/types"
 
 export const rentReceiptStatusVariants: Record<RentReceiptStatus, string> = {
     DRAFT: "bg-gray-100 text-gray-800 hover:bg-gray-200",

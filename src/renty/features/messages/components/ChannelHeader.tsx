@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import { getChannelMessages, UserWithType } from "../db";
 import { useTranslations } from "next-intl";
-import { ParticipantType } from "@prisma/client";
+import { ParticipantType } from "@/lib/types";
 
 type ChannelHeaderProps = {
     channel: Awaited<ReturnType<typeof getChannelMessages>>;

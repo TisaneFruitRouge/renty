@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from "next-intl";
-import type { user } from "@prisma/client";
+import type { user } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserInfoForm } from "@/features/settings/components/UserInfoForm";
 import { User } from "lucide-react";

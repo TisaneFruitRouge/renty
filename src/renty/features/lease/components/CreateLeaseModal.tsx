@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import type { property } from "@prisma/client"
+import type { property } from "@/lib/types"
 import {
     Dialog,
     DialogContent,

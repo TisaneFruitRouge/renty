@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { DocumentCategory } from "@prisma/client"
+import { DocumentCategory } from "@/lib/types"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"

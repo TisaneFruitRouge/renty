@@ -20,7 +20,7 @@ vi.mock('@/features/rent-receipt/email/sendEmail', () => ({
 import { GET } from '@/app/api/(cron)/rent-receipt/send/route';
 import * as receiptDb from '@/features/rent-receipt/db';
 import * as emailSender from '@/features/rent-receipt/email/sendEmail';
-import { RentReceiptStatus } from '@prisma/client';
+import { RentReceiptStatus } from '@/lib/types';
 import { NextRequest } from 'next/server';
 
 // ---------------------------------------------------------------------------
