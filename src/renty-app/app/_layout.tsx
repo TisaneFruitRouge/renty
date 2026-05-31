@@ -16,6 +16,8 @@ import { useAuth } from '@/hooks/useAuth';
 import * as React from 'react';
 import { NAV_THEME } from '@/constants/Colors';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ConvexProvider } from 'convex/react';
+import { convex } from '@/lib/convex';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,7 +43,7 @@ export default function RootLayout() {
     colorScheme,
     isDarkColorScheme
   } = useColorScheme();
-  const { tenant, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
@@ -77,16 +79,18 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-          </ThemeProvider>
-        </QueryClientProvider>
+        <ConvexProvider client={convex}>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </ConvexProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

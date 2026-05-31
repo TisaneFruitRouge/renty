@@ -1,24 +1,20 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, Text } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Input } from '@/components/ui/input';
-import { Stack, useNavigation } from 'expo-router';
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useQuery } from '@tanstack/react-query';
-import { fetchChannel, sendMessage } from '@/queries/channels';
+import { useQuery } from 'convex/react';
+import { api } from '../../../renty/convex/_generated/api';
+import { sendMessage } from '@/queries/channels';
 import { useAuth } from '@/hooks/useAuth';
 import { Channel, MessageWithSender } from '@/lib/types';
 import { Message as MessageComponent } from '@/components/messages/Message';
 
-import * as Ably from 'ably';
-import { AblyProvider, useChannel, ChannelProvider } from 'ably/react';
-import { ABLY_API_KEY } from '@/constants/config';
-
 interface MessageListProps {
   messages: MessageWithSender[];
   userId: string;
-  scrollViewRef: React.RefObject<ScrollView>;
+  scrollViewRef: React.RefObject<ScrollView | null>;
 }
 
 function MessageList({ messages, userId, scrollViewRef }: MessageListProps) {
@@ -92,27 +88,10 @@ function MessageInput({ onSend }: MessageInputProps) {
   );
 }
 
-function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, initialMessages: MessageWithSender[] }) {
+function ChatContent({ chatChannel, messages }: { chatChannel: Channel, messages: MessageWithSender[] }) {
   const { tenant } = useAuth();
-  const [messages, setMessages] = useState(initialMessages);
   const navigation = useNavigation();
   const scrollViewRef = useRef<ScrollView>(null);
-
-  const { channel } = useChannel(`channel:${chatChannel.id}`, (message) => {
-    const newMessage: MessageWithSender = {
-      id: message.id!,
-      channelId: chatChannel.id,
-      channel: chatChannel,
-      senderId: message.data.senderId,
-      senderType: message.data.senderType,
-      content: message.data.content,
-      createdAt: new Date(),
-      sender: message.data.sender
-    }
-    
-    // Optimistically update the UI
-    setMessages(prev => [...prev, newMessage]);
-  });
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -123,9 +102,7 @@ function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, i
 
   const handleSend = async (content: string) => {
     try {
-      const { message } = await sendMessage(chatChannel.id, content);
-      // Publish to Ably to notify other users
-      await channel.publish('message', message);
+      await sendMessage(chatChannel.id, content);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -168,20 +145,22 @@ function ChatContent({ chatChannel, initialMessages }: { chatChannel: Channel, i
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { tenant } = useAuth();
   const navigation = useNavigation();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['channels', id],
-    queryFn: () => fetchChannel(id),
-  });
-
-  const client = useMemo(() => new Ably.Realtime({ 
-    key: ABLY_API_KEY, 
-    clientId: tenant!.id 
-  }), [tenant!.id]);
+  const liveChannel = useQuery(api.channels.getMessages, id ? { channelId: id } : 'skip');
+  const chatChannel = useMemo(() => {
+    if (!liveChannel) return liveChannel;
+    return {
+      ...liveChannel,
+      messages: liveChannel.messages.map((message) => ({
+        ...message,
+        channel: liveChannel,
+        createdAt: new Date(message.createdAt),
+      })),
+    } as unknown as Channel & { messages: MessageWithSender[] };
+  }, [liveChannel]);
   
-  if (isLoading) {
+  if (chatChannel === undefined) {
     return (
       <KeyboardAvoidingView
         className="flex-1 bg-background"
@@ -245,14 +224,19 @@ export default function ChatScreen() {
     );
   }
 
+  if (!chatChannel) {
+    return (
+      <View className="flex-1 items-center justify-center bg-background px-4">
+        <Stack.Screen options={{ headerTitle: 'Channel not found' }} />
+        <Text className="text-muted-foreground text-center">This conversation could not be found.</Text>
+      </View>
+    );
+  }
+
   return (
-    <AblyProvider client={client}>
-      <ChannelProvider channelName={`channel:${id}`}>
-        <ChatContent 
-          chatChannel={data?.channel!}
-          initialMessages={data?.channel?.messages || []}
-        />
-      </ChannelProvider>
-    </AblyProvider>
+    <ChatContent
+      chatChannel={chatChannel}
+      messages={chatChannel.messages}
+    />
   );
 }

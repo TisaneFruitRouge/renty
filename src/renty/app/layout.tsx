@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from "@/components/theme-provider";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -45,8 +46,10 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            {children}
-            <Toaster />
+            <ConvexClientProvider>
+              {children}
+              <Toaster />
+            </ConvexClientProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

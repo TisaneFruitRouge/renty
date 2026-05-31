@@ -39,7 +39,6 @@
     "@react-pdf/renderer": "^4.1.6",
     "@tanstack/react-table": "^8.20.6",
     "@types/ua-parser-js": "^0.7.39",
-    "ably": "^2.6.3",
     "bcryptjs": "^2.4.3",
     "better-auth": "~1.6.9",
     "class-variance-authority": "^0.7.0",

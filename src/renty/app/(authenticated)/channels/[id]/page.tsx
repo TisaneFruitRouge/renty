@@ -34,7 +34,6 @@ export default async function Channel({ params }: ChannelProps) {
                 channelParticipants={channelParticipants}
             />
             <ChannelChat 
-                apiKey={process.env.ABLY_API_KEY!}
                 initialMessages={channel.messages}
                 channelId={channel.id}
                 user={session.user as unknown as user}

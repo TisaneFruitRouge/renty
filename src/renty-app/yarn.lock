@@ -7,13 +7,6 @@
   resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.2.0.tgz#296d00581bfaaabfda1e976849d927824aaea81b"
   integrity sha512-/1iHy9TTr63gE1YcR5idjx8UREz1s0kFhydf3bBLCXyqjhkIc6igAzTOx3zPifCwFR87tsh/4Pa9cNts6d2otw==
 
-"@ably/msgpack-js@^0.4.0":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@ably/msgpack-js/-/msgpack-js-0.4.1.tgz#81526bdea5362ca57c112356899a5e506a34b760"
-  integrity sha512-Sjxj6SOr17hExAVrsycN7u6oV4PhZcK7Z2S8dM71CH/butgO47cSo/TL6FJPCXUyDAzKkOWjMUpJGyZkEpyu4Q==
-  dependencies:
-    bops "^1.0.1"
-
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
@@ -2056,18 +2049,6 @@ abab@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.6.tgz#41b80f2c871d19686216b82309231cfd3cb3d291"
   integrity sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==
-
-ably@^2.6.3:
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/ably/-/ably-2.12.0.tgz#e7c0c00036479e76edb34c1e000c2459bf44983d"
-  integrity sha512-sU2LSpXXxesYv+CbX/p/+w0dHUkn8+V92iusZVvhQBQpzUbENGvjsVlt5gph8Q/FzdY67lwTMFYQ6yo5od2SJw==
-  dependencies:
-    "@ably/msgpack-js" "^0.4.0"
-    dequal "^2.0.3"
-    fastestsmallesttextencoderdecoder "^1.0.22"
-    got "^11.8.5"
-    ulid "^2.3.0"
-    ws "^8.17.1"
 
 abort-controller@^3.0.0:
   version "3.0.0"

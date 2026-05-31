@@ -48,7 +48,7 @@ export default {
       },
       extra: {
         apiUrl: process.env.API_URL,
-        ablyApiKey: process.env.ABLY_API_KEY
+        convexUrl: process.env.CONVEX_URL ?? process.env.NEXT_PUBLIC_CONVEX_URL
       },
     },
   };

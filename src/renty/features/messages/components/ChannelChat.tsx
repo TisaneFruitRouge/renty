@@ -1,57 +1,42 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import { AblyProvider, ChannelProvider, useChannel } from "ably/react";
+import { useMemo } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { createMessageAction } from "../actions";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
-import { ChatSkeleton } from "./ChatSkeleton";
-import * as Ably from "ably";
 import { ParticipantType, user } from "@/lib/types";
 import { MessageWithSender } from "../db";
  
 
 type ChannelChatProps = {
-    apiKey: string;
     initialMessages: MessageWithSender[];
     channelId: string;
     user: user;
 };
 
-function ChatContent({ initialMessages, channelId, user }: Omit<ChannelChatProps, 'apiKey'>) {
-    const [messages, setMessages] = useState<MessageWithSender[]>(initialMessages);
+function reviveMessageDates(messages: MessageWithSender[]) {
+    return messages.map((message) => ({
+        ...message,
+        createdAt: new Date(message.createdAt),
+    }));
+}
 
-    const { channel } = useChannel(`channel:${channelId}`, 'message', (message) => {
-        const newMessage: MessageWithSender = {
-            id: message.id!,
-            channelId: channelId,
-            senderId: message.data.senderId,
-            senderType: message.data.senderType,
-            content: message.data.content,
-            createdAt: new Date(),
-            sender: message.data.sender
-        };
-        setMessages(prev => [...prev, newMessage]);
-    });
+export function ChannelChat({ initialMessages, channelId, user }: ChannelChatProps) {
+    const liveChannel = useQuery(api.channels.getMessages, { channelId });
+    const messages = useMemo(
+        () => reviveMessageDates((liveChannel?.messages ?? initialMessages) as MessageWithSender[]),
+        [initialMessages, liveChannel?.messages],
+    );
 
     const sendMessage = async (content: string) => {
         try {
-            // First save to database
-            const savedMessage = await createMessageAction({
+            await createMessageAction({
                 channelId,
                 senderId: user.id,
-                senderType: ParticipantType.LANDLORD, // You might want to pass this as a prop
+                senderType: ParticipantType.LANDLORD,
                 content,
-            });
-
-            // Then publish to Ably
-            await channel.publish('message', {
-                id: savedMessage.id,
-                content: savedMessage.content,
-                senderId: savedMessage.senderId,
-                senderType: savedMessage.senderType,
-                timestamp: savedMessage.createdAt.toISOString(),
-                sender: user
             });
         } catch (error) {
             console.error('Failed to send message:', error);
@@ -64,38 +49,5 @@ function ChatContent({ initialMessages, channelId, user }: Omit<ChannelChatProps
             <MessageList messages={messages} currentUserId={user.id} />
             <MessageInput onSendMessage={sendMessage} />
         </>
-    );
-}
-
-export function ChannelChat({ apiKey, initialMessages, channelId, user }: ChannelChatProps) {
-    const [client, setClient] = useState<Ably.Realtime | null>(null);
-
-    useEffect(() => {
-        const ablyClient = new Ably.Realtime({
-            key: apiKey,
-            clientId: user.id,
-        });
-
-        setClient(ablyClient);
-
-        return () => {
-            ablyClient.close();
-        };
-    }, [apiKey, user.id]);
-
-    if (!client) {
-        return <ChatSkeleton />;
-    }
-
-    return (
-        <AblyProvider client={client}>
-            <ChannelProvider channelName={`channel:${channelId}`}>
-                <ChatContent 
-                    initialMessages={initialMessages}
-                    channelId={channelId}
-                    user={user}
-                />
-            </ChannelProvider>
-        </AblyProvider>
     );
 }

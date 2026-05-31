@@ -21,7 +21,7 @@ database, Better Auth, server functions, and file storage.
 
 ### Lease Management
 - Create individual, shared, and colocation leases
-- Track active, pending, expired, and terminated leases
+- Track active, p ending, expired, and terminated leases
 - Renew or terminate leases
 - Configure automatic rent receipt generation
 
