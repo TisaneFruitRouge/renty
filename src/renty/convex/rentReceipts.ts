@@ -260,6 +260,45 @@ export const addBlobUrl = mutation({
   },
 });
 
+export const attachPdf = mutation({
+  args: {
+    id: v.string(),
+    blobUrl: v.string(),
+    storageId: v.id("_storage"),
+    name: v.optional(v.string()),
+    size: v.optional(v.number()),
+  },
+  handler: async (ctx, { id, blobUrl, storageId, name, size }) => {
+    const receipt = await receiptById(ctx, id);
+    if (!receipt) throw new Error("receipt not found");
+
+    await ctx.db.patch(receipt._id, {
+      blobUrl,
+      storageId,
+      updatedAt: Date.now(),
+    });
+
+    const existing = await ctx.db
+      .query("storageFiles")
+      .withIndex("by_storage_id", (q) => q.eq("storageId", storageId))
+      .first();
+
+    if (!existing) {
+      await ctx.db.insert("storageFiles", {
+        storageId,
+        url: blobUrl,
+        bucket: "rentReceipt",
+        name: name ?? null,
+        contentType: "application/pdf",
+        size: size ?? null,
+        createdAt: Date.now(),
+      });
+    }
+
+    return shape((await ctx.db.get(receipt._id))!);
+  },
+});
+
 export const updateStatus = mutation({
   args: { id: v.string(), status: rentReceiptStatus },
   handler: async (ctx, { id, status }) => {

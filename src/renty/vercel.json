@@ -1,18 +1,9 @@
 {
-    "$schema": "https://openapi.vercel.sh/vercel.json",
-    "buildCommand": "next build",
-    "crons": [
-        {
-            "path": "/api/rent-receipt/generate",
-            "schedule": "0 8 * * *"
-        },
-        {
-            "path": "/api/rent-receipt/send",
-            "schedule": "0 8 * * *"
-        },
-        {
-            "path": "/api/lease/expire",
-            "schedule": "0 7 * * *"
-        }
-    ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/((?!assets/|favicon.ico|renty.svg).*)",
+      "destination": "/index.html"
+    }
+  ]
 }

@@ -53,6 +53,25 @@ async function propertyByAppId(ctx: QueryCtx, id: string) {
   return convexId ? await ctx.db.get(convexId) : null;
 }
 
+async function assertPropertyOwner(ctx: QueryCtx | MutationCtx, propertyId: string, userId?: string) {
+  if (!userId) return;
+  const byPrisma = await ctx.db
+    .query("properties")
+    .withIndex("by_prisma_id", (q) => q.eq("prismaId", propertyId))
+    .first();
+  const property = byPrisma ?? (ctx.db.normalizeId("properties", propertyId)
+    ? await ctx.db.get(ctx.db.normalizeId("properties", propertyId)!)
+    : null);
+  if (!property || property.userId !== userId) {
+    throw new Error("Property not found or access denied");
+  }
+}
+
+async function assertLeaseOwner(ctx: QueryCtx | MutationCtx, lease: Doc<"leases">, userId?: string) {
+  if (!userId) return;
+  await assertPropertyOwner(ctx, lease.propertyId, userId);
+}
+
 async function tenantsWithAuth(ctx: QueryCtx, leaseAppId: string) {
   const tenants = await ctx.db
     .query("tenants")
@@ -75,6 +94,27 @@ async function plainTenants(ctx: QueryCtx, leaseAppId: string) {
     .withIndex("by_lease", (q) => q.eq("leaseId", leaseAppId))
     .collect();
   return tenants.map(shape);
+}
+
+async function tenantCountForLease(ctx: QueryCtx | MutationCtx, leaseAppId: string) {
+  return (await ctx.db
+    .query("tenants")
+    .withIndex("by_lease", (q) => q.eq("leaseId", leaseAppId))
+    .collect()).length;
+}
+
+async function assertLeaseTypeAllowsTenantCount(
+  ctx: QueryCtx | MutationCtx,
+  leaseAppId: string,
+  nextLeaseType: "INDIVIDUAL" | "SHARED" | "COLOCATION",
+) {
+  const tenantCount = await tenantCountForLease(ctx, leaseAppId);
+  if ((nextLeaseType === "INDIVIDUAL" || nextLeaseType === "COLOCATION") && tenantCount > 1) {
+    throw new Error("lease type allows only one tenant");
+  }
+  if (nextLeaseType === "SHARED" && tenantCount === 1) {
+    throw new Error("shared lease requires at least two tenants");
+  }
 }
 
 async function propertyWithUser(ctx: QueryCtx, propertyId: string) {
@@ -131,6 +171,7 @@ async function insertLease(ctx: MutationCtx, data: LeaseInput) {
 }
 
 const leaseInputValidator = {
+  userId: v.optional(v.string()),
   propertyId: v.string(),
   startDate: v.number(),
   endDate: v.optional(v.union(v.null(), v.number())),
@@ -381,7 +422,9 @@ export const countExpiringForUser = query({
 export const create = mutation({
   args: leaseInputValidator,
   handler: async (ctx, args) => {
-    const id = await insertLease(ctx, args);
+    const { userId, ...leaseArgs } = args;
+    await assertPropertyOwner(ctx, leaseArgs.propertyId, userId);
+    const id = await insertLease(ctx, leaseArgs);
     const lease = await leaseById(ctx, id);
     return {
       ...shape(lease!),
@@ -393,6 +436,7 @@ export const create = mutation({
 
 export const terminate = mutation({
   args: {
+    userId: v.optional(v.string()),
     id: v.string(),
     endDate: v.number(),
     terminationReason,
@@ -401,6 +445,7 @@ export const terminate = mutation({
   handler: async (ctx, args) => {
     const lease = await leaseById(ctx, args.id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, args.userId);
     const patch: Record<string, unknown> = {
       status: "TERMINATED",
       endDate: args.endDate,
@@ -420,16 +465,21 @@ export const terminate = mutation({
 });
 
 export const renew = mutation({
-  args: { oldLeaseId: v.string(), newLease: v.object(leaseInputValidator) },
-  handler: async (ctx, { oldLeaseId, newLease }) => {
+  args: { userId: v.optional(v.string()), oldLeaseId: v.string(), newLease: v.object(leaseInputValidator) },
+  handler: async (ctx, { userId, oldLeaseId, newLease }) => {
+    const oldLease = await leaseById(ctx, oldLeaseId);
+    if (!oldLease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, oldLease, userId);
+    await assertPropertyOwner(ctx, newLease.propertyId, userId);
+    await assertLeaseTypeAllowsTenantCount(ctx, appId(oldLease), newLease.leaseType);
+    const { userId: _ignoredUserId, ...newLeaseInput } = newLease;
     const newId = await insertLease(ctx, {
-      ...newLease,
+      ...newLeaseInput,
       status: "ACTIVE",
       autoGenerateReceipts: false,
       renewedFromLeaseId: oldLeaseId,
     });
 
-    const oldLease = await leaseById(ctx, oldLeaseId);
     if (oldLease) {
       await ctx.db.patch(oldLease._id, { status: "EXPIRED", updatedAt: Date.now() });
       const tenants = await ctx.db
@@ -454,6 +504,7 @@ export const renew = mutation({
 
 export const update = mutation({
   args: {
+    userId: v.optional(v.string()),
     id: v.string(),
     startDate: v.optional(v.number()),
     endDate: v.optional(v.union(v.null(), v.number())),
@@ -470,9 +521,13 @@ export const update = mutation({
     receiptGenerationDate: v.optional(v.union(v.null(), v.number())),
     nextReceiptDate: v.optional(v.union(v.null(), v.number())),
   },
-  handler: async (ctx, { id, ...fields }) => {
+  handler: async (ctx, { id, userId, ...fields }) => {
     const lease = await leaseById(ctx, id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, userId);
+    if (fields.leaseType !== undefined && fields.leaseType !== lease.leaseType) {
+      await assertLeaseTypeAllowsTenantCount(ctx, appId(lease), fields.leaseType);
+    }
     const patch: Record<string, unknown> = { updatedAt: Date.now() };
     for (const [key, value] of Object.entries(fields)) {
       if (value !== undefined) patch[key] = value;
@@ -488,10 +543,11 @@ export const update = mutation({
 });
 
 export const remove = mutation({
-  args: { id: v.string() },
-  handler: async (ctx, { id }) => {
+  args: { id: v.string(), userId: v.optional(v.string()) },
+  handler: async (ctx, { id, userId }) => {
     const lease = await leaseById(ctx, id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, userId);
     const shaped = shape(lease);
     await ctx.db.delete(lease._id);
     return shaped;
@@ -499,10 +555,11 @@ export const remove = mutation({
 });
 
 export const updateStatus = mutation({
-  args: { id: v.string(), status: leaseStatus },
-  handler: async (ctx, { id, status }) => {
+  args: { id: v.string(), userId: v.optional(v.string()), status: leaseStatus },
+  handler: async (ctx, { id, userId, status }) => {
     const lease = await leaseById(ctx, id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, userId);
     await ctx.db.patch(lease._id, { status, updatedAt: Date.now() });
     return shape((await ctx.db.get(lease._id))!);
   },
@@ -510,14 +567,16 @@ export const updateStatus = mutation({
 
 export const updateRentReceiptSettings = mutation({
   args: {
+    userId: v.optional(v.string()),
     id: v.string(),
     autoGenerateReceipts: v.boolean(),
     receiptGenerationDate: v.optional(v.union(v.null(), v.number())),
     nextReceiptDate: v.optional(v.union(v.null(), v.number())),
   },
-  handler: async (ctx, { id, autoGenerateReceipts, receiptGenerationDate, nextReceiptDate }) => {
+  handler: async (ctx, { id, userId, autoGenerateReceipts, receiptGenerationDate, nextReceiptDate }) => {
     const lease = await leaseById(ctx, id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, userId);
     await ctx.db.patch(lease._id, {
       autoGenerateReceipts,
       receiptGenerationDate: receiptGenerationDate ?? null,
@@ -534,10 +593,11 @@ export const updateRentReceiptSettings = mutation({
 });
 
 export const updateNextReceiptDate = mutation({
-  args: { id: v.string(), nextReceiptDate: v.number() },
-  handler: async (ctx, { id, nextReceiptDate }) => {
+  args: { id: v.string(), userId: v.optional(v.string()), nextReceiptDate: v.number() },
+  handler: async (ctx, { id, userId, nextReceiptDate }) => {
     const lease = await leaseById(ctx, id);
     if (!lease) throw new Error("lease not found");
+    await assertLeaseOwner(ctx, lease, userId);
     await ctx.db.patch(lease._id, { nextReceiptDate, updatedAt: Date.now() });
     return shape((await ctx.db.get(lease._id))!);
   },

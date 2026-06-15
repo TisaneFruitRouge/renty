@@ -52,6 +52,20 @@ async function participantsOf(ctx: QueryCtx, channelAppId: string) {
   return participants.map(shape);
 }
 
+async function isChannelParticipant(ctx: QueryCtx, channelAppId: string, participantId: string) {
+  const membership = await ctx.db
+    .query("channelParticipants")
+    .withIndex("by_participant", (q) => q.eq("participantId", participantId))
+    .filter((q) =>
+      q.and(
+        q.eq(q.field("channelId"), channelAppId),
+        q.or(q.eq(q.field("leftAt"), null), q.eq(q.field("leftAt"), undefined)),
+      ),
+    )
+    .first();
+  return membership !== null;
+}
+
 async function resolveSender(ctx: QueryCtx, senderId: string, senderType: "LANDLORD" | "TENANT") {
   if (senderType === "LANDLORD") {
     return await getLandlordById(ctx, senderId);
@@ -92,12 +106,16 @@ export const listForUser = query({
 });
 
 export const getMessages = query({
-  args: { channelId: v.string() },
-  handler: async (ctx, { channelId }) => {
+  args: { channelId: v.string(), userId: v.optional(v.string()) },
+  handler: async (ctx, { channelId, userId }) => {
     const channel = await channelById(ctx, channelId);
     if (!channel) return null;
 
     const channelAppId = appId(channel);
+    if (userId && !(await isChannelParticipant(ctx, channelAppId, userId))) {
+      return null;
+    }
+
     const messages = (
       await ctx.db
         .query("messages")
@@ -125,13 +143,18 @@ export const getMessages = query({
 });
 
 export const getParticipants = query({
-  args: { channelId: v.string() },
-  handler: async (ctx, { channelId }) => {
+  args: { channelId: v.string(), userId: v.optional(v.string()) },
+  handler: async (ctx, { channelId, userId }) => {
     const channel = await channelById(ctx, channelId);
     if (!channel) return [];
+    const channelAppId = appId(channel);
+    if (userId && !(await isChannelParticipant(ctx, channelAppId, userId))) {
+      return [];
+    }
+
     const participants = await ctx.db
       .query("channelParticipants")
-      .withIndex("by_channel", (q) => q.eq("channelId", appId(channel)))
+      .withIndex("by_channel", (q) => q.eq("channelId", channelAppId))
       .collect();
 
     const resolved = await Promise.all(
@@ -169,10 +192,17 @@ export const saveMessage = mutation({
     content: v.string(),
   },
   handler: async (ctx, args) => {
+    const channel = await channelById(ctx, args.channelId);
+    if (!channel) throw new Error("Channel not found");
+    const channelAppId = appId(channel);
+    if (!(await isChannelParticipant(ctx, channelAppId, args.senderId))) {
+      throw new Error("Not authorized to send messages in this channel");
+    }
+
     const id = crypto.randomUUID();
     await ctx.db.insert("messages", {
       prismaId: id,
-      channelId: args.channelId,
+      channelId: channelAppId,
       senderId: args.senderId,
       senderType: args.senderType,
       content: args.content,

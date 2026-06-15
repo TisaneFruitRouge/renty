@@ -1,5 +1,6 @@
 import { stripe } from "@better-auth/stripe";
 import { convex } from "@convex-dev/better-auth/plugins";
+import { crossDomain } from "@convex-dev/better-auth/plugins";
 import type { BetterAuthOptions } from "better-auth/minimal";
 import Stripe from "stripe";
 import authConfig from "./auth.config";
@@ -10,10 +11,35 @@ const siteUrl =
   process.env.BETTER_AUTH_URL ??
   "http://localhost:3000";
 
+const frontendUrl =
+  process.env.FRONTEND_SITE_URL ??
+  process.env.VITE_APP_URL ??
+  process.env.NEXT_PUBLIC_APP_URL ??
+  siteUrl;
+
+const trustedOrigins = Array.from(
+  new Set(
+    [
+      siteUrl,
+      frontendUrl,
+      process.env.NEXT_PUBLIC_APP_URL,
+      process.env.VITE_APP_URL,
+      process.env.VITE_AUTH_ORIGIN,
+      process.env.TRUSTED_AUTH_ORIGINS,
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ]
+      .flatMap((origin) => origin?.split(",") ?? [])
+      .map((origin) => origin.trim())
+      .filter(Boolean),
+  ),
+);
+
 const stripeClient = new Stripe(
   process.env.STRIPE_SECRET_KEY ?? "sk_test_convex_schema_generation_placeholder",
   {
-    apiVersion: "2026-04-22.dahlia",
+    apiVersion: "2026-05-27.dahlia",
   },
 );
 
@@ -22,6 +48,7 @@ export function buildAuthOptions(
 ): BetterAuthOptions {
   return {
     baseURL: siteUrl,
+    trustedOrigins,
     database,
     emailAndPassword: {
       enabled: true,
@@ -63,6 +90,7 @@ export function buildAuthOptions(
           ],
         },
       }),
+      crossDomain({ siteUrl: frontendUrl }),
       convex({ authConfig }),
     ],
     user: {

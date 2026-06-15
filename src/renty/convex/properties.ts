@@ -208,6 +208,7 @@ export const update = mutation({
     id: v.string(),
     title: v.optional(v.string()),
     images: v.optional(v.array(v.string())),
+    imageStorageIds: v.optional(v.array(v.id("_storage"))),
     address: v.optional(v.string()),
     city: v.optional(v.string()),
     state: v.optional(v.string()),

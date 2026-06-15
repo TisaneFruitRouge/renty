@@ -19,6 +19,7 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "dev:renty": "turbo run dev --filter=renty",
+    "build:renty": "yarn workspace renty build",
     "dev:landing": "turbo run dev --filter=landing",
     "dev:mobile": "turbo run start --filter=renty-app",
     "convex:dev": "yarn workspace renty convex:dev",

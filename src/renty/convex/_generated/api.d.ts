@@ -18,8 +18,10 @@ import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as leases from "../leases.js";
 import type * as properties from "../properties.js";
+import type * as rentReceiptWorkflows from "../rentReceiptWorkflows.js";
 import type * as rentReceipts from "../rentReceipts.js";
 import type * as settings from "../settings.js";
+import type * as subscriptionBilling from "../subscriptionBilling.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as tenants from "../tenants.js";
 
@@ -40,8 +42,10 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   leases: typeof leases;
   properties: typeof properties;
+  rentReceiptWorkflows: typeof rentReceiptWorkflows;
   rentReceipts: typeof rentReceipts;
   settings: typeof settings;
+  subscriptionBilling: typeof subscriptionBilling;
   subscriptions: typeof subscriptions;
   tenants: typeof tenants;
 }>;

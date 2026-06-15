@@ -1,42 +1,37 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
     "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/components/theme-provider": ["./src/components/theme-provider.tsx"],
+      "@/components/AppSidebar": ["./src/components/AppSidebar.tsx"],
+      "@/components/TimeGreeting": ["./src/components/TimeGreeting.tsx"],
+      "@/components/Link": ["./src/components/Link.tsx"],
+      "@/components/Image": ["./src/components/Image.tsx"],
+      "@/lib/auth-client": ["./src/lib/auth-client.ts"],
+      "@/lib/i18n": ["./src/lib/i18n.tsx"],
+      "@/lib/navigation": ["./src/lib/navigation.ts"],
+      "@/lib/theme": ["./src/lib/theme.tsx"],
+      "next/link": ["./src/components/Link.tsx"],
+      "next/navigation": ["./src/lib/navigation.ts"],
+      "next-intl": ["./src/lib/i18n.tsx"],
+      "@/convex/*": ["./convex/*"],
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
